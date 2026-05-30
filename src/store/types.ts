@@ -1,0 +1,84 @@
+import type { StateCreator } from "zustand";
+import type {
+  AppData,
+  HabitStatus,
+  Habit,
+  ValueTracker,
+  ValueType,
+  Todo,
+  MotionSettings,
+  Settings,
+} from "@/lib/schema";
+
+export type AppDataState = AppData & { hydrated: boolean };
+
+export type HistoryActions = {
+  setHabitStatusToday: (habitId: string, status: HabitStatus | null) => void;
+  cycleHabitDone: (habitId: string) => void;
+  cycleHabitMissed: (habitId: string) => void;
+  setValueEntryToday: (valueId: string, value: number | string | null) => void;
+};
+
+export type HabitsActions = {
+  addTimeframe: (name: string) => string;
+  renameTimeframe: (id: string, name: string) => void;
+  deleteTimeframe: (id: string) => void;
+  reorderTimeframes: (orderedIds: string[]) => void;
+  addCategory: (timeframeId: string, name: string) => string;
+  renameCategory: (id: string, name: string) => void;
+  deleteCategory: (id: string) => void;
+  reorderCategories: (timeframeId: string, orderedIds: string[]) => void;
+  addHabit: (categoryId: string, title: string) => string;
+  updateHabit: (
+    id: string,
+    patch: Partial<Pick<Habit, "title" | "details" | "imageId" | "linkedValueId">>,
+  ) => void;
+  deleteHabit: (id: string) => void;
+  reorderHabits: (categoryId: string, orderedIds: string[]) => void;
+};
+
+export type ValuesActions = {
+  addValue: (name: string, type: ValueType) => string;
+  updateValue: (
+    id: string,
+    patch: Partial<Pick<ValueTracker, "name" | "linkedHabitId">>,
+  ) => void;
+  deleteValue: (id: string) => void;
+  reorderValues: (orderedIds: string[]) => void;
+  linkHabitToValue: (habitId: string, valueId: string | null) => void;
+};
+
+export type TodosActions = {
+  addTodo: (title: string, date: string | null) => string;
+  updateTodo: (
+    id: string,
+    patch: Partial<Pick<Todo, "title" | "notes" | "date">>,
+  ) => void;
+  deleteTodo: (id: string) => void;
+  toggleTodo: (id: string) => void;
+};
+
+export type SettingsActions = {
+  setEditMode: (value: boolean) => void;
+  toggleEditMode: () => void;
+  setTheme: (theme: Settings["theme"]) => void;
+  updateMotion: (patch: Partial<MotionSettings>) => void;
+  setInstalledAt: (timestamp: number) => void;
+  setDeviceLabel: (label: string) => void;
+};
+
+export type SystemActions = {
+  hydrate: (data: AppData) => void;
+  replaceAllData: (data: AppData) => void;
+  mergeData: (incoming: AppData) => void;
+};
+
+export type StoreState = AppDataState &
+  HistoryActions &
+  HabitsActions &
+  ValuesActions &
+  TodosActions &
+  SettingsActions &
+  SystemActions;
+
+export type AppSlice<T> = StateCreator<StoreState, [["zustand/immer", never]], [], T>;
