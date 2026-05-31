@@ -16,7 +16,7 @@ export function HabitRow({ categoryId }: { categoryId: string }) {
 
   if (!editMode) {
     return (
-      <div className="no-scrollbar snap-row flex flex-row gap-3 overflow-x-auto pb-1">
+      <div className="no-scrollbar snap-row flex flex-row gap-1 overflow-x-auto pb-1">
         {habits.map((habit) => (
           <HabitCard key={habit.id} habit={habit} />
         ))}
@@ -28,7 +28,7 @@ export function HabitRow({ categoryId }: { categoryId: string }) {
   }
 
   return (
-    <div className="no-scrollbar flex flex-row gap-3 overflow-x-auto pb-1">
+    <div className="no-scrollbar flex flex-row gap-1 overflow-x-auto pb-1">
       <DndList
         ids={habits.map((habit) => habit.id)}
         strategy={horizontalListSortingStrategy}

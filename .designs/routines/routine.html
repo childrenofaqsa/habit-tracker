@@ -1,0 +1,224 @@
+<!DOCTYPE html><html lang="en" __gcrremoteframetoken="c6fa24ba21003f24e2639ed9a4d792b7" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Routinely Dashboard</title>
+<!-- Tailwind CSS CDN with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Lucide Icons for consistent iconography -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<!-- Plus Jakarta Sans Font -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+theme: {
+extend: {
+colors: {
+'routine-green': '#19a337', // Vibrant green from image
+'routine-red': '#d92525', // Vibrant red from image
+'routine-purple': '#8b5cf6', // Vibrant bright purple
+'routine-bg': '#f8f9ff',
+'routine-card-bg': '#ffffff',
+'routine-sidebar-bg': '#eff4ff',
+'routine-text-primary': '#000000',
+'routine-text-secondary': '#000000',
+},
+fontFamily: {
+sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+},
+borderRadius: {
+'xl': '12px', // Slightly larger rounding to match image
+'2xl': '16px',
+'3xl': '24px',
+}
+}
+}
+}
+</script>
+<style data-purpose="custom-layout" class="">
+body {
+background-color: #f8f9ff;
+font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+color: #000000;
+}
+.active-nav {
+background-color: #8b5cf6; /* Vibrant Purple for active nav */
+color: #000000; /* Black text on purple background */
+}
+.habit-card {
+width: 64px;
+height: 104px;
+}
+.sidebar-width {
+width: 240px;
+}
+/* Style for the inner icon container enlarged to fill more card width */
+.status-icon-box {
+width: 48px;
+height: 54px;
+border-radius: 12px;
+}
+</style>
+</head>
+<body class="flex h-screen overflow-hidden text-routine-text-primary" data-__gcrweb-annotatedpagecontent-processed="DD6C2724F22C06C5145200CE5DD0F262" style="cursor: grabbing;">
+<!-- BEGIN: LeftSidebar -->
+<aside class="sidebar-width bg-routine-sidebar-bg flex flex-col h-full border-r border-indigo-50" data-purpose="navigation-sidebar">
+<div class="p-8">
+<h1 class="text-xl font-extrabold leading-tight text-black">Routinely</h1>
+<p class="text-xs font-semibold text-black/60">Stay Mindful</p>
+</div>
+<!-- Main Navigation -->
+<nav class="flex-grow px-4 space-y-2" data-purpose="main-nav">
+<a class="active-nav flex items-center gap-3 px-4 py-3 rounded-xl transition-all shadow-sm" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="calendar-check" aria-hidden="true" class="lucide lucide-calendar-check w-5 h-5 text-white"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path><path d="m9 16 2 2 4-4"></path></svg><span class="font-bold text-white">Routine</span></a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-black hover:bg-white/50 transition-colors" href="#">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="list-todo" aria-hidden="true" class="lucide lucide-list-todo w-5 h-5"><path d="M13 5h8"></path><path d="M13 12h8"></path><path d="M13 19h8"></path><path d="m3 17 2 2 4-4"></path><rect x="3" y="4" width="6" height="6" rx="1"></rect></svg>
+<span class="font-semibold">To Do</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-black hover:bg-white/50 transition-colors" href="#">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="refresh-cw" aria-hidden="true" class="lucide lucide-refresh-cw w-5 h-5"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg>
+<span class="font-semibold">Update</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-black hover:bg-white/50 transition-colors" href="#">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="bar-chart-3" aria-hidden="true" class="lucide lucide-bar-chart-3 w-5 h-5"><path d="M3 3v16a2 2 0 0 0 2 2h16"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path></svg>
+<span class="font-semibold">Analytics</span>
+</a>
+</nav>
+<!-- Bottom Navigation -->
+<div class="px-4 pb-8 space-y-2" data-purpose="bottom-nav">
+<a class="flex items-center gap-3 px-4 py-2 rounded-xl text-black hover:bg-white/50 transition-colors" href="#">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="settings" aria-hidden="true" class="lucide lucide-settings w-5 h-5"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"></path><circle cx="12" cy="12" r="3"></circle></svg>
+<span class="text-sm font-semibold">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-xl text-black hover:bg-white/50 transition-colors" href="#">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="help-circle" aria-hidden="true" class="lucide lucide-help-circle w-5 h-5"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg>
+<span class="text-sm font-semibold">Help</span>
+</a>
+</div>
+</aside>
+<!-- END: LeftSidebar -->
+<!-- BEGIN: MainContent -->
+<main class="flex-grow overflow-y-auto p-12 bg-routine-bg relative" data-purpose="main-dashboard-content">
+<!-- Top Header Section -->
+<header class="flex justify-between items-start mb-10">
+<div>
+<h2 class="text-3xl font-extrabold text-black">Sunday, May 31</h2>
+<p class="text-[10px] font-bold uppercase tracking-[0.2em] mt-1 text-black">Today's Journey</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="p-2.5 bg-white border border-indigo-100 rounded-xl text-black hover:bg-indigo-50 transition-colors shadow-sm">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="edit-3" aria-hidden="true" class="lucide lucide-edit-3 w-5 h-5"><path d="M13 21h8"></path><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path></svg>
+</button>
+<button class="p-2.5 bg-white border border-indigo-100 rounded-xl text-black hover:bg-indigo-50 transition-colors shadow-sm">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="calendar" aria-hidden="true" class="lucide lucide-calendar w-5 h-5"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>
+</button>
+<div class="ml-2">
+<img alt="User Profile" class="w-10 h-10 rounded-full border-2 border-routine-purple" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWzbqJGRwoysI0Qgimj8N-WHag0piURDF7rB_pcfZqyTbwh4cMmtMoZrdgtAxhDI5lUZ1voWC2DXjwh-0cQ9qMvdqXwo_Ta9jG7Tg3MRx5DosWs2_WaZAMOOw5kupjeP_ui6CE03HEHzsUcd9gMPVHL_5aHuHe0it3kwGydA_jT00eWCYXrYvnTnxPHGbz6M_sFdppa4QRW-4ImAP3db9piWAWEFU5p1xE3yQF1C2PsdnhdAdHVtIgZYFQUzSaYYOLqKamnQyTrs8">
+</div>
+</div>
+</header>
+<!-- Habits Sections -->
+<div class="space-y-4 max-w-4xl" data-purpose="habits-accordion">
+<!-- Morning Section (Expanded) -->
+<section class="bg-white rounded-3xl shadow-sm border border-indigo-50 overflow-hidden" data-purpose="morning-habits">
+<div class="px-6 py-5 flex justify-between items-center cursor-pointer">
+<div class="flex items-center gap-3 text-black">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sun" aria-hidden="true" class="lucide lucide-sun w-5 h-5 text-black"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>
+<span class="font-bold">Morning</span>
+</div>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-up" aria-hidden="true" class="lucide lucide-chevron-up w-5 h-5 text-black/30"><path d="m18 15-6-6-6 6"></path></svg>
+</div>
+<div class="px-8 pb-10 pt-2 space-y-8">
+<!-- Health Category -->
+<div data-purpose="health-category">
+<p class="text-[10px] font-bold text-black uppercase tracking-widest mb-4">Health</p>
+<div class="flex gap-1"> <!-- Reduced horizontal gap -->
+<!-- Habit: Meditate (Done) -->
+<div class="habit-card bg-white rounded-2xl flex flex-col items-center p-2.5 border border-gray-100 shadow-sm">
+<div class="status-icon-box bg-routine-green flex items-center justify-center mb-2.5">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="check" aria-hidden="true" class="lucide lucide-check w-7 h-7 text-white stroke-[3px]"><path d="M20 6 9 17l-5-5"></path></svg>
+</div>
+<span class="text-[11px] text-black font-bold">Meditate</span>
+</div>
+<!-- Habit: Exercise (Not Done) -->
+<div class="habit-card bg-white rounded-2xl flex flex-col items-center p-2.5 border border-gray-100 shadow-sm">
+<div class="status-icon-box bg-routine-red flex items-center justify-center mb-2.5">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" aria-hidden="true" class="lucide lucide-x w-7 h-7 text-white stroke-[3px]"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+</div>
+<span class="text-[11px] text-black font-bold">Exercise</span>
+</div>
+<!-- Habit: Water (Unfinished) -->
+<div class="habit-card bg-white rounded-2xl flex flex-col items-center p-2.5 border border-gray-100 shadow-sm">
+<div class="status-icon-box bg-routine-bg flex items-center justify-center mb-2.5">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="droplet" aria-hidden="true" class="lucide lucide-droplet w-6 h-6 text-black"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"></path></svg>
+</div>
+<span class="text-[11px] font-bold text-black">Water</span>
+</div>
+</div>
+</div>
+<!-- Mind Category -->
+<div data-purpose="mind-category">
+<p class="text-[10px] font-bold text-black uppercase tracking-widest mb-4">Mind</p>
+<div class="flex gap-1"> <!-- Reduced horizontal gap -->
+<!-- Habit: Read -->
+<div class="habit-card bg-white rounded-2xl flex flex-col items-center p-2.5 border border-gray-100 shadow-sm">
+<div class="status-icon-box bg-routine-bg flex items-center justify-center mb-2.5">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="book-open" aria-hidden="true" class="lucide lucide-book-open w-6 h-6 text-black"><path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path></svg>
+</div>
+<span class="text-[11px] font-bold text-black">Read</span>
+</div>
+<!-- Habit: Journal -->
+<div class="habit-card bg-white rounded-2xl flex flex-col items-center p-2.5 border border-gray-100 shadow-sm">
+<div class="status-icon-box bg-routine-bg flex items-center justify-center mb-2.5">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="pen-tool" aria-hidden="true" class="lucide lucide-pen-tool w-6 h-6 text-black"><path d="M15.707 21.293a1 1 0 0 1-1.414 0l-1.586-1.586a1 1 0 0 1 0-1.414l5.586-5.586a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 1 0 1.414z"></path><path d="m18 13-1.375-6.874a1 1 0 0 0-.746-.776L3.235 2.028a1 1 0 0 0-1.207 1.207L5.35 15.879a1 1 0 0 0 .776.746L13 18"></path><path d="m2.3 2.3 7.286 7.286"></path><circle cx="11" cy="11" r="2"></circle></svg>
+</div>
+<span class="text-[11px] font-bold text-black">Journal</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Noon Section (Collapsed) -->
+<section class="bg-white rounded-3xl shadow-sm border border-indigo-50" data-purpose="noon-habits">
+<div class="px-6 py-5 flex justify-between items-center cursor-pointer">
+<div class="flex items-center gap-3 text-black">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sun-medium" aria-hidden="true" class="lucide lucide-sun-medium w-5 h-5 text-black"><circle cx="12" cy="12" r="4"></circle><path d="M12 3v1"></path><path d="M12 20v1"></path><path d="M3 12h1"></path><path d="M20 12h1"></path><path d="m18.364 5.636-.707.707"></path><path d="m6.343 17.657-.707.707"></path><path d="m5.636 5.636.707.707"></path><path d="m17.657 17.657.707.707"></path></svg>
+<span class="font-bold">Noon</span>
+</div>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-down" aria-hidden="true" class="lucide lucide-chevron-down w-5 h-5 text-black/30"><path d="m6 9 6 6 6-6"></path></svg>
+</div>
+</section>
+<!-- Evening Section (Collapsed) -->
+<section class="bg-white rounded-3xl shadow-sm border border-indigo-50" data-purpose="evening-habits">
+<div class="px-6 py-5 flex justify-between items-center cursor-pointer">
+<div class="flex items-center gap-3 text-black">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sunset" aria-hidden="true" class="lucide lucide-sunset w-5 h-5 text-black"><path d="M12 10V2"></path><path d="m4.93 10.93 1.41 1.41"></path><path d="M2 18h2"></path><path d="M20 18h2"></path><path d="m19.07 10.93-1.41 1.41"></path><path d="M22 22H2"></path><path d="m16 6-4 4-4-4"></path><path d="M16 18a4 4 0 0 0-8 0"></path></svg>
+<span class="font-bold">Evening</span>
+</div>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-down" aria-hidden="true" class="lucide lucide-chevron-down w-5 h-5 text-black/30"><path d="m6 9 6 6 6-6"></path></svg>
+</div>
+</section>
+<!-- Night Section (Collapsed) -->
+<section class="bg-white rounded-3xl shadow-sm border border-indigo-50" data-purpose="night-habits">
+<div class="px-6 py-5 flex justify-between items-center cursor-pointer">
+<div class="flex items-center gap-3 text-black">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="moon" aria-hidden="true" class="lucide lucide-moon w-5 h-5 text-black"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"></path></svg>
+<span class="font-bold">Night</span>
+</div>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-down" aria-hidden="true" class="lucide lucide-chevron-down w-5 h-5 text-black/30"><path d="m6 9 6 6 6-6"></path></svg>
+</div>
+</section>
+</div>
+<!-- Floating Action Button - Purple Theme -->
+<button class="fixed bottom-12 right-12 w-16 h-16 bg-routine-purple rounded-full shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all text-white" data-purpose="add-button">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="plus" aria-hidden="true" class="lucide lucide-plus w-8 h-8"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+</button>
+</main>
+<!-- END: MainContent -->
+<script data-purpose="icon-initialization">
+// Initialize Lucide icons
+lucide.createIcons();
+</script>
+
+
+
+
+</body></html>

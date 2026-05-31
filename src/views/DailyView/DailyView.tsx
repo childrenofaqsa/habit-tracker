@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { CalendarPlus, GripVertical } from "lucide-react";
+import { CalendarPlus, GripVertical, Pencil, Calendar, Plus } from "lucide-react";
+import { format, parse } from "date-fns";
 import { verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useShallow } from "zustand/react/shallow";
 import { todayKey } from "@/lib/date";
@@ -7,7 +8,6 @@ import { useAppStore } from "@/store/useAppStore";
 import { selectTimeframes, selectTodaySummary } from "@/store/selectors";
 import { EmptyState } from "@/common/components/EmptyState";
 import { Reveal } from "@/common/components/motion/Reveal";
-import { DateScrollRow } from "@/common/components/DateScrollRow";
 import { SelectedDateProvider } from "@/common/hooks/useSelectedDate";
 import { useCelebration } from "@/common/hooks/useCelebration";
 import { AddInline } from "@/features/editmode/AddInline";
@@ -23,6 +23,7 @@ export function DailyView() {
   const habitCount = useAppStore((state) => state.habits.length);
   const addTimeframe = useAppStore((state) => state.addTimeframe);
   const reorderTimeframes = useAppStore((state) => state.reorderTimeframes);
+  const addHabit = useAppStore((state) => state.addHabit);
   const summary = useAppStore(useShallow(selectTodaySummary));
   const celebrate = useCelebration();
   const previousCompletion = useRef(summary.completion);
@@ -50,8 +51,36 @@ export function DailyView() {
 
   return (
     <SelectedDateProvider value={selectedDate}>
-      <div className="space-y-6">
-        <DateScrollRow selectedDate={selectedDate} onDateChange={setSelectedDate} />
+      <div className="space-y-4">
+        <header className="flex items-start justify-between">
+          <div>
+            <h2 className="text-3xl font-extrabold text-black dark:text-foreground">
+              {format(parse(selectedDate, "yyyy-MM-dd", new Date()), "EEEE, MMMM d")}
+            </h2>
+            <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-black dark:text-foreground">
+              Today&apos;s Journey
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => useAppStore.getState().toggleEditMode()}
+              className="rounded-xl border border-indigo-100 bg-white p-2.5 shadow-sm transition-colors hover:bg-indigo-50 dark:border-border dark:bg-card"
+              aria-label="Edit mode"
+            >
+              <Pencil className="size-5 text-black dark:text-foreground" />
+            </button>
+            <label className="rounded-xl border border-indigo-100 bg-white p-2.5 shadow-sm transition-colors hover:bg-indigo-50 dark:border-border dark:bg-card">
+              <Calendar className="size-5 text-black dark:text-foreground" />
+              <input
+                type="date"
+                className="sr-only"
+                value={selectedDate}
+                onChange={(e) => e.target.value && setSelectedDate(e.target.value)}
+              />
+            </label>
+          </div>
+        </header>
 
         {habitCount === 0 && !editMode && (
           <EmptyState
@@ -105,6 +134,20 @@ export function DailyView() {
       )}
       <LinkedValueDialog />
       </div>
+
+      {editMode && (
+        <button
+          type="button"
+          onClick={() => {
+            const firstCategory = useAppStore.getState().categories[0];
+            if (firstCategory) addHabit(firstCategory.id, "New Habit");
+          }}
+          className="fixed bottom-20 right-6 z-40 flex size-16 items-center justify-center rounded-full bg-[#8b5cf6] shadow-xl transition-transform hover:scale-110 active:scale-95"
+          aria-label="Add habit"
+        >
+          <Plus className="size-8 text-white" />
+        </button>
+      )}
     </SelectedDateProvider>
   );
 }

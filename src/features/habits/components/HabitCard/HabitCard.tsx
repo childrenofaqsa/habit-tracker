@@ -13,7 +13,6 @@ import { useHabitActions } from "@/features/habits/hooks/useHabitActions";
 import { HabitDetailSheet } from "@/features/habits/components/HabitCard/HabitDetailSheet";
 import { RadialMenu } from "@/features/habits/components/HabitCard/RadialMenu";
 import { deleteImage, revokeImageUrl } from "@/storage/imageStore";
-import { CARD_SIZE } from "@/features/habits/cardSize";
 
 export function HabitCard({ habit }: { habit: Habit }) {
   const editMode = useAppStore((state) => state.settings.editMode);
@@ -51,61 +50,36 @@ export function HabitCard({ habit }: { habit: Habit }) {
         whileTap={{ scale: 0.94 }}
         transition={springs.press}
         {...gesture}
-        className={cn(
-          CARD_SIZE,
-          "snap-card relative flex shrink-0 select-none flex-col items-center justify-center overflow-hidden rounded-2xl border shadow-sm transition-colors duration-200",
-          status === "done" && "border-success/50",
-          status === "missed" && "border-destructive/50",
-          !status && "border-border",
-          "bg-card",
-        )}
+        className="snap-card relative flex w-16 shrink-0 select-none flex-col items-center rounded-2xl border border-gray-100 bg-white p-2.5 shadow-sm dark:border-border dark:bg-card"
       >
-        <div className="flex w-full flex-col items-center justify-center gap-1 px-1">
-          <div className="relative">
-            {imageUrl ? (
+        <div
+          className={cn(
+            "mb-2.5 flex h-[54px] w-12 items-center justify-center rounded-xl",
+            status === "done" && "bg-[#19a337]",
+            status === "missed" && "bg-[#d92525]",
+            !status && "bg-[#f8f9ff] dark:bg-muted",
+          )}
+        >
+          {status === "done" && (
+            <Check className="size-7 text-white" strokeWidth={3} />
+          )}
+          {status === "missed" && (
+            <X className="size-7 text-white" strokeWidth={3} />
+          )}
+          {!status &&
+            (imageUrl ? (
               <img
                 src={imageUrl}
                 alt=""
-                className={cn(
-                  "size-9 rounded-lg object-cover sm:size-11",
-                  status === "done" && "ring-2 ring-success",
-                  status === "missed" && "ring-2 ring-destructive",
-                )}
+                className="size-full rounded-xl object-cover"
               />
             ) : (
-              <div
-                className={cn(
-                  "grid size-9 place-items-center rounded-lg sm:size-11",
-                  status === "done" && "bg-success/20 ring-2 ring-success",
-                  status === "missed" && "bg-destructive/20 ring-2 ring-destructive",
-                )}
-              >
-                <Sparkles className="size-5 text-muted-foreground" />
-              </div>
-            )}
-            {status === "done" && (
-              <div className="absolute -bottom-1 -right-1 grid size-4 place-items-center rounded-full bg-success shadow-sm">
-                <Check className="size-2.5 text-success-foreground" strokeWidth={3} />
-              </div>
-            )}
-            {status === "missed" && (
-              <div className="absolute -bottom-1 -right-1 grid size-4 place-items-center rounded-full bg-destructive shadow-sm">
-                <X className="size-2.5 text-destructive-foreground" strokeWidth={3} />
-              </div>
-            )}
-          </div>
-          <button
-            type="button"
-            onPointerDown={(event) => event.stopPropagation()}
-            onClick={(event) => {
-              event.stopPropagation();
-              setDetailOpen(true);
-            }}
-            className="line-clamp-2 max-h-8 px-0.5 text-center text-[11px] font-medium leading-tight"
-          >
-            {habit.title}
-          </button>
+              <Sparkles className="size-6 text-black/60 dark:text-muted-foreground" />
+            ))}
         </div>
+        <span className="line-clamp-2 max-h-7 text-center text-[11px] font-bold leading-tight text-black dark:text-foreground">
+          {habit.title}
+        </span>
 
         <RadialMenu
           open={radialOpen}
