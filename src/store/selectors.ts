@@ -20,10 +20,20 @@ export const selectHabitStatusToday =
   (state: StoreState): HabitStatus | undefined =>
     state.history[todayKey()]?.habitStatus[habitId];
 
+export const selectHabitStatus =
+  (habitId: string, dateKey: string) =>
+  (state: StoreState): HabitStatus | undefined =>
+    state.history[dateKey]?.habitStatus[habitId];
+
 export const selectValueEntryToday =
   (valueId: string) =>
   (state: StoreState): number | string | undefined =>
     state.history[todayKey()]?.valueEntries[valueId];
+
+export const selectValueEntry =
+  (valueId: string, dateKey: string) =>
+  (state: StoreState): number | string | undefined =>
+    state.history[dateKey]?.valueEntries[valueId];
 
 export type DaySummary = {
   done: number;

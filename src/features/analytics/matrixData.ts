@@ -7,20 +7,29 @@ export type MatrixRow = {
   valueType?: ValueType;
 };
 
+export type MatrixFilter = "all" | "habits" | "values";
+
 export function buildMatrixRows(
   habits: Habit[],
   values: ValueTracker[],
+  filter: MatrixFilter = "all",
 ): MatrixRow[] {
-  const habitRows: MatrixRow[] = habits.map((habit) => ({
-    id: habit.id,
-    name: habit.title,
-    kind: "habit",
-  }));
-  const valueRows: MatrixRow[] = values.map((value) => ({
-    id: value.id,
-    name: value.name,
-    kind: "value",
-    valueType: value.type,
-  }));
+  const habitRows: MatrixRow[] =
+    filter === "values"
+      ? []
+      : habits.map((habit) => ({
+          id: habit.id,
+          name: habit.title,
+          kind: "habit",
+        }));
+  const valueRows: MatrixRow[] =
+    filter === "habits"
+      ? []
+      : values.map((value) => ({
+          id: value.id,
+          name: value.name,
+          kind: "value",
+          valueType: value.type,
+        }));
   return [...habitRows, ...valueRows];
 }

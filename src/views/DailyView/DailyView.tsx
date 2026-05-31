@@ -1,11 +1,14 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CalendarPlus, GripVertical } from "lucide-react";
 import { verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useShallow } from "zustand/react/shallow";
+import { todayKey } from "@/lib/date";
 import { useAppStore } from "@/store/useAppStore";
 import { selectTimeframes, selectTodaySummary } from "@/store/selectors";
 import { EmptyState } from "@/common/components/EmptyState";
 import { Reveal } from "@/common/components/motion/Reveal";
+import { DateScrollRow } from "@/common/components/DateScrollRow";
+import { SelectedDateProvider } from "@/common/hooks/useSelectedDate";
 import { useCelebration } from "@/common/hooks/useCelebration";
 import { AddInline } from "@/features/editmode/AddInline";
 import { DndList } from "@/features/editmode/DndList";
@@ -14,6 +17,7 @@ import { TimeframeSection } from "@/features/habits/components/TimeframeSection"
 import { LinkedValueDialog } from "@/features/values/components/LinkedValueDialog";
 
 export function DailyView() {
+  const [selectedDate, setSelectedDate] = useState(todayKey);
   const editMode = useAppStore((state) => state.settings.editMode);
   const timeframes = useAppStore(useShallow(selectTimeframes));
   const habitCount = useAppStore((state) => state.habits.length);
@@ -45,14 +49,17 @@ export function DailyView() {
   }
 
   return (
-    <div className="space-y-8">
-      {habitCount === 0 && !editMode && (
-        <EmptyState
-          icon={CalendarPlus}
-          title="Start tracking"
-          description="Turn on Edit Mode to add your first habits."
-        />
-      )}
+    <SelectedDateProvider value={selectedDate}>
+      <div className="space-y-6">
+        <DateScrollRow selectedDate={selectedDate} onDateChange={setSelectedDate} />
+
+        {habitCount === 0 && !editMode && (
+          <EmptyState
+            icon={CalendarPlus}
+            title="Start tracking"
+            description="Turn on Edit Mode to add your first habits."
+          />
+        )}
       {editMode ? (
         <DndList
           ids={timeframes.map((timeframe) => timeframe.id)}
@@ -84,7 +91,7 @@ export function DailyView() {
         </DndList>
       ) : (
         timeframes.map((timeframe, index) => (
-          <Reveal key={timeframe.id} delay={index * 0.05}>
+          <Reveal key={timeframe.id} delay={index * 0.05} className="lazy-section">
             <TimeframeSection timeframe={timeframe} />
           </Reveal>
         ))
@@ -97,6 +104,7 @@ export function DailyView() {
         />
       )}
       <LinkedValueDialog />
-    </div>
+      </div>
+    </SelectedDateProvider>
   );
 }

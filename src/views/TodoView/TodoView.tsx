@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { ListTodo } from "lucide-react";
+import { todayKey } from "@/lib/date";
 import { useAppStore } from "@/store/useAppStore";
 import { buildTodoBuckets } from "@/store/todoSelectors";
 import type { Todo } from "@/lib/schema";
@@ -10,10 +12,12 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/common/components/ui/data/accordion";
+import { DateScrollRow } from "@/common/components/DateScrollRow";
 import { AddTodo } from "@/features/todos/components/AddTodo";
 import { TodoItem } from "@/features/todos/components/TodoItem";
 
 export function TodoView() {
+  const [selectedDate, setSelectedDate] = useState(todayKey);
   const todos = useAppStore((state) => state.todos);
   const buckets = buildTodoBuckets(todos);
 
@@ -26,7 +30,8 @@ export function TodoView() {
 
   return (
     <div className="space-y-4">
-      <AddTodo />
+      <DateScrollRow selectedDate={selectedDate} onDateChange={setSelectedDate} />
+      <AddTodo defaultDate={selectedDate !== todayKey() ? selectedDate : null} />
       {todos.length === 0 ? (
         <EmptyState
           icon={ListTodo}

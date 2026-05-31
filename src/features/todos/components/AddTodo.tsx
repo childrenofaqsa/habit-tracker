@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { CalendarDays, Plus } from "lucide-react";
 import { toDateKey, formatShortDate } from "@/lib/date";
 import { useAppStore } from "@/store/useAppStore";
@@ -10,12 +11,11 @@ import {
   PopoverTrigger,
 } from "@/common/components/ui/overlay/popover";
 import { Calendar } from "@/common/components/ui/form/calendar";
-import { Magnetic } from "@/common/components/motion/Magnetic";
 
-export function AddTodo() {
+export function AddTodo({ defaultDate }: { defaultDate?: string | null }) {
   const addTodo = useAppStore((state) => state.addTodo);
   const [title, setTitle] = useState("");
-  const [date, setDate] = useState<string | null>(null);
+  const [date, setDate] = useState<string | null>(defaultDate ?? null);
 
   const submit = () => {
     const trimmed = title.trim();
@@ -52,11 +52,20 @@ export function AddTodo() {
           />
         </PopoverContent>
       </Popover>
-      <Magnetic>
-        <Button type="submit" size="icon" aria-label="Add task">
-          <Plus className="size-4" />
-        </Button>
-      </Magnetic>
+      <AnimatePresence>
+        {title.trim().length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.15 }}
+          >
+            <Button type="submit" size="icon" aria-label="Add task">
+              <Plus className="size-4" />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {date && (
         <span className="hidden text-xs text-muted-foreground sm:inline">
           {formatShortDate(date)}

@@ -2,7 +2,8 @@ import { Trash2, Link2 } from "lucide-react";
 import type { ValueTracker } from "@/lib/schema";
 import { cn } from "@/lib/cn";
 import { useAppStore } from "@/store/useAppStore";
-import { selectValueEntryToday, selectHabitStatusToday } from "@/store/selectors";
+import { selectValueEntry, selectHabitStatus } from "@/store/selectors";
+import { useSelectedDate } from "@/common/hooks/useSelectedDate";
 import {
   Card,
   CardHeader,
@@ -14,13 +15,15 @@ import { Button } from "@/common/components/ui/data/button";
 import { EditableTitle } from "@/features/editmode/EditableTitle";
 import { NumericCounter } from "@/features/values/components/NumericCounter";
 import { TextboxLog } from "@/features/values/components/TextboxLog";
+import { ValueHistory } from "@/features/values/components/ValueHistory";
 
 type Props = { value: ValueTracker; handle?: React.ReactNode };
 
 export function ValueCard({ value, handle }: Props) {
+  const selectedDate = useSelectedDate();
   const editMode = useAppStore((state) => state.settings.editMode);
-  const entry = useAppStore(selectValueEntryToday(value.id));
-  const linkedStatus = useAppStore(selectHabitStatusToday(value.linkedHabitId ?? ""));
+  const entry = useAppStore(selectValueEntry(value.id, selectedDate));
+  const linkedStatus = useAppStore(selectHabitStatus(value.linkedHabitId ?? "", selectedDate));
   const habits = useAppStore((state) => state.habits);
   const setValueEntryToday = useAppStore((state) => state.setValueEntryToday);
   const updateValue = useAppStore((state) => state.updateValue);
@@ -98,6 +101,8 @@ export function ValueCard({ value, handle }: Props) {
             </select>
           </div>
         )}
+
+        <ValueHistory value={value} />
       </CardContent>
     </Card>
   );

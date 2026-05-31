@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
-import { ANALYTICS_MATRIX_DAYS } from "@/lib/constants";
+import { useAppStore } from "@/store/useAppStore";
 import { SummaryBanner } from "@/features/analytics/components/SummaryBanner";
 import { CompletionChart } from "@/features/analytics/components/CompletionChart";
 import { HistoryMatrix } from "@/features/analytics/components/HistoryMatrix";
@@ -13,10 +13,18 @@ import {
   CardContent,
 } from "@/common/components/ui/data/card";
 
-const RANGES = [30, 90, ANALYTICS_MATRIX_DAYS];
+const RANGES = [
+  { label: "1M", days: 30 },
+  { label: "3M", days: 90 },
+  { label: "All", days: 0 },
+] as const;
 
 export function AnalyticsView() {
-  const [days, setDays] = useState(ANALYTICS_MATRIX_DAYS);
+  const historyKeys = useAppStore((state) => Object.keys(state.history));
+  const allDays = useMemo(() => Math.max(historyKeys.length, 30), [historyKeys.length]);
+  const [selectedRange, setSelectedRange] = useState<number>(0);
+
+  const days = selectedRange === 0 ? allDays : selectedRange;
 
   return (
     <div className="space-y-6">
@@ -30,17 +38,17 @@ export function AnalyticsView() {
           <div className="inline-flex rounded-lg bg-muted p-1">
             {RANGES.map((range) => (
               <button
-                key={range}
+                key={range.label}
                 type="button"
-                onClick={() => setDays(range)}
+                onClick={() => setSelectedRange(range.days)}
                 className={cn(
                   "rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
-                  days === range
+                  (range.days === 0 ? selectedRange === 0 : days === range.days && selectedRange !== 0)
                     ? "bg-background text-foreground shadow-sm"
                     : "text-muted-foreground",
                 )}
               >
-                {range}d
+                {range.label}
               </button>
             ))}
           </div>
@@ -54,7 +62,7 @@ export function AnalyticsView() {
       <Reveal delay={0.05}>
         <div className="space-y-2">
           <h2 className="text-sm font-semibold text-muted-foreground">
-            {days}-day history
+            History
           </h2>
           <HistoryMatrix days={days} />
         </div>

@@ -1,6 +1,5 @@
-import { Pencil } from "lucide-react";
-import { Switch } from "@/common/components/ui/form/switch";
-import { Label } from "@/common/components/ui/form/label";
+import { Pencil, PencilOff } from "lucide-react";
+import { Button } from "@/common/components/ui/data/button";
 import { useAppStore } from "@/store/useAppStore";
 
 export function EditModeToggle() {
@@ -8,12 +7,19 @@ export function EditModeToggle() {
   const toggleEditMode = useAppStore((state) => state.toggleEditMode);
 
   return (
-    <div className="flex items-center gap-2">
-      <Pencil className="size-4 text-muted-foreground" />
-      <Label htmlFor="edit-mode" className="hidden text-sm sm:inline">
-        Edit
-      </Label>
-      <Switch id="edit-mode" checked={editMode} onCheckedChange={toggleEditMode} />
-    </div>
+    <Button
+      variant={editMode ? "default" : "ghost"}
+      size="icon"
+      aria-label={editMode ? "Exit edit mode" : "Enter edit mode"}
+      aria-pressed={editMode}
+      onClick={toggleEditMode}
+      className="size-9"
+    >
+      {editMode ? (
+        <PencilOff className="size-4" />
+      ) : (
+        <Pencil className="size-4" />
+      )}
+    </Button>
   );
 }

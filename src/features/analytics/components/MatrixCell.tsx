@@ -16,19 +16,38 @@ export function MatrixCell({ row, record, height, onOpenText }: Props) {
     const status = record?.habitStatus[row.id];
     return (
       <div className={base} style={{ height }}>
-        {status === "done" && <Check className="size-3.5 text-success" />}
-        {status === "missed" && <X className="size-3.5 text-destructive" />}
+        {status === "done" && (
+          <span className="grid size-5 place-items-center rounded-full bg-success/20">
+            <Check className="size-3 text-success" />
+          </span>
+        )}
+        {status === "missed" && (
+          <span className="grid size-5 place-items-center rounded-full bg-destructive/20">
+            <X className="size-3 text-destructive" />
+          </span>
+        )}
+        {!status && (
+          <span className="size-1.5 rounded-full bg-border" />
+        )}
       </div>
     );
   }
 
   const entry = record?.valueEntries[row.id];
-  if (entry === undefined) return <div className={base} style={{ height }} />;
+  if (entry === undefined) {
+    return (
+      <div className={base} style={{ height }}>
+        <span className="size-1.5 rounded-full bg-border" />
+      </div>
+    );
+  }
 
   if (row.valueType === "numeric") {
     return (
       <div className={base} style={{ height }}>
-        <span className="text-[11px] tabular-nums">{String(entry)}</span>
+        <span className="rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-primary">
+          {String(entry)}
+        </span>
       </div>
     );
   }
@@ -39,9 +58,9 @@ export function MatrixCell({ row, record, height, onOpenText }: Props) {
         type="button"
         aria-label="View note"
         onClick={() => onOpenText(row.name, String(entry))}
-        className="text-muted-foreground hover:text-primary"
+        className="grid size-5 place-items-center rounded-full bg-primary/15 text-primary hover:bg-primary/25"
       >
-        <FileText className="size-3.5" />
+        <FileText className="size-3" />
       </button>
     </div>
   );

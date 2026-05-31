@@ -122,6 +122,10 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+  .lazy-section {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 200px;
+  }
   .snap-row {
     scroll-snap-type: x mandatory;
   }
