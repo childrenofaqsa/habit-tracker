@@ -1,12 +1,16 @@
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
+import { todayKey } from "@/lib/date";
 import { useAppStore } from "@/store/useAppStore";
+import { useUiStore } from "@/store/useUiStore";
 import { selectTodaySummary } from "@/store/selectors";
 import { useShallow } from "zustand/react/shallow";
+import { calculateCurrentStreak, calculateBestStreak } from "@/lib/streak";
 import { CompletionChart } from "@/features/analytics/components/CompletionChart";
 import { HistoryMatrix } from "@/features/analytics/components/HistoryMatrix";
 import { Reveal } from "@/common/components/motion/Reveal";
 import { BackupButton } from "@/features/backup/BackupButton";
+import type { HabitStatus } from "@/lib/schema";
 
 const RANGES = [
   { label: "This Week", days: 7 },
@@ -19,6 +23,15 @@ export function AnalyticsView() {
   const allDays = useMemo(() => Math.max(historyLength, 30), [historyLength]);
   const [selectedRange, setSelectedRange] = useState<number>(30);
   const summary = useAppStore(useShallow(selectTodaySummary));
+  const habits = useAppStore((state) => state.habits);
+  const history = useAppStore((state) => state.history);
+  const searchQuery = useUiStore((state) => state.searchQuery);
+
+  const matchingHabits = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return [];
+    return habits.filter((h) => h.title.toLowerCase().includes(q));
+  }, [habits, searchQuery]);
 
   const days = selectedRange === 0 ? allDays : selectedRange;
 
@@ -29,6 +42,17 @@ export function AnalyticsView() {
           Track your progress and optimize your daily workflow.
         </p>
       </Reveal>
+
+      {searchQuery.trim() && (
+        <Reveal>
+          <HabitSpotlight
+            habits={matchingHabits}
+            history={history}
+            query={searchQuery.trim()}
+          />
+        </Reveal>
+      )}
+
       <Reveal delay={0.02}>
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <StatCard
@@ -124,6 +148,78 @@ export function AnalyticsView() {
           </div>
         </div>
       </Reveal>
+    </div>
+  );
+}
+
+function HabitSpotlight({
+  habits,
+  history,
+  query,
+}: {
+  habits: import("@/lib/schema").Habit[];
+  history: Record<string, import("@/lib/schema").DayRecord>;
+  query: string;
+}) {
+  if (habits.length === 0) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        No habits found for &ldquo;{query}&rdquo;.
+      </p>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+        Habit Spotlight
+      </h2>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {habits.map((habit) => (
+          <HabitSpotlightCard key={habit.id} habit={habit} history={history} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function HabitSpotlightCard({
+  habit,
+  history,
+}: {
+  habit: import("@/lib/schema").Habit;
+  history: Record<string, import("@/lib/schema").DayRecord>;
+}) {
+  const todayStatus: HabitStatus | undefined = history[todayKey()]?.habitStatus[habit.id];
+  const currentStreak = calculateCurrentStreak(habit.id, history);
+  const bestStreak = calculateBestStreak(habit.id, history);
+
+  const statusLabel = todayStatus === "done" ? "Done" : todayStatus === "missed" ? "Missed" : "Pending";
+  const statusColor =
+    todayStatus === "done"
+      ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400"
+      : todayStatus === "missed"
+        ? "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400"
+        : "bg-muted text-muted-foreground";
+
+  return (
+    <div className="rounded-xl border border-border bg-card p-4 space-y-3">
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-sm font-semibold text-foreground leading-tight">{habit.title}</p>
+        <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold", statusColor)}>
+          {statusLabel}
+        </span>
+      </div>
+      <div className="flex gap-4 text-center">
+        <div>
+          <p className="text-lg font-bold text-foreground">{currentStreak}</p>
+          <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Current streak</p>
+        </div>
+        <div>
+          <p className="text-lg font-bold text-foreground">{bestStreak}</p>
+          <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Best streak</p>
+        </div>
+      </div>
     </div>
   );
 }

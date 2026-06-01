@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Gauge, GripVertical, Hash, Type, CalendarDays, ChevronDown, Plus } from "lucide-react";
 import { format, subDays } from "date-fns";
 import { verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useShallow } from "zustand/react/shallow";
 import { todayKey } from "@/lib/date";
 import { useAppStore } from "@/store/useAppStore";
+import { useUiStore } from "@/store/useUiStore";
 import { selectValues } from "@/store/selectors";
 import { EmptyState } from "@/common/components/EmptyState";
 import { Button } from "@/common/components/ui/data/button";
@@ -30,6 +31,17 @@ export function ValuesView() {
   const addValue = useAppStore((state) => state.addValue);
   const reorderValues = useAppStore((state) => state.reorderValues);
   const pastDays = getPastDays(6);
+  const searchQuery = useUiStore((state) => state.searchQuery);
+
+  const filteredValues = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return values;
+    return values.filter(
+      (v) =>
+        v.name.toLowerCase().includes(q) ||
+        v.unit.toLowerCase().includes(q),
+    );
+  }, [values, searchQuery]);
 
   const editingValue = editingValueId
     ? values.find((v) => v.id === editingValueId)
@@ -93,14 +105,14 @@ export function ValuesView() {
           </div>
         </div>
 
-        {editMode ? (
+        {editMode && !searchQuery.trim() ? (
           <DndList
-            ids={values.map((value) => value.id)}
+            ids={filteredValues.map((value) => value.id)}
             strategy={verticalListSortingStrategy}
             onReorder={reorderValues}
           >
             <div className="space-y-4">
-              {values.map((value) => (
+              {filteredValues.map((value) => (
                 <Sortable key={value.id} id={value.id}>
                   {({ attributes, listeners }) => (
                     <ValueRow
@@ -124,9 +136,15 @@ export function ValuesView() {
               ))}
             </div>
           </DndList>
+        ) : filteredValues.length === 0 && searchQuery.trim() ? (
+          <EmptyState
+            icon={Gauge}
+            title="No values found"
+            description={`No values match "${searchQuery.trim()}".`}
+          />
         ) : (
           <div className="space-y-4">
-            {values.map((value) => (
+            {filteredValues.map((value) => (
               <ValueRow
                 key={value.id}
                 value={value}

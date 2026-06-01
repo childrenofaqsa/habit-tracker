@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { DailyView } from "@/views/DailyView/DailyView";
 import { useAppStore } from "@/store/useAppStore";
 import { emptyAppData } from "@/lib/schema";
@@ -34,10 +34,6 @@ vi.mock("@/features/habits/components/EditHabitPage", () => ({
   EditHabitPage: () => <div data-testid="edit-habit-page" />,
 }));
 
-vi.mock("@/common/components/FloatingActionButton", () => ({
-  FloatingActionButton: () => null,
-}));
-
 vi.mock("@/features/values/components/LinkedValueDialog", () => ({
   LinkedValueDialog: () => null,
 }));
@@ -64,7 +60,7 @@ describe("DailyView", () => {
     expect(screen.getByText("No timeframes yet")).toBeInTheDocument();
   });
 
-  it("renders habit table when data present", () => {
+  it("renders My Day view by default with timeframe sections", () => {
     const data = emptyAppData();
     data.timeframes.push(buildTimeframe({ id: "tf-1", name: "Morning", order: 0 }));
     data.categories.push(buildCategory({ id: "c-1", timeframeId: "tf-1", order: 0 }));
@@ -72,8 +68,20 @@ describe("DailyView", () => {
     useAppStore.setState({ ...data, hydrated: true } as Partial<StoreState>);
 
     render(<DailyView />);
+    expect(screen.getByTestId("timeframe-section")).toBeInTheDocument();
+    expect(screen.getByText("Morning")).toBeInTheDocument();
+  });
+
+  it("switches to All Task view when toggle clicked", () => {
+    const data = emptyAppData();
+    data.timeframes.push(buildTimeframe({ id: "tf-1", name: "Morning", order: 0 }));
+    data.categories.push(buildCategory({ id: "c-1", timeframeId: "tf-1", order: 0 }));
+    data.habits.push(buildHabit({ id: "h-1", categoryId: "c-1", order: 0 }));
+    useAppStore.setState({ ...data, hydrated: true } as Partial<StoreState>);
+
+    render(<DailyView />);
+    fireEvent.click(screen.getByText("All Task"));
     expect(screen.getByTestId("habit-table")).toBeInTheDocument();
-    expect(screen.getByText("All Task")).toBeInTheDocument();
   });
 
   it("does not infinite loop (regression: renders within reasonable time)", () => {

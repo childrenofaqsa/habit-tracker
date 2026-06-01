@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ListTodo, Calendar as CalendarIcon, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { todayKey } from "@/lib/date";
 import { useAppStore } from "@/store/useAppStore";
+import { useUiStore } from "@/store/useUiStore";
 import { buildTodoBuckets, buildDateGroupedTodos } from "@/store/todoSelectors";
 import { cn } from "@/lib/cn";
 import { EmptyState } from "@/common/components/EmptyState";
@@ -19,8 +20,21 @@ export function TodoView() {
   const [viewMode, setViewMode] = useState<ViewMode>("today");
   const [showAddTodo, setShowAddTodo] = useState(false);
   const todos = useAppStore((state) => state.todos);
-  const buckets = buildTodoBuckets(todos);
-  const dateGroups = buildDateGroupedTodos(todos);
+  const searchQuery = useUiStore((state) => state.searchQuery);
+
+  const filteredTodos = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return todos;
+    return todos.filter(
+      (t) =>
+        t.title.toLowerCase().includes(q) ||
+        t.notes.toLowerCase().includes(q) ||
+        (t.location ?? "").toLowerCase().includes(q),
+    );
+  }, [todos, searchQuery]);
+
+  const buckets = buildTodoBuckets(filteredTodos);
+  const dateGroups = buildDateGroupedTodos(filteredTodos);
 
   if (viewMode === "calendar") {
     return (
@@ -67,6 +81,12 @@ export function TodoView() {
           icon={ListTodo}
           title="Nothing to do"
           description="Add one-time tasks. Assign a date or leave them in your inbox."
+        />
+      ) : filteredTodos.length === 0 && searchQuery.trim() ? (
+        <EmptyState
+          icon={ListTodo}
+          title="No tasks found"
+          description={`No tasks match "${searchQuery.trim()}".`}
         />
       ) : viewMode === "today" ? (
         <TodayView buckets={buckets} />
