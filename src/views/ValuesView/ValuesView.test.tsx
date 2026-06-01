@@ -15,6 +15,14 @@ vi.mock("@/features/values/components/EditUpdatePage", () => ({
   EditUpdatePage: () => <div>Edit Update Page</div>,
 }));
 
+vi.mock("@/features/values/components/CreateTrackerPage", () => ({
+  CreateTrackerPage: () => <div>Create Tracker Page</div>,
+}));
+
+vi.mock("@/features/values/components/TrackerDetailView", () => ({
+  TrackerDetailView: () => <div>Tracker Detail View</div>,
+}));
+
 vi.mock("@/features/editmode/DndList", () => ({
   DndList: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
@@ -32,7 +40,7 @@ beforeEach(() => {
 describe("ValuesView", () => {
   it("renders empty state when no values", () => {
     render(<ValuesView />);
-    expect(screen.getByText(/no values tracked/i)).toBeInTheDocument();
+    expect(screen.getByText(/no trackers yet/i)).toBeInTheDocument();
   });
 
   it("renders value cards when data present", () => {
@@ -48,12 +56,8 @@ describe("ValuesView", () => {
     expect(screen.getByText("Sleep hours")).toBeInTheDocument();
   });
 
-  it("shows add buttons in edit mode", () => {
-    const data = emptyAppData();
-    data.settings.editMode = true;
-    useAppStore.setState({ ...data, hydrated: true } as Partial<StoreState>);
-
+  it("shows Create New button", () => {
     render(<ValuesView />);
-    expect(screen.getByText(/counter/i)).toBeInTheDocument();
+    expect(screen.getByText(/create new/i)).toBeInTheDocument();
   });
 });

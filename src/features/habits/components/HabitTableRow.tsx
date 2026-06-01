@@ -1,10 +1,9 @@
 import { MoreVertical } from "lucide-react";
 import { cn } from "@/lib/cn";
-import type { Habit, Category } from "@/lib/schema";
+import type { Habit } from "@/lib/schema";
 
 type HabitTableRowProps = {
   habit: Habit;
-  category: Category | undefined;
   timeframeName: string;
   bestStreak: number;
   onAction: (habitId: string) => void;
@@ -24,7 +23,6 @@ const PRIORITY_LABELS = {
 
 export function HabitTableRow({
   habit,
-  category,
   timeframeName,
   bestStreak,
   onAction,

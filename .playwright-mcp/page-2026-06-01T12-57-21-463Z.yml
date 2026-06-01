@@ -1,0 +1,99 @@
+- generic [ref=e2]:
+  - generic [ref=e29]:
+    - navigation [ref=e31]:
+      - generic [ref=e32]:
+        - heading "Routinely" [level=2] [ref=e33]
+        - paragraph [ref=e34]: Productivity Workspace
+      - generic [ref=e35]:
+        - button "Routine" [ref=e36] [cursor=pointer]:
+          - img [ref=e37]
+          - generic [ref=e40]: Routine
+        - button "To Do" [ref=e41] [cursor=pointer]:
+          - img [ref=e42]
+          - generic [ref=e45]: To Do
+        - button "Update" [ref=e46] [cursor=pointer]:
+          - img [ref=e47]
+          - generic [ref=e52]: Update
+        - button "Analytics" [ref=e53] [cursor=pointer]:
+          - img [ref=e54]
+          - generic [ref=e55]: Analytics
+      - generic [ref=e56]:
+        - button "Settings" [ref=e57] [cursor=pointer]:
+          - img [ref=e58]
+          - generic [ref=e61]: Settings
+        - button "Help" [ref=e62] [cursor=pointer]:
+          - img [ref=e63]
+          - generic [ref=e66]: Help
+    - generic [ref=e67]:
+      - banner [ref=e69]:
+        - heading "Update" [level=1] [ref=e70]
+        - generic [ref=e72]:
+          - img [ref=e73]
+          - textbox "Search values..." [ref=e76]
+        - generic [ref=e77]:
+          - button [ref=e78] [cursor=pointer]:
+            - img [ref=e79]
+          - generic [ref=e84]: U
+          - generic [ref=e85]:
+            - button "Install" [ref=e86] [cursor=pointer]:
+              - img [ref=e87]
+              - text: Install
+            - button "Exit edit mode" [pressed] [ref=e90] [cursor=pointer]:
+              - img [ref=e91]
+            - button "Backup and restore" [ref=e96] [cursor=pointer]:
+              - img [ref=e97]
+      - generic [ref=e104]:
+        - img [ref=e105]
+        - generic [ref=e107]: Edit Mode — tap items to rename, icons to delete, drag to reorder.
+      - generic [ref=e108]:
+        - img [ref=e110]
+        - main [ref=e115]:
+          - generic [ref=e679]:
+            - generic [ref=e680]:
+              - button "Back" [ref=e681] [cursor=pointer]:
+                - img [ref=e682]
+                - text: Back
+              - heading "Water Intake" [level=2] [ref=e684]
+              - generic [ref=e685]:
+                - button "Month" [ref=e686] [cursor=pointer]
+                - button "Week" [active] [ref=e687] [cursor=pointer]
+                - button "List" [ref=e688] [cursor=pointer]
+            - generic [ref=e689]:
+              - generic [ref=e690]:
+                - paragraph [ref=e691]: Daily Goal
+                - paragraph [ref=e692]: 2000 ml
+              - generic [ref=e694]:
+                - button [ref=e695] [cursor=pointer]:
+                  - img [ref=e696]
+                - paragraph [ref=e698]: May 31 – Jun 6
+                - button [disabled] [ref=e699] [cursor=pointer]:
+                  - img [ref=e700]
+              - generic [ref=e702]:
+                - paragraph [ref=e703]: Completion
+                - paragraph [ref=e704]: 0%
+                - paragraph [ref=e705]: 0/2 days
+            - generic [ref=e781]:
+              - button "Sun 31" [ref=e782] [cursor=pointer]:
+                - generic [ref=e783]: Sun
+                - generic [ref=e784]: "31"
+                - img [ref=e785]
+              - button "Mon 1" [ref=e788] [cursor=pointer]:
+                - generic [ref=e789]: Mon
+                - generic [ref=e790]: "1"
+                - img [ref=e791]
+              - button "Tue 2" [disabled] [ref=e794]:
+                - generic [ref=e795]: Tue
+                - generic [ref=e796]: "2"
+              - button "Wed 3" [disabled] [ref=e797]:
+                - generic [ref=e798]: Wed
+                - generic [ref=e799]: "3"
+              - button "Thu 4" [disabled] [ref=e800]:
+                - generic [ref=e801]: Thu
+                - generic [ref=e802]: "4"
+              - button "Fri 5" [disabled] [ref=e803]:
+                - generic [ref=e804]: Fri
+                - generic [ref=e805]: "5"
+              - button "Sat 6" [disabled] [ref=e806]:
+                - generic [ref=e807]: Sat
+                - generic [ref=e808]: "6"
+  - region "Notifications alt+T"

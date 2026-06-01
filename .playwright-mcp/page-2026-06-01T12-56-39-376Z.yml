@@ -1,0 +1,181 @@
+- generic [ref=e2]:
+  - generic [ref=e29]:
+    - navigation [ref=e31]:
+      - generic [ref=e32]:
+        - heading "Routinely" [level=2] [ref=e33]
+        - paragraph [ref=e34]: Productivity Workspace
+      - generic [ref=e35]:
+        - button "Routine" [ref=e36] [cursor=pointer]:
+          - img [ref=e37]
+          - generic [ref=e40]: Routine
+        - button "To Do" [ref=e41] [cursor=pointer]:
+          - img [ref=e42]
+          - generic [ref=e45]: To Do
+        - button "Update" [ref=e46] [cursor=pointer]:
+          - img [ref=e47]
+          - generic [ref=e52]: Update
+        - button "Analytics" [ref=e53] [cursor=pointer]:
+          - img [ref=e54]
+          - generic [ref=e55]: Analytics
+      - generic [ref=e56]:
+        - button "Settings" [ref=e57] [cursor=pointer]:
+          - img [ref=e58]
+          - generic [ref=e61]: Settings
+        - button "Help" [ref=e62] [cursor=pointer]:
+          - img [ref=e63]
+          - generic [ref=e66]: Help
+    - generic [ref=e67]:
+      - banner [ref=e69]:
+        - heading "Update" [level=1] [ref=e70]
+        - generic [ref=e72]:
+          - img [ref=e73]
+          - textbox "Search values..." [ref=e76]
+        - generic [ref=e77]:
+          - button [ref=e78] [cursor=pointer]:
+            - img [ref=e79]
+          - generic [ref=e84]: U
+          - generic [ref=e85]:
+            - button "Install" [ref=e86] [cursor=pointer]:
+              - img [ref=e87]
+              - text: Install
+            - button "Exit edit mode" [pressed] [ref=e90] [cursor=pointer]:
+              - img [ref=e91]
+            - button "Backup and restore" [ref=e96] [cursor=pointer]:
+              - img [ref=e97]
+      - generic [ref=e104]:
+        - img [ref=e105]
+        - generic [ref=e107]: Edit Mode — tap items to rename, icons to delete, drag to reorder.
+      - generic [ref=e108]:
+        - img [ref=e110]
+        - main [ref=e115]:
+          - generic [ref=e316]:
+            - generic [ref=e317]:
+              - heading "Tracker Updates" [level=2] [ref=e318]
+              - generic [ref=e319]:
+                - button "Toggle drag reorder mode" [ref=e320] [cursor=pointer]:
+                  - img [ref=e321]
+                - button "Create New" [ref=e328] [cursor=pointer]:
+                  - img [ref=e329]
+                  - text: Create New
+            - generic [ref=e330]:
+              - generic [ref=e331]:
+                - img [ref=e333]
+                - generic [ref=e335]:
+                  - button "Water Intake" [ref=e336] [cursor=pointer]
+                  - paragraph [ref=e337]: "Goal: 2000 ml"
+                - generic [ref=e338]:
+                  - button "Decrease" [ref=e339] [cursor=pointer]:
+                    - img [ref=e340]
+                  - generic [ref=e341]:
+                    - generic [ref=e342]: "0"
+                    - generic [ref=e343]: ml
+                  - button "Increase" [ref=e344] [cursor=pointer]:
+                    - img [ref=e345]
+                - button "View log history" [ref=e346] [cursor=pointer]:
+                  - img [ref=e347]
+              - generic [ref=e349]:
+                - img [ref=e351]
+                - generic [ref=e353]:
+                  - button "Pages Read" [ref=e354] [cursor=pointer]
+                  - paragraph [ref=e355]: "Goal: 20 pages"
+                - generic [ref=e356]:
+                  - button "Decrease" [ref=e357] [cursor=pointer]:
+                    - img [ref=e358]
+                  - generic [ref=e359]:
+                    - generic [ref=e360]: "0"
+                    - generic [ref=e361]: pages
+                  - button "Increase" [ref=e362] [cursor=pointer]:
+                    - img [ref=e363]
+                - button "View log history" [ref=e364] [cursor=pointer]:
+                  - img [ref=e365]
+              - generic [ref=e367]:
+                - img [ref=e369]
+                - generic [ref=e371]:
+                  - button "Coffee Cups" [ref=e372] [cursor=pointer]
+                  - paragraph [ref=e373]: "Goal: 3 cups"
+                - generic [ref=e374]:
+                  - button "Decrease" [ref=e375] [cursor=pointer]:
+                    - img [ref=e376]
+                  - generic [ref=e377]:
+                    - generic [ref=e378]: "0"
+                    - generic [ref=e379]: cups
+                  - button "Increase" [ref=e380] [cursor=pointer]:
+                    - img [ref=e381]
+                - button "View log history" [ref=e382] [cursor=pointer]:
+                  - img [ref=e383]
+              - generic [ref=e385]:
+                - img [ref=e387]
+                - generic [ref=e389]:
+                  - button "New counter" [ref=e390] [cursor=pointer]
+                  - paragraph [ref=e391]: count
+                - generic [ref=e392]:
+                  - button "Decrease" [ref=e393] [cursor=pointer]:
+                    - img [ref=e394]
+                  - generic [ref=e395]:
+                    - generic [ref=e396]: "0"
+                    - generic [ref=e397]: count
+                  - button "Increase" [ref=e398] [cursor=pointer]:
+                    - img [ref=e399]
+                - button "View log history" [ref=e400] [cursor=pointer]:
+                  - img [ref=e401]
+              - generic [ref=e403]:
+                - img [ref=e405]
+                - generic [ref=e407]:
+                  - button "New counter" [ref=e408] [cursor=pointer]
+                  - paragraph [ref=e409]: count
+                - generic [ref=e410]:
+                  - button "Decrease" [ref=e411] [cursor=pointer]:
+                    - img [ref=e412]
+                  - generic [ref=e413]:
+                    - generic [ref=e414]: "0"
+                    - generic [ref=e415]: count
+                  - button "Increase" [ref=e416] [cursor=pointer]:
+                    - img [ref=e417]
+                - button "View log history" [ref=e418] [cursor=pointer]:
+                  - img [ref=e419]
+              - generic [ref=e421]:
+                - img [ref=e423]
+                - generic [ref=e425]:
+                  - button "New counter" [ref=e426] [cursor=pointer]
+                  - paragraph [ref=e427]: count
+                - generic [ref=e428]:
+                  - button "Decrease" [ref=e429] [cursor=pointer]:
+                    - img [ref=e430]
+                  - generic [ref=e431]:
+                    - generic [ref=e432]: "0"
+                    - generic [ref=e433]: count
+                  - button "Increase" [ref=e434] [cursor=pointer]:
+                    - img [ref=e435]
+                - button "View log history" [ref=e436] [cursor=pointer]:
+                  - img [ref=e437]
+              - generic [ref=e439]:
+                - img [ref=e441]
+                - generic [ref=e443]:
+                  - button "New counter" [ref=e444] [cursor=pointer]
+                  - paragraph [ref=e445]: count
+                - generic [ref=e446]:
+                  - button "Decrease" [ref=e447] [cursor=pointer]:
+                    - img [ref=e448]
+                  - generic [ref=e449]:
+                    - generic [ref=e450]: "0"
+                    - generic [ref=e451]: count
+                  - button "Increase" [ref=e452] [cursor=pointer]:
+                    - img [ref=e453]
+                - button "View log history" [ref=e454] [cursor=pointer]:
+                  - img [ref=e455]
+              - generic [ref=e457]:
+                - img [ref=e459]
+                - generic [ref=e461]:
+                  - button "New counter" [ref=e462] [cursor=pointer]
+                  - paragraph [ref=e463]: count
+                - generic [ref=e464]:
+                  - button "Decrease" [ref=e465] [cursor=pointer]:
+                    - img [ref=e466]
+                  - generic [ref=e467]:
+                    - generic [ref=e468]: "0"
+                    - generic [ref=e469]: count
+                  - button "Increase" [ref=e470] [cursor=pointer]:
+                    - img [ref=e471]
+                - button "View log history" [ref=e472] [cursor=pointer]:
+                  - img [ref=e473]
+  - region "Notifications alt+T"

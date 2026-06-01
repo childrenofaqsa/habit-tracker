@@ -9,11 +9,9 @@ import {
   subMonths,
   isSameDay,
   isToday,
-  isBefore,
 } from "date-fns";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { todayKey } from "@/lib/date";
 import { useAppStore } from "@/store/useAppStore";
 import { selectTodosByDate } from "@/store/todoSelectors";
 import { TodoCard } from "./TodoCard";
@@ -24,7 +22,7 @@ type CalendarViewProps = {
 
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-export function CalendarView({ onClose }: CalendarViewProps) {
+export function CalendarView({ onClose: _onClose }: CalendarViewProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(new Date());
   const todos = useAppStore((s) => s.todos);
@@ -88,7 +86,6 @@ export function CalendarView({ onClose }: CalendarViewProps) {
           {days.map((day) => {
             const isSelected = isSameDay(day, selectedDay);
             const hasTodo = hasTodos(day);
-            const isPast = isBefore(day, new Date()) && !isToday(day);
 
             return (
               <button

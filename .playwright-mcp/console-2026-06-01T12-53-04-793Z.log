@@ -1,0 +1,51 @@
+[    4077ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:14337
+[    4874ms] [ERROR] In HTML, %s cannot be a descendant of <%s>.
+This will cause a hydration error.%s <button> button 
+
+  ...
+    <div className="space-y-8">
+      <Sortable id="4ce968ff-1...">
+        <div ref={function} style={{...}} className="">
+          <TimeframeSection timeframe={{id:"4ce968...", ...}} handle={<button>}>
+            <Collapsible open={true} onOpenChange={function bound dispatchSetState} asChild={true}>
+              <CollapsibleProvider scope={undefined} disabled={undefined} contentId="radix-_r_d_" open={true} ...>
+                <Primitive.div data-state="open" data-disabled={undefined} asChild={true} ref={null}>
+                  <Primitive.div.Slot data-state="open" data-disabled={undefined} ref={null}>
+                    <Primitive.div.SlotClone data-state="open" data-disabled={undefined} ref={null}>
+                      <section className="overflow-h..." data-state="open" data-disabled={undefined} ref={null}>
+                        <CollapsibleTrigger asChild={true}>
+                          <Primitive.button type="button" aria-controls="radix-_r_d_" aria-expanded={true} ...>
+                            <Primitive.button.Slot type="button" aria-controls="radix-_r_d_" aria-expanded={true} ...>
+                              <Primitive.button.SlotClone type="button" aria-controls="radix-_r_d_" aria-expanded={true} ...>
+>                               <button
+>                                 type="button"
+>                                 className="flex w-full items-center justify-between px-6 py-5 text-left"
+>                                 aria-controls="radix-_r_d_"
+>                                 aria-expanded={true}
+>                                 data-state="open"
+>                                 data-disabled={undefined}
+>                                 disabled={undefined}
+>                                 onClick={function handleEvent}
+>                                 ref={null}
+>                               >
+                                  <div className="flex items...">
+>                                   <button
+>                                     type="button"
+>                                     aria-label="Drag to reorder"
+>                                     className="grid size-6 cursor-grab touch-none place-items-center rounded-md text..."
+>                                     role="button"
+>                                     tabIndex={0}
+>                                     aria-disabled={false}
+>                                     aria-pressed={undefined}
+>                                     aria-roledescription="sortable"
+>                                     aria-describedby="DndDescribedBy-0"
+>                                     onPointerDown={function}
+>                                     onKeyDown={function}
+>                                   >
+                                    ...
+                                  ...
+                        ...
+      ...
+ @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:1772
+[    4874ms] [ERROR] <%s> cannot contain a nested %s.
+See this log for the ancestor stack trace. button <button> @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:1774

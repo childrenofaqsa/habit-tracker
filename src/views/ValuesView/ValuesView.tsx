@@ -1,171 +1,156 @@
 import { useMemo, useState } from "react";
-import { Gauge, GripVertical, Hash, Type, CalendarDays, ChevronDown, Plus } from "lucide-react";
-import { format, subDays } from "date-fns";
+import { Gauge, GripVertical, Plus } from "lucide-react";
 import { verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useShallow } from "zustand/react/shallow";
-import { todayKey } from "@/lib/date";
 import { useAppStore } from "@/store/useAppStore";
 import { useUiStore } from "@/store/useUiStore";
 import { selectValues } from "@/store/selectors";
 import { EmptyState } from "@/common/components/EmptyState";
-import { Button } from "@/common/components/ui/data/button";
-import { SelectedDateProvider } from "@/common/hooks/useSelectedDate";
 import { DndList } from "@/features/editmode/DndList";
 import { Sortable } from "@/features/editmode/Sortable";
 import { ValueRow } from "@/features/values/components/ValueRow";
 import { EditUpdatePage } from "@/features/values/components/EditUpdatePage";
+import { CreateTrackerPage } from "@/features/values/components/CreateTrackerPage";
+import { TrackerDetailView } from "@/features/values/components/TrackerDetailView";
 
-function getPastDays(count: number) {
-  const today = new Date();
-  return Array.from({ length: count }, (_, i) => {
-    const d = subDays(today, i + 1);
-    return { key: format(d, "yyyy-MM-dd"), label: format(d, "MMM d") };
-  });
-}
+type ValuesScreen =
+  | { type: "home" }
+  | { type: "create" }
+  | { type: "edit"; valueId: string }
+  | { type: "detail"; valueId: string };
 
 export function ValuesView() {
-  const [selectedDate, setSelectedDate] = useState(todayKey);
-  const [editingValueId, setEditingValueId] = useState<string | null>(null);
-  const editMode = useAppStore((state) => state.settings.editMode);
+  const [screen, setScreen] = useState<ValuesScreen>({ type: "home" });
+  const [dragMode, setDragMode] = useState(false);
   const values = useAppStore(useShallow(selectValues));
-  const addValue = useAppStore((state) => state.addValue);
-  const reorderValues = useAppStore((state) => state.reorderValues);
-  const pastDays = getPastDays(6);
-  const searchQuery = useUiStore((state) => state.searchQuery);
+  const reorderValues = useAppStore((s) => s.reorderValues);
+  const searchQuery = useUiStore((s) => s.searchQuery);
 
   const filteredValues = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return values;
     return values.filter(
       (v) =>
-        v.name.toLowerCase().includes(q) ||
-        v.unit.toLowerCase().includes(q),
+        v.name.toLowerCase().includes(q) || v.unit.toLowerCase().includes(q),
     );
   }, [values, searchQuery]);
 
-  const editingValue = editingValueId
-    ? values.find((v) => v.id === editingValueId)
-    : null;
-
-  if (editingValue) {
-    return (
-      <EditUpdatePage
-        value={editingValue}
-        onBack={() => setEditingValueId(null)}
-      />
-    );
+  if (screen.type === "create") {
+    return <CreateTrackerPage onBack={() => setScreen({ type: "home" })} />;
   }
 
-  if (values.length === 0 && !editMode) {
+  if (screen.type === "edit") {
+    const value = values.find((v) => v.id === screen.valueId);
+    if (!value) return <div />;
+    return <EditUpdatePage value={value} onBack={() => setScreen({ type: "home" })} />;
+  }
+
+  if (screen.type === "detail") {
+    const value = values.find((v) => v.id === screen.valueId);
+    if (!value) return <div />;
+    return <TrackerDetailView value={value} onBack={() => setScreen({ type: "home" })} />;
+  }
+
+  if (values.length === 0) {
     return (
-      <EmptyState
-        icon={Gauge}
-        title="No values tracked"
-        description="Turn on Edit Mode to add numeric counters or text logs you can record each day."
-      />
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold">Tracker Updates</h2>
+          <button
+            type="button"
+            onClick={() => setScreen({ type: "create" })}
+            className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+          >
+            <Plus className="size-4" /> Create New
+          </button>
+        </div>
+        <EmptyState
+          icon={Gauge}
+          title="No trackers yet"
+          description="Create your first tracker to start recording daily progress."
+        />
+      </div>
     );
   }
 
   return (
-    <SelectedDateProvider value={selectedDate}>
-      <div className="space-y-6">
-        <div className="flex items-start justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground">Daily Updates</h2>
-            <label className="mt-1 flex cursor-pointer items-center gap-2 text-muted-foreground hover:text-foreground">
-              <CalendarDays className="size-4" />
-              <span className="text-sm font-medium">
-                {format(new Date(selectedDate), "EEEE, MMMM d, yyyy")}
-              </span>
-              <ChevronDown className="size-4" />
-              <input
-                type="date"
-                className="sr-only"
-                value={selectedDate}
-                onChange={(e) => e.target.value && setSelectedDate(e.target.value)}
-              />
-            </label>
-          </div>
-          <Button
-            className="bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
-            onClick={() => addValue("New counter", "numeric")}
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">Tracker Updates</h2>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setDragMode((d) => !d)}
+            className={`rounded-xl border px-3 py-2 text-sm font-semibold transition-colors ${
+              dragMode
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-border bg-card text-muted-foreground hover:text-foreground"
+            }`}
+            aria-label="Toggle drag reorder mode"
+          >
+            <GripVertical className="size-4" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setScreen({ type: "create" })}
+            className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
           >
             <Plus className="size-4" /> Create New
-          </Button>
+          </button>
         </div>
+      </div>
 
-        <div className="hidden overflow-x-auto lg:block">
-          <div className="grid min-w-[900px] grid-cols-[2fr_1.5fr_repeat(6,0.8fr)_0.5fr] px-8 mb-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-            <div>Habit</div>
-            <div className="text-center">Today Progress</div>
-            {pastDays.map((d) => (
-              <div key={d.key} className="text-center">{d.label}</div>
-            ))}
-            <div className="text-right">History</div>
-          </div>
-        </div>
-
-        {editMode && !searchQuery.trim() ? (
-          <DndList
-            ids={filteredValues.map((value) => value.id)}
-            strategy={verticalListSortingStrategy}
-            onReorder={reorderValues}
-          >
-            <div className="space-y-4">
-              {filteredValues.map((value) => (
-                <Sortable key={value.id} id={value.id}>
-                  {({ attributes, listeners }) => (
-                    <ValueRow
-                      value={value}
-                      pastDays={pastDays}
-                      onEdit={() => setEditingValueId(value.id)}
-                      handle={
-                        <button
-                          type="button"
-                          aria-label="Drag to reorder"
-                          className="grid size-6 cursor-grab touch-none place-items-center rounded-md text-muted-foreground active:cursor-grabbing"
-                          {...attributes}
-                          {...listeners}
-                        >
-                          <GripVertical className="size-4" />
-                        </button>
-                      }
-                    />
-                  )}
-                </Sortable>
-              ))}
-            </div>
-          </DndList>
-        ) : filteredValues.length === 0 && searchQuery.trim() ? (
-          <EmptyState
-            icon={Gauge}
-            title="No values found"
-            description={`No values match "${searchQuery.trim()}".`}
-          />
-        ) : (
+      {dragMode && !searchQuery.trim() ? (
+        <DndList
+          ids={filteredValues.map((v) => v.id)}
+          strategy={verticalListSortingStrategy}
+          onReorder={reorderValues}
+        >
           <div className="space-y-4">
             {filteredValues.map((value) => (
-              <ValueRow
-                key={value.id}
-                value={value}
-                pastDays={pastDays}
-                onEdit={() => setEditingValueId(value.id)}
-              />
+              <Sortable key={value.id} id={value.id}>
+                {({ attributes, listeners }) => (
+                  <ValueRow
+                    value={value}
+                    dragMode={dragMode}
+                    onNameClick={() => setScreen({ type: "edit", valueId: value.id })}
+                    onLogClick={() => setScreen({ type: "detail", valueId: value.id })}
+                    handle={
+                      <button
+                        type="button"
+                        aria-label="Drag to reorder"
+                        className="grid size-6 cursor-grab touch-none place-items-center rounded-md text-muted-foreground active:cursor-grabbing"
+                        {...attributes}
+                        {...listeners}
+                      >
+                        <GripVertical className="size-4" />
+                      </button>
+                    }
+                  />
+                )}
+              </Sortable>
             ))}
           </div>
-        )}
-
-        {editMode && (
-          <div className="flex flex-wrap gap-2">
-            <Button variant="secondary" onClick={() => addValue("New counter", "numeric")}>
-              <Hash className="size-4" /> Add Counter
-            </Button>
-            <Button variant="secondary" onClick={() => addValue("New log", "text")}>
-              <Type className="size-4" /> Add Log
-            </Button>
-          </div>
-        )}
-      </div>
-    </SelectedDateProvider>
+        </DndList>
+      ) : filteredValues.length === 0 ? (
+        <EmptyState
+          icon={Gauge}
+          title="No trackers found"
+          description={`No trackers match "${searchQuery.trim()}".`}
+        />
+      ) : (
+        <div className="space-y-4">
+          {filteredValues.map((value) => (
+            <ValueRow
+              key={value.id}
+              value={value}
+              dragMode={false}
+              onNameClick={() => setScreen({ type: "edit", valueId: value.id })}
+              onLogClick={() => setScreen({ type: "detail", valueId: value.id })}
+            />
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

@@ -165,10 +165,10 @@ export function EditHabitPage({ habit, onBack }: EditHabitPageProps) {
               <button
                 key={DAY_CODES[i]}
                 type="button"
-                onClick={() => toggleDay(DAY_CODES[i])}
+                onClick={() => toggleDay(DAY_CODES[i]!)}
                 className={cn(
                   "flex size-9 items-center justify-center rounded-full text-xs font-semibold transition-colors",
-                  !isEveryday && recurrence.includes(DAY_CODES[i])
+                  !isEveryday && recurrence.includes(DAY_CODES[i]!)
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground",
                 )}

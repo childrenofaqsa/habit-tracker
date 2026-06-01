@@ -1,0 +1,93 @@
+- generic [ref=e2]:
+  - generic [ref=e29]:
+    - navigation [ref=e31]:
+      - generic [ref=e32]:
+        - heading "Routinely" [level=2] [ref=e33]
+        - paragraph [ref=e34]: Productivity Workspace
+      - generic [ref=e35]:
+        - button "Routine" [ref=e36] [cursor=pointer]:
+          - img [ref=e37]
+          - generic [ref=e40]: Routine
+        - button "To Do" [ref=e41] [cursor=pointer]:
+          - img [ref=e42]
+          - generic [ref=e45]: To Do
+        - button "Update" [ref=e46] [cursor=pointer]:
+          - img [ref=e47]
+          - generic [ref=e52]: Update
+        - button "Analytics" [ref=e53] [cursor=pointer]:
+          - img [ref=e54]
+          - generic [ref=e55]: Analytics
+      - generic [ref=e56]:
+        - button "Settings" [ref=e57] [cursor=pointer]:
+          - img [ref=e58]
+          - generic [ref=e61]: Settings
+        - button "Help" [ref=e62] [cursor=pointer]:
+          - img [ref=e63]
+          - generic [ref=e66]: Help
+    - generic [ref=e67]:
+      - banner [ref=e69]:
+        - heading "Update" [level=1] [ref=e70]
+        - generic [ref=e72]:
+          - img [ref=e73]
+          - textbox "Search values..." [ref=e76]
+        - generic [ref=e77]:
+          - button [ref=e78] [cursor=pointer]:
+            - img [ref=e79]
+          - generic [ref=e84]: U
+          - generic [ref=e85]:
+            - button "Install" [ref=e86] [cursor=pointer]:
+              - img [ref=e87]
+              - text: Install
+            - button "Exit edit mode" [pressed] [ref=e90] [cursor=pointer]:
+              - img [ref=e91]
+            - button "Backup and restore" [ref=e96] [cursor=pointer]:
+              - img [ref=e97]
+      - generic [ref=e104]:
+        - img [ref=e105]
+        - generic [ref=e107]: Edit Mode — tap items to rename, icons to delete, drag to reorder.
+      - generic [ref=e108]:
+        - img [ref=e110]
+        - main [ref=e115]:
+          - generic [ref=e276]:
+            - generic [ref=e277]:
+              - generic [ref=e278]:
+                - button "Back" [ref=e279] [cursor=pointer]:
+                  - img [ref=e280]
+                  - text: Back
+                - heading "Create Tracker" [level=2] [ref=e282]
+                - paragraph [ref=e283]: Design how you track your momentum and growth.
+              - button "Save Tracker" [ref=e284] [cursor=pointer]
+            - generic [ref=e285]:
+              - generic [ref=e286]:
+                - text: Tracker Name
+                - textbox "e.g. Daily Water Intake" [ref=e287]
+              - generic [ref=e288]:
+                - text: Unit
+                - textbox "cups, ml, pages..." [ref=e289]
+            - generic [ref=e290]:
+              - generic [ref=e291]: Input Mode
+              - generic [ref=e292]:
+                - button "Counter" [ref=e293] [cursor=pointer]
+                - button "Textbox" [ref=e294] [cursor=pointer]
+            - generic [ref=e295]:
+              - heading "Goal Setting" [level=3] [ref=e296]:
+                - img [ref=e297]
+                - text: Goal Setting
+              - generic [ref=e299]:
+                - button "Daily" [ref=e300] [cursor=pointer]
+                - button "Weekly" [ref=e301] [cursor=pointer]
+                - button "Monthly" [ref=e302] [cursor=pointer]
+              - generic [ref=e303]:
+                - text: Target Value
+                - generic [ref=e304]:
+                  - generic [ref=e305]: value
+                  - spinbutton [ref=e306]
+            - generic [ref=e307]:
+              - generic [ref=e308]:
+                - heading "Linked Habits" [level=3] [ref=e309]:
+                  - img [ref=e310]
+                  - text: Linked Habits
+                - button [ref=e313] [cursor=pointer]:
+                  - img [ref=e314]
+              - paragraph [ref=e315]: No linked habits. Tap + to add.
+  - region "Notifications alt+T"

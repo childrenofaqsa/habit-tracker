@@ -1,4 +1,4 @@
-import { CalendarCheck, ListChecks, RefreshCw, BarChart2, Settings, HelpCircle } from "lucide-react";
+import { CalendarCheck, ListChecks, RefreshCw, BarChart2 } from "lucide-react";
 import type { ViewId } from "@/lib/constants";
 
 export type NavItem = {

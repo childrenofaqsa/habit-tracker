@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ListTodo, Calendar as CalendarIcon, Plus } from "lucide-react";
+import { ListTodo, Calendar as CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { todayKey } from "@/lib/date";
 import { useAppStore } from "@/store/useAppStore";

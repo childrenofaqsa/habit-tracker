@@ -50,4 +50,16 @@ export const createHistorySlice: AppSlice<HistoryActions> = (set) => ({
         day.valueEntries[valueId] = value;
       }
     }),
+
+  setValueEntry: (valueId, dateKey, value) =>
+    set((draft) => {
+      if (!draft.history[dateKey]) {
+        draft.history[dateKey] = { habitStatus: {}, valueEntries: {} };
+      }
+      if (value === null || value === "") {
+        delete draft.history[dateKey]!.valueEntries[valueId];
+      } else {
+        draft.history[dateKey]!.valueEntries[valueId] = value;
+      }
+    }),
 });

@@ -8,8 +8,6 @@ import type {
   Todo,
   MotionSettings,
   Settings,
-  Priority,
-  GoalType,
 } from "@/lib/schema";
 
 export type AppDataState = AppData & { hydrated: boolean };
@@ -19,6 +17,7 @@ export type HistoryActions = {
   cycleHabitDone: (habitId: string) => void;
   cycleHabitMissed: (habitId: string) => void;
   setValueEntryToday: (valueId: string, value: number | string | null) => void;
+  setValueEntry: (valueId: string, dateKey: string, value: number | string | null) => void;
 };
 
 export type HabitsActions = {
@@ -43,7 +42,7 @@ export type ValuesActions = {
   addValue: (name: string, type: ValueType) => string;
   updateValue: (
     id: string,
-    patch: Partial<Pick<ValueTracker, "name" | "linkedHabitId" | "unit" | "goalType" | "goalTarget">>,
+    patch: Partial<Pick<ValueTracker, "name" | "linkedHabitId" | "unit" | "goalType" | "goalTarget" | "type">>,
   ) => void;
   deleteValue: (id: string) => void;
   reorderValues: (orderedIds: string[]) => void;

@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { ArrowLeft, Trash2, Link2, Plus, X, Flag } from "lucide-react";
+import { ArrowLeft, Link2, Plus, X, Flag } from "lucide-react";
+import type { GoalType } from "@/lib/schema";
 import { cn } from "@/lib/cn";
 import { useAppStore } from "@/store/useAppStore";
-import type { ValueTracker, GoalType } from "@/lib/schema";
 import { HabitPickerSheet } from "./HabitPickerSheet";
 
 type Props = {
-  value: ValueTracker;
   onBack: () => void;
 };
 
@@ -16,21 +15,19 @@ const GOAL_TYPES: { id: GoalType; label: string }[] = [
   { id: "monthly", label: "Monthly" },
 ];
 
-export function EditUpdatePage({ value, onBack }: Props) {
+export function CreateTrackerPage({ onBack }: Props) {
+  const addValue = useAppStore((s) => s.addValue);
   const updateValue = useAppStore((s) => s.updateValue);
-  const deleteValue = useAppStore((s) => s.deleteValue);
   const linkHabitToValue = useAppStore((s) => s.linkHabitToValue);
   const habits = useAppStore((s) => s.habits);
   const categories = useAppStore((s) => s.categories);
 
-  const linkedHabits = habits.filter((h) => h.linkedValueId === value.id);
-
-  const [name, setName] = useState(value.name);
-  const [unit, setUnit] = useState(value.unit);
-  const [inputMode, setInputMode] = useState<"numeric" | "text">(value.type);
-  const [goalType, setGoalType] = useState<GoalType>(value.goalType ?? "daily");
-  const [goalTarget, setGoalTarget] = useState(value.goalTarget ?? 0);
-  const [linkedHabitIds, setLinkedHabitIds] = useState<string[]>(linkedHabits.map((h) => h.id));
+  const [name, setName] = useState("");
+  const [unit, setUnit] = useState("");
+  const [inputMode, setInputMode] = useState<"numeric" | "text">("numeric");
+  const [goalType, setGoalType] = useState<GoalType>("daily");
+  const [goalTarget, setGoalTarget] = useState(0);
+  const [linkedHabitIds, setLinkedHabitIds] = useState<string[]>([]);
   const [pickerOpen, setPickerOpen] = useState(false);
 
   function toggleHabit(habitId: string) {
@@ -44,25 +41,16 @@ export function EditUpdatePage({ value, onBack }: Props) {
   }
 
   function handleSave() {
-    updateValue(value.id, {
-      name: name.trim() || value.name,
+    const id = addValue(name.trim() || "New Tracker", inputMode);
+    updateValue(id, {
+      name: name.trim() || "New Tracker",
       unit: unit.trim(),
-      type: inputMode,
       goalType,
       goalTarget: goalTarget > 0 ? goalTarget : null,
     });
-    const originalIds = linkedHabits.map((h) => h.id);
-    for (const id of originalIds) {
-      if (!linkedHabitIds.includes(id)) linkHabitToValue(id, null);
+    for (const habitId of linkedHabitIds) {
+      linkHabitToValue(habitId, id);
     }
-    for (const id of linkedHabitIds) {
-      if (!originalIds.includes(id)) linkHabitToValue(id, value.id);
-    }
-    onBack();
-  }
-
-  function handleDelete() {
-    deleteValue(value.id);
     onBack();
   }
 
@@ -78,26 +66,18 @@ export function EditUpdatePage({ value, onBack }: Props) {
             <ArrowLeft className="size-4" />
             Back
           </button>
-          <h2 className="text-2xl font-bold">Edit Tracker</h2>
-          <p className="text-sm text-muted-foreground">Customize how you track your progress.</p>
+          <h2 className="text-2xl font-bold">Create Tracker</h2>
+          <p className="text-sm text-muted-foreground">
+            Design how you track your momentum and growth.
+          </p>
         </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <button
-            type="button"
-            onClick={handleDelete}
-            className="flex items-center gap-1.5 rounded-xl border border-destructive px-4 py-2.5 text-sm font-semibold text-destructive hover:bg-destructive/10"
-          >
-            <Trash2 className="size-4" />
-            Delete
-          </button>
-          <button
-            type="button"
-            onClick={handleSave}
-            className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
-          >
-            Save Changes
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={handleSave}
+          className="shrink-0 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+        >
+          Save Tracker
+        </button>
       </header>
 
       <div className="space-y-4 rounded-2xl border border-border bg-card p-5">
@@ -109,6 +89,7 @@ export function EditUpdatePage({ value, onBack }: Props) {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            placeholder="e.g. Daily Water Intake"
             className="mt-2 w-full rounded-lg bg-muted/60 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
         </div>

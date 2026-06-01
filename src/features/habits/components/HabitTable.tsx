@@ -1,12 +1,8 @@
 import { useShallow } from "zustand/react/shallow";
 import { useAppStore } from "@/store/useAppStore";
-import {
-  selectTimeframes,
-  selectAllCategoryNames,
-  selectBestStreak,
-} from "@/store/selectors";
-import { HabitTableRow } from "./HabitTableRow";
+import { selectTimeframes } from "@/store/selectors";
 import type { Habit } from "@/lib/schema";
+import { HabitTableRow } from "./HabitTableRow";
 
 type HabitTableProps = {
   habits: Habit[];
@@ -91,7 +87,6 @@ export function HabitTable({ habits, onHabitAction }: HabitTableProps) {
               getTimeframeName={getTimeframeName}
               getBestStreak={getBestStreak}
               onAction={onHabitAction}
-              categories={categories}
             />
           ))}
         </tbody>
@@ -106,14 +101,12 @@ function CategoryGroup({
   getTimeframeName,
   getBestStreak,
   onAction,
-  categories,
 }: {
   categoryName: string;
   habits: Habit[];
   getTimeframeName: (h: Habit) => string;
   getBestStreak: (id: string) => number;
   onAction: (id: string) => void;
-  categories: { id: string; name: string }[];
 }) {
   return (
     <>
@@ -130,7 +123,6 @@ function CategoryGroup({
         <HabitTableRow
           key={habit.id}
           habit={habit}
-          category={categories.find((c) => c.id === habit.categoryId)}
           timeframeName={getTimeframeName(habit)}
           bestStreak={getBestStreak(habit.id)}
           onAction={onAction}

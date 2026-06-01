@@ -82,7 +82,7 @@ export function buildDateGroupedTodos(todos: Todo[]): DateGroupedTodos[] {
       date: key,
       isOverdue,
       isToday,
-      todos: groups[key].sort(byDate),
+      todos: groups[key]!.sort(byDate),
     };
   });
 }

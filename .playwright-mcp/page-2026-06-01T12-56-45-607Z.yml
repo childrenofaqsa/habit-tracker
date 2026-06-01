@@ -1,0 +1,97 @@
+- generic [ref=e2]:
+  - generic [ref=e29]:
+    - navigation [ref=e31]:
+      - generic [ref=e32]:
+        - heading "Routinely" [level=2] [ref=e33]
+        - paragraph [ref=e34]: Productivity Workspace
+      - generic [ref=e35]:
+        - button "Routine" [ref=e36] [cursor=pointer]:
+          - img [ref=e37]
+          - generic [ref=e40]: Routine
+        - button "To Do" [ref=e41] [cursor=pointer]:
+          - img [ref=e42]
+          - generic [ref=e45]: To Do
+        - button "Update" [ref=e46] [cursor=pointer]:
+          - img [ref=e47]
+          - generic [ref=e52]: Update
+        - button "Analytics" [ref=e53] [cursor=pointer]:
+          - img [ref=e54]
+          - generic [ref=e55]: Analytics
+      - generic [ref=e56]:
+        - button "Settings" [ref=e57] [cursor=pointer]:
+          - img [ref=e58]
+          - generic [ref=e61]: Settings
+        - button "Help" [ref=e62] [cursor=pointer]:
+          - img [ref=e63]
+          - generic [ref=e66]: Help
+    - generic [ref=e67]:
+      - banner [ref=e69]:
+        - heading "Update" [level=1] [ref=e70]
+        - generic [ref=e72]:
+          - img [ref=e73]
+          - textbox "Search values..." [ref=e76]
+        - generic [ref=e77]:
+          - button [ref=e78] [cursor=pointer]:
+            - img [ref=e79]
+          - generic [ref=e84]: U
+          - generic [ref=e85]:
+            - button "Install" [ref=e86] [cursor=pointer]:
+              - img [ref=e87]
+              - text: Install
+            - button "Exit edit mode" [pressed] [ref=e90] [cursor=pointer]:
+              - img [ref=e91]
+            - button "Backup and restore" [ref=e96] [cursor=pointer]:
+              - img [ref=e97]
+      - generic [ref=e104]:
+        - img [ref=e105]
+        - generic [ref=e107]: Edit Mode — tap items to rename, icons to delete, drag to reorder.
+      - generic [ref=e108]:
+        - img [ref=e110]
+        - main [ref=e115]:
+          - generic [ref=e475]:
+            - generic [ref=e476]:
+              - generic [ref=e477]:
+                - button "Back" [ref=e478] [cursor=pointer]:
+                  - img [ref=e479]
+                  - text: Back
+                - heading "Edit Tracker" [level=2] [ref=e481]
+                - paragraph [ref=e482]: Customize how you track your progress.
+              - generic [ref=e483]:
+                - button "Delete" [ref=e484] [cursor=pointer]:
+                  - img [ref=e485]
+                  - text: Delete
+                - button "Save Changes" [ref=e488] [cursor=pointer]
+            - generic [ref=e489]:
+              - generic [ref=e490]:
+                - text: Tracker Name
+                - textbox [ref=e491]: Water Intake
+              - generic [ref=e492]:
+                - text: Unit
+                - textbox "cups, ml, pages..." [ref=e493]: ml
+            - generic [ref=e494]:
+              - generic [ref=e495]: Input Mode
+              - generic [ref=e496]:
+                - button "Counter" [ref=e497] [cursor=pointer]
+                - button "Textbox" [ref=e498] [cursor=pointer]
+            - generic [ref=e499]:
+              - heading "Goal Setting" [level=3] [ref=e500]:
+                - img [ref=e501]
+                - text: Goal Setting
+              - generic [ref=e503]:
+                - button "Daily" [ref=e504] [cursor=pointer]
+                - button "Weekly" [ref=e505] [cursor=pointer]
+                - button "Monthly" [ref=e506] [cursor=pointer]
+              - generic [ref=e507]:
+                - text: Target Value
+                - generic [ref=e508]:
+                  - generic [ref=e509]: ml
+                  - spinbutton [ref=e510]: "2000"
+            - generic [ref=e511]:
+              - generic [ref=e512]:
+                - heading "Linked Habits" [level=3] [ref=e513]:
+                  - img [ref=e514]
+                  - text: Linked Habits
+                - button [ref=e517] [cursor=pointer]:
+                  - img [ref=e518]
+              - paragraph [ref=e519]: No linked habits. Tap + to add.
+  - region "Notifications alt+T"
