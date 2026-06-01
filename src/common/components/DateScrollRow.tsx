@@ -69,7 +69,7 @@ export function DateScrollRow({ selectedDate, onDateChange }: Props) {
   }, [loadMorePast, loadMoreFuture]);
 
   useEffect(() => {
-    selectedRef.current?.scrollIntoView({
+    selectedRef.current?.scrollIntoView?.({
       behavior: "smooth",
       block: "nearest",
       inline: "center",

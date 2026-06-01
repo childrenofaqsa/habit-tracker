@@ -20,6 +20,9 @@ export const categorySchema = z.object({
   order: z.number(),
 });
 
+export const prioritySchema = z.enum(["high", "medium", "low"]);
+export type Priority = z.infer<typeof prioritySchema>;
+
 export const habitSchema = z.object({
   id: z.string(),
   categoryId: z.string(),
@@ -27,16 +30,27 @@ export const habitSchema = z.object({
   details: z.string().default(""),
   imageId: z.string().nullable().default(null),
   linkedValueId: z.string().nullable().default(null),
+  priority: prioritySchema.default("medium"),
+  motivation: z.string().default(""),
+  scheduledTime: z.string().nullable().default(null),
+  recurrence: z.array(z.string()).default(["everyday"]),
+  notifications: z.boolean().default(false),
   order: z.number(),
   createdAt: z.number(),
   updatedAt: z.number(),
 });
+
+export const goalTypeSchema = z.enum(["daily", "weekly", "monthly"]);
+export type GoalType = z.infer<typeof goalTypeSchema>;
 
 export const valueTrackerSchema = z.object({
   id: z.string(),
   name: z.string(),
   type: valueTypeSchema,
   linkedHabitId: z.string().nullable().default(null),
+  unit: z.string().default(""),
+  goalType: goalTypeSchema.nullable().default(null),
+  goalTarget: z.number().nullable().default(null),
   order: z.number(),
   createdAt: z.number(),
   updatedAt: z.number(),
@@ -47,6 +61,9 @@ export const todoSchema = z.object({
   title: z.string(),
   notes: z.string().default(""),
   date: z.string().nullable().default(null),
+  priority: prioritySchema.default("medium"),
+  time: z.string().nullable().default(null),
+  location: z.string().nullable().default(null),
   completed: z.boolean().default(false),
   completedAt: z.number().nullable().default(null),
   createdAt: z.number(),

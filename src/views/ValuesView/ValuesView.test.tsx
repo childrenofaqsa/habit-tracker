@@ -5,10 +5,14 @@ import { emptyAppData } from "@/lib/schema";
 import { buildValue } from "@/test/factories";
 import type { StoreState } from "@/store/types";
 
-vi.mock("@/features/values/components/ValueCard", () => ({
-  ValueCard: ({ value }: { value: { name: string } }) => (
+vi.mock("@/features/values/components/ValueRow", () => ({
+  ValueRow: ({ value }: { value: { name: string } }) => (
     <div data-testid="value-card">{value.name}</div>
   ),
+}));
+
+vi.mock("@/features/values/components/EditUpdatePage", () => ({
+  EditUpdatePage: () => <div>Edit Update Page</div>,
 }));
 
 vi.mock("@/features/editmode/DndList", () => ({

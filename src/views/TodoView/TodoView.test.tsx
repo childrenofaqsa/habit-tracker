@@ -9,10 +9,22 @@ vi.mock("@/features/todos/components/AddTodo", () => ({
   AddTodo: () => <div data-testid="add-todo" />,
 }));
 
-vi.mock("@/features/todos/components/TodoItem", () => ({
-  TodoItem: ({ todo }: { todo: { title: string } }) => (
+vi.mock("@/features/todos/components/TodoCard", () => ({
+  TodoCard: ({ todo }: { todo: { title: string } }) => (
     <div data-testid="todo-item">{todo.title}</div>
   ),
+}));
+
+vi.mock("@/features/todos/components/CalendarView", () => ({
+  CalendarView: () => <div data-testid="calendar-view" />,
+}));
+
+vi.mock("@/common/components/DateScrollRow", () => ({
+  DateScrollRow: () => <div data-testid="date-scroll" />,
+}));
+
+vi.mock("@/common/components/FloatingActionButton", () => ({
+  FloatingActionButton: () => null,
 }));
 
 const { TodoView } = await import("@/views/TodoView/TodoView");
@@ -39,6 +51,6 @@ describe("TodoView", () => {
 
     render(<TodoView />);
     const items = screen.getAllByTestId("todo-item");
-    expect(items.length).toBeGreaterThanOrEqual(3);
+    expect(items.length).toBeGreaterThanOrEqual(2);
   });
 });

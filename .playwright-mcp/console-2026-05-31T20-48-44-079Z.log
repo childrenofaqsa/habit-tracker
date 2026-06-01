@@ -1,0 +1,125 @@
+[     520ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:14337
+[ 4683148ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:5173/@vite/client:992
+[ 4684861ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:14337
+[ 4685207ms] [INFO] Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner. @ http://localhost:5173/:0
+[ 4688131ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:5173/@vite/client:992
+[20608082ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:14337
+[20608345ms] [INFO] Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner. @ http://localhost:5173/:0
+[21023905ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:5173/@vite/client:992
+[21210063ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:14337
+[21210425ms] [INFO] Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner. @ http://localhost:5173/:0
+[21213778ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:5173/@vite/client:992
+[31311399ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:14337
+[31311678ms] [INFO] Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner. @ http://localhost:5173/:0
+[31361350ms] [WARNING] Error while trying to use the following icon from the Manifest: http://localhost:5173/pwa-192.png (Download error or resource isn't a valid image) @ http://localhost:5173/:0
+[31361907ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:14337
+[31362141ms] [INFO] Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner. @ http://localhost:5173/:0
+[31396293ms] [ERROR] In HTML, %s cannot be a descendant of <%s>.
+This will cause a hydration error.%s <button> button 
+
+  ...
+    <div className="space-y-8">
+      <Sortable id="4ce968ff-1...">
+        <div ref={function} style={{...}} className="">
+          <TimeframeSection timeframe={{id:"4ce968...", ...}} handle={<button>}>
+            <Collapsible open={true} onOpenChange={function bound dispatchSetState} asChild={true}>
+              <CollapsibleProvider scope={undefined} disabled={undefined} contentId="radix-_r_g_" open={true} ...>
+                <Primitive.div data-state="open" data-disabled={undefined} asChild={true} ref={null}>
+                  <Primitive.div.Slot data-state="open" data-disabled={undefined} ref={null}>
+                    <Primitive.div.SlotClone data-state="open" data-disabled={undefined} ref={null}>
+                      <section className="overflow-h..." data-state="open" data-disabled={undefined} ref={null}>
+                        <CollapsibleTrigger asChild={true}>
+                          <Primitive.button type="button" aria-controls="radix-_r_g_" aria-expanded={true} ...>
+                            <Primitive.button.Slot type="button" aria-controls="radix-_r_g_" aria-expanded={true} ...>
+                              <Primitive.button.SlotClone type="button" aria-controls="radix-_r_g_" aria-expanded={true} ...>
+>                               <button
+>                                 type="button"
+>                                 className="flex w-full items-center justify-between px-6 py-5 text-left"
+>                                 aria-controls="radix-_r_g_"
+>                                 aria-expanded={true}
+>                                 data-state="open"
+>                                 data-disabled={undefined}
+>                                 disabled={undefined}
+>                                 onClick={function handleEvent}
+>                                 ref={null}
+>                               >
+                                  <div className="flex items...">
+>                                   <button
+>                                     type="button"
+>                                     aria-label="Drag to reorder"
+>                                     className="grid size-6 cursor-grab touch-none place-items-center rounded-md text..."
+>                                     role="button"
+>                                     tabIndex={0}
+>                                     aria-disabled={false}
+>                                     aria-pressed={undefined}
+>                                     aria-roledescription="sortable"
+>                                     aria-describedby="DndDescribedBy-0"
+>                                     onPointerDown={function}
+>                                     onKeyDown={function}
+>                                   >
+                                    ...
+                                  ...
+                        ...
+      ...
+ @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:1772
+[31396293ms] [ERROR] <%s> cannot contain a nested %s.
+See this log for the ancestor stack trace. button <button> @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:1774
+[31722795ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:5173/node_modules/.vite/deps/recharts.js?v=6a0705b4:6684
+[31722796ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:5173/node_modules/.vite/deps/recharts.js?v=6a0705b4:6684
+[31900924ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:14337
+[31901343ms] [ERROR] In HTML, %s cannot be a descendant of <%s>.
+This will cause a hydration error.%s <button> button 
+
+  ...
+    <div className="space-y-8">
+      <Sortable id="4ce968ff-1...">
+        <div ref={function} style={{...}} className="">
+          <TimeframeSection timeframe={{id:"4ce968...", ...}} handle={<button>}>
+            <Collapsible open={true} onOpenChange={function bound dispatchSetState} asChild={true}>
+              <CollapsibleProvider scope={undefined} disabled={undefined} contentId="radix-_r_d_" open={true} ...>
+                <Primitive.div data-state="open" data-disabled={undefined} asChild={true} ref={null}>
+                  <Primitive.div.Slot data-state="open" data-disabled={undefined} ref={null}>
+                    <Primitive.div.SlotClone data-state="open" data-disabled={undefined} ref={null}>
+                      <section className="overflow-h..." data-state="open" data-disabled={undefined} ref={null}>
+                        <CollapsibleTrigger asChild={true}>
+                          <Primitive.button type="button" aria-controls="radix-_r_d_" aria-expanded={true} ...>
+                            <Primitive.button.Slot type="button" aria-controls="radix-_r_d_" aria-expanded={true} ...>
+                              <Primitive.button.SlotClone type="button" aria-controls="radix-_r_d_" aria-expanded={true} ...>
+>                               <button
+>                                 type="button"
+>                                 className="flex w-full items-center justify-between px-6 py-5 text-left"
+>                                 aria-controls="radix-_r_d_"
+>                                 aria-expanded={true}
+>                                 data-state="open"
+>                                 data-disabled={undefined}
+>                                 disabled={undefined}
+>                                 onClick={function handleEvent}
+>                                 ref={null}
+>                               >
+                                  <div className="flex items...">
+>                                   <button
+>                                     type="button"
+>                                     aria-label="Drag to reorder"
+>                                     className="grid size-6 cursor-grab touch-none place-items-center rounded-md text..."
+>                                     role="button"
+>                                     tabIndex={0}
+>                                     aria-disabled={false}
+>                                     aria-pressed={undefined}
+>                                     aria-roledescription="sortable"
+>                                     aria-describedby="DndDescribedBy-0"
+>                                     onPointerDown={function}
+>                                     onKeyDown={function}
+>                                   >
+                                    ...
+                                  ...
+                        ...
+      ...
+ @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:1772
+[31901343ms] [ERROR] <%s> cannot contain a nested %s.
+See this log for the ancestor stack trace. button <button> @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:1774

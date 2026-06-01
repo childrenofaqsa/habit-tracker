@@ -15,7 +15,7 @@ import {
 } from "@/common/components/ui/overlay/dialog";
 
 const BASE_COL = 46;
-const BASE_ROW = 34;
+const BASE_ROW = 42;
 const BASE_HEADER = 30;
 const LABEL_WIDTH = 140;
 const COLUMN_CHUNK = 30;
@@ -30,10 +30,11 @@ export function HistoryMatrix({ days }: { days: number }) {
   const habits = useAppStore((state) => state.habits);
   const values = useAppStore((state) => state.values);
   const history = useAppStore((state) => state.history);
+  const categories = useAppStore((state) => state.categories);
   const [filter, setFilter] = useState<MatrixFilter>("all");
   const [visibleDays, setVisibleDays] = useState(Math.min(days, COLUMN_CHUNK));
 
-  const rows = buildMatrixRows(habits, values, filter);
+  const rows = buildMatrixRows(habits, values, filter, categories);
   const columns = reverseChronologicalKeys(visibleDays);
 
   const [scale, setScale] = useState(1);
@@ -128,9 +129,14 @@ export function HistoryMatrix({ days }: { days: number }) {
               <div
                 key={row.id}
                 style={{ height: rowHeight }}
-                className="flex items-center truncate border-b border-border px-2 text-xs"
+                className="flex flex-col justify-center truncate border-b border-border px-2"
               >
-                <span className="truncate">{row.name}</span>
+                <span className="truncate text-xs">{row.name}</span>
+                {row.category && (
+                  <span className="truncate text-[9px] uppercase text-muted-foreground">
+                    {row.category}
+                  </span>
+                )}
               </div>
             ))}
           </div>

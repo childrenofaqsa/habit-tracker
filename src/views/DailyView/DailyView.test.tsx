@@ -20,6 +20,24 @@ vi.mock("@/features/habits/components/TimeframeSection", () => ({
   ),
 }));
 
+vi.mock("@/features/habits/components/CategoryFilter", () => ({
+  CategoryFilter: () => <div data-testid="category-filter" />,
+}));
+
+vi.mock("@/features/habits/components/HabitTable", () => ({
+  HabitTable: ({ habits }: { habits: Array<{ id: string }> }) => (
+    <div data-testid="habit-table">{habits.length} habits</div>
+  ),
+}));
+
+vi.mock("@/features/habits/components/EditHabitPage", () => ({
+  EditHabitPage: () => <div data-testid="edit-habit-page" />,
+}));
+
+vi.mock("@/common/components/FloatingActionButton", () => ({
+  FloatingActionButton: () => null,
+}));
+
 vi.mock("@/features/values/components/LinkedValueDialog", () => ({
   LinkedValueDialog: () => null,
 }));
@@ -46,7 +64,7 @@ describe("DailyView", () => {
     expect(screen.getByText("No timeframes yet")).toBeInTheDocument();
   });
 
-  it("renders timeframe sections when data present", () => {
+  it("renders habit table when data present", () => {
     const data = emptyAppData();
     data.timeframes.push(buildTimeframe({ id: "tf-1", name: "Morning", order: 0 }));
     data.categories.push(buildCategory({ id: "c-1", timeframeId: "tf-1", order: 0 }));
@@ -54,8 +72,8 @@ describe("DailyView", () => {
     useAppStore.setState({ ...data, hydrated: true } as Partial<StoreState>);
 
     render(<DailyView />);
-    expect(screen.getByTestId("timeframe-section")).toBeInTheDocument();
-    expect(screen.getByText("Morning")).toBeInTheDocument();
+    expect(screen.getByTestId("habit-table")).toBeInTheDocument();
+    expect(screen.getByText("All Task")).toBeInTheDocument();
   });
 
   it("does not infinite loop (regression: renders within reasonable time)", () => {

@@ -1,0 +1,234 @@
+- generic [ref=e2]:
+  - generic [ref=e29]:
+    - navigation [ref=e31]:
+      - generic [ref=e32]:
+        - heading "Routinely" [level=2] [ref=e33]
+        - paragraph [ref=e34]: Productivity Workspace
+      - generic [ref=e35]:
+        - button "Routine" [ref=e36] [cursor=pointer]:
+          - img [ref=e37]
+          - generic [ref=e40]: Routine
+        - button "To Do" [active] [ref=e41] [cursor=pointer]:
+          - img [ref=e42]
+          - generic [ref=e45]: To Do
+        - button "Update" [ref=e46] [cursor=pointer]:
+          - img [ref=e47]
+          - generic [ref=e52]: Update
+        - button "Analytics" [ref=e53] [cursor=pointer]:
+          - img [ref=e54]
+          - generic [ref=e55]: Analytics
+      - generic [ref=e56]:
+        - button "Settings" [ref=e57] [cursor=pointer]:
+          - img [ref=e58]
+          - generic [ref=e61]: Settings
+        - button "Help" [ref=e62] [cursor=pointer]:
+          - img [ref=e63]
+          - generic [ref=e66]: Help
+    - generic [ref=e67]:
+      - banner [ref=e69]:
+        - heading "To Do" [level=1] [ref=e324]
+        - generic [ref=e72]:
+          - img [ref=e73]
+          - textbox "Search tasks..." [ref=e325]
+        - generic [ref=e77]:
+          - button [ref=e78] [cursor=pointer]:
+            - img [ref=e79]
+          - generic [ref=e84]: U
+          - generic [ref=e85]:
+            - button "Install" [ref=e86] [cursor=pointer]:
+              - img [ref=e87]
+              - text: Install
+            - button "Enter edit mode" [ref=e90] [cursor=pointer]:
+              - img [ref=e91]
+            - button "Backup and restore" [ref=e94] [cursor=pointer]:
+              - img [ref=e95]
+            - button "Settings" [ref=e101] [cursor=pointer]:
+              - img [ref=e102]
+      - generic [ref=e105]:
+        - img [ref=e107]
+        - main [ref=e112]:
+          - generic [ref=e327]:
+            - generic [ref=e328]:
+              - heading "To Do" [level=2] [ref=e329]
+              - generic [ref=e330]:
+                - generic [ref=e331]:
+                  - button "Today" [ref=e332] [cursor=pointer]
+                  - button "All" [ref=e333] [cursor=pointer]
+                - button [ref=e334] [cursor=pointer]:
+                  - img [ref=e335]
+            - generic [ref=e337]:
+              - generic [ref=e338]:
+                - button "Mon 11" [ref=e339] [cursor=pointer]:
+                  - generic [ref=e340]: Mon
+                  - generic [ref=e341]: "11"
+                - button "Tue 12" [ref=e342] [cursor=pointer]:
+                  - generic [ref=e343]: Tue
+                  - generic [ref=e344]: "12"
+                - button "Wed 13" [ref=e345] [cursor=pointer]:
+                  - generic [ref=e346]: Wed
+                  - generic [ref=e347]: "13"
+                - button "Thu 14" [ref=e348] [cursor=pointer]:
+                  - generic [ref=e349]: Thu
+                  - generic [ref=e350]: "14"
+                - button "Fri 15" [ref=e351] [cursor=pointer]:
+                  - generic [ref=e352]: Fri
+                  - generic [ref=e353]: "15"
+                - button "Sat 16" [ref=e354] [cursor=pointer]:
+                  - generic [ref=e355]: Sat
+                  - generic [ref=e356]: "16"
+                - button "Sun 17" [ref=e357] [cursor=pointer]:
+                  - generic [ref=e358]: Sun
+                  - generic [ref=e359]: "17"
+                - button "Mon 18" [ref=e360] [cursor=pointer]:
+                  - generic [ref=e361]: Mon
+                  - generic [ref=e362]: "18"
+                - button "Tue 19" [ref=e363] [cursor=pointer]:
+                  - generic [ref=e364]: Tue
+                  - generic [ref=e365]: "19"
+                - button "Wed 20" [ref=e366] [cursor=pointer]:
+                  - generic [ref=e367]: Wed
+                  - generic [ref=e368]: "20"
+                - button "Thu 21" [ref=e369] [cursor=pointer]:
+                  - generic [ref=e370]: Thu
+                  - generic [ref=e371]: "21"
+                - button "Fri 22" [ref=e372] [cursor=pointer]:
+                  - generic [ref=e373]: Fri
+                  - generic [ref=e374]: "22"
+                - button "Sat 23" [ref=e375] [cursor=pointer]:
+                  - generic [ref=e376]: Sat
+                  - generic [ref=e377]: "23"
+                - button "Sun 24" [ref=e378] [cursor=pointer]:
+                  - generic [ref=e379]: Sun
+                  - generic [ref=e380]: "24"
+                - button "Mon 25" [ref=e381] [cursor=pointer]:
+                  - generic [ref=e382]: Mon
+                  - generic [ref=e383]: "25"
+                - button "Tue 26" [ref=e384] [cursor=pointer]:
+                  - generic [ref=e385]: Tue
+                  - generic [ref=e386]: "26"
+                - button "Wed 27" [ref=e387] [cursor=pointer]:
+                  - generic [ref=e388]: Wed
+                  - generic [ref=e389]: "27"
+                - button "Thu 28" [ref=e390] [cursor=pointer]:
+                  - generic [ref=e391]: Thu
+                  - generic [ref=e392]: "28"
+                - button "Fri 29" [ref=e393] [cursor=pointer]:
+                  - generic [ref=e394]: Fri
+                  - generic [ref=e395]: "29"
+                - button "Sat 30" [ref=e396] [cursor=pointer]:
+                  - generic [ref=e397]: Sat
+                  - generic [ref=e398]: "30"
+                - button "Sun 31" [ref=e399] [cursor=pointer]:
+                  - generic [ref=e400]: Sun
+                  - generic [ref=e401]: "31"
+                - button "Mon 1" [ref=e402] [cursor=pointer]:
+                  - generic [ref=e403]: Mon
+                  - generic [ref=e404]: "1"
+                - button "Tue 2" [ref=e406] [cursor=pointer]:
+                  - generic [ref=e407]: Tue
+                  - generic [ref=e408]: "2"
+                - button "Wed 3" [ref=e409] [cursor=pointer]:
+                  - generic [ref=e410]: Wed
+                  - generic [ref=e411]: "3"
+                - button "Thu 4" [ref=e412] [cursor=pointer]:
+                  - generic [ref=e413]: Thu
+                  - generic [ref=e414]: "4"
+                - button "Fri 5" [ref=e415] [cursor=pointer]:
+                  - generic [ref=e416]: Fri
+                  - generic [ref=e417]: "5"
+                - button "Sat 6" [ref=e418] [cursor=pointer]:
+                  - generic [ref=e419]: Sat
+                  - generic [ref=e420]: "6"
+                - button "Sun 7" [ref=e421] [cursor=pointer]:
+                  - generic [ref=e422]: Sun
+                  - generic [ref=e423]: "7"
+                - button "Mon 8" [ref=e424] [cursor=pointer]:
+                  - generic [ref=e425]: Mon
+                  - generic [ref=e426]: "8"
+                - button "Tue 9" [ref=e427] [cursor=pointer]:
+                  - generic [ref=e428]: Tue
+                  - generic [ref=e429]: "9"
+                - button "Wed 10" [ref=e430] [cursor=pointer]:
+                  - generic [ref=e431]: Wed
+                  - generic [ref=e432]: "10"
+                - button "Thu 11" [ref=e433] [cursor=pointer]:
+                  - generic [ref=e434]: Thu
+                  - generic [ref=e435]: "11"
+                - button "Fri 12" [ref=e436] [cursor=pointer]:
+                  - generic [ref=e437]: Fri
+                  - generic [ref=e438]: "12"
+                - button "Sat 13" [ref=e439] [cursor=pointer]:
+                  - generic [ref=e440]: Sat
+                  - generic [ref=e441]: "13"
+                - button "Sun 14" [ref=e442] [cursor=pointer]:
+                  - generic [ref=e443]: Sun
+                  - generic [ref=e444]: "14"
+                - button "Mon 15" [ref=e445] [cursor=pointer]:
+                  - generic [ref=e446]: Mon
+                  - generic [ref=e447]: "15"
+              - button "Pick date" [ref=e448] [cursor=pointer]:
+                - img [ref=e449]
+            - generic [ref=e451]:
+              - generic [ref=e452]:
+                - heading "Overdue" [level=3] [ref=e454]
+                - generic [ref=e455]:
+                  - generic [ref=e456]:
+                    - button [ref=e457] [cursor=pointer]
+                    - generic [ref=e458]:
+                      - paragraph [ref=e459]: Review project proposal
+                      - text: Overdue
+                      - generic [ref=e460]: • 10:00 AM
+                    - generic [ref=e461]: high
+                    - button [ref=e462] [cursor=pointer]:
+                      - img [ref=e463]
+                  - generic [ref=e466]:
+                    - button [ref=e467] [cursor=pointer]
+                    - generic [ref=e468]:
+                      - paragraph [ref=e469]: Schedule dentist appointment
+                      - text: Overdue
+                    - generic [ref=e470]: medium
+                    - button [ref=e471] [cursor=pointer]:
+                      - img [ref=e472]
+                  - generic [ref=e475]:
+                    - button [ref=e476] [cursor=pointer]
+                    - generic [ref=e477]:
+                      - paragraph [ref=e478]: Buy groceries for the week
+                      - generic [ref=e479]: • 06:00 PM
+                    - generic [ref=e480]: medium
+                    - button [ref=e481] [cursor=pointer]:
+                      - img [ref=e482]
+                  - generic [ref=e485]:
+                    - button [ref=e486] [cursor=pointer]
+                    - generic [ref=e487]:
+                      - paragraph [ref=e488]: Prepare meeting presentation
+                      - generic [ref=e489]: • 09:00 AM
+                    - generic [ref=e490]: high
+                    - button [ref=e491] [cursor=pointer]:
+                      - img [ref=e492]
+                  - generic [ref=e495]:
+                    - button [ref=e496] [cursor=pointer]
+                    - paragraph [ref=e498]: Call plumber for leak
+                    - generic [ref=e499]: low
+                    - button [ref=e500] [cursor=pointer]:
+                      - img [ref=e501]
+              - heading "Today" [level=3] [ref=e506]
+              - generic [ref=e507]:
+                - heading "Scheduled" [level=3] [ref=e509]
+                - generic [ref=e510]:
+                  - generic [ref=e511]:
+                    - button [ref=e512] [cursor=pointer]
+                    - generic [ref=e513]:
+                      - paragraph [ref=e514]: Submit expense report
+                      - generic [ref=e515]: • 02:00 PM
+                    - generic [ref=e516]: medium
+                    - button [ref=e517] [cursor=pointer]:
+                      - img [ref=e518]
+                  - generic [ref=e521]:
+                    - button [ref=e522] [cursor=pointer]
+                    - paragraph [ref=e524]: Plan weekend trip
+                    - generic [ref=e525]: low
+                    - button [ref=e526] [cursor=pointer]:
+                      - img [ref=e527]
+            - button [ref=e530] [cursor=pointer]:
+              - img [ref=e531]
+  - region "Notifications alt+T"

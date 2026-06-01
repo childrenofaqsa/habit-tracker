@@ -1,6 +1,7 @@
 import { todayKey, reverseChronologicalKeys } from "@/lib/date";
 import type { HabitStatus } from "@/lib/schema";
 import type { StoreState } from "@/store/types";
+import { calculateBestStreak } from "@/lib/streak";
 
 const byOrder = <T extends { order: number }>(a: T, b: T) => a.order - b.order;
 
@@ -93,3 +94,30 @@ export function selectDayCompletion(state: StoreState, dayKey: string): number {
   }
   return tracked === 0 ? 0 : Math.round((done / tracked) * 100);
 }
+
+export const selectHabitsByCategory =
+  (categoryName: string) => (state: StoreState) => {
+    if (categoryName === "All") return [...state.habits].sort(byOrder);
+    const categoryIds = state.categories
+      .filter((c) => c.name.toLowerCase() === categoryName.toLowerCase())
+      .map((c) => c.id);
+    return state.habits
+      .filter((h) => categoryIds.includes(h.categoryId))
+      .sort(byOrder);
+  };
+
+export const selectBestStreak =
+  (habitId: string) => (state: StoreState) =>
+    calculateBestStreak(habitId, state.history);
+
+export const selectCategoryForHabit =
+  (categoryId: string) => (state: StoreState) =>
+    state.categories.find((c) => c.id === categoryId);
+
+export const selectTimeframeForCategory =
+  (timeframeId: string) => (state: StoreState) =>
+    state.timeframes.find((t) => t.id === timeframeId);
+
+export const selectAllCategoryNames = (state: StoreState) => [
+  ...new Set(state.categories.map((c) => c.name)),
+];

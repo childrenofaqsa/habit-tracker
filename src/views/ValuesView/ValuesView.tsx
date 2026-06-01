@@ -12,6 +12,7 @@ import { SelectedDateProvider } from "@/common/hooks/useSelectedDate";
 import { DndList } from "@/features/editmode/DndList";
 import { Sortable } from "@/features/editmode/Sortable";
 import { ValueRow } from "@/features/values/components/ValueRow";
+import { EditUpdatePage } from "@/features/values/components/EditUpdatePage";
 
 function getPastDays(count: number) {
   const today = new Date();
@@ -23,11 +24,25 @@ function getPastDays(count: number) {
 
 export function ValuesView() {
   const [selectedDate, setSelectedDate] = useState(todayKey);
+  const [editingValueId, setEditingValueId] = useState<string | null>(null);
   const editMode = useAppStore((state) => state.settings.editMode);
   const values = useAppStore(useShallow(selectValues));
   const addValue = useAppStore((state) => state.addValue);
   const reorderValues = useAppStore((state) => state.reorderValues);
   const pastDays = getPastDays(6);
+
+  const editingValue = editingValueId
+    ? values.find((v) => v.id === editingValueId)
+    : null;
+
+  if (editingValue) {
+    return (
+      <EditUpdatePage
+        value={editingValue}
+        onBack={() => setEditingValueId(null)}
+      />
+    );
+  }
 
   if (values.length === 0 && !editMode) {
     return (
@@ -44,8 +59,8 @@ export function ValuesView() {
       <div className="space-y-6">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-3xl font-extrabold text-black dark:text-foreground">Daily Updates</h2>
-            <label className="mt-1 flex cursor-pointer items-center gap-2 text-gray-500 hover:text-gray-700 dark:text-muted-foreground">
+            <h2 className="text-2xl font-bold text-foreground">Daily Updates</h2>
+            <label className="mt-1 flex cursor-pointer items-center gap-2 text-muted-foreground hover:text-foreground">
               <CalendarDays className="size-4" />
               <span className="text-sm font-medium">
                 {format(new Date(selectedDate), "EEEE, MMMM d, yyyy")}
@@ -59,18 +74,16 @@ export function ValuesView() {
               />
             </label>
           </div>
-          {editMode && (
-            <Button
-              className="bg-[#633DF7] text-white shadow-sm hover:bg-[#633DF7]/90"
-              onClick={() => addValue("New counter", "numeric")}
-            >
-              <Plus className="size-4" /> Create New
-            </Button>
-          )}
+          <Button
+            className="bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
+            onClick={() => addValue("New counter", "numeric")}
+          >
+            <Plus className="size-4" /> Create New
+          </Button>
         </div>
 
         <div className="hidden overflow-x-auto lg:block">
-          <div className="grid min-w-[900px] grid-cols-[2fr_1.5fr_repeat(6,0.8fr)_0.5fr] px-8 mb-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+          <div className="grid min-w-[900px] grid-cols-[2fr_1.5fr_repeat(6,0.8fr)_0.5fr] px-8 mb-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             <div>Habit</div>
             <div className="text-center">Today Progress</div>
             {pastDays.map((d) => (
@@ -93,6 +106,7 @@ export function ValuesView() {
                     <ValueRow
                       value={value}
                       pastDays={pastDays}
+                      onEdit={() => setEditingValueId(value.id)}
                       handle={
                         <button
                           type="button"
@@ -113,7 +127,12 @@ export function ValuesView() {
         ) : (
           <div className="space-y-4">
             {values.map((value) => (
-              <ValueRow key={value.id} value={value} pastDays={pastDays} />
+              <ValueRow
+                key={value.id}
+                value={value}
+                pastDays={pastDays}
+                onEdit={() => setEditingValueId(value.id)}
+              />
             ))}
           </div>
         )}

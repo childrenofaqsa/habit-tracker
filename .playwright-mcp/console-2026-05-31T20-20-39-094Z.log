@@ -1,0 +1,35 @@
+[     295ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:14337
+[     456ms] [INFO] Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner. @ http://localhost:5173/:0
+[   33014ms] [ERROR] The result of getSnapshot should be cached to avoid an infinite loop @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:4515
+[   33340ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:5173/node_modules/.vite/deps/recharts.js?v=6a0705b4:6684
+[   33341ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:5173/node_modules/.vite/deps/recharts.js?v=6a0705b4:6684
+[   37458ms] Error: Maximum update depth exceeded. This can happen when a component repeatedly calls setState inside componentWillUpdate or componentDidUpdate. React limits the number of nested updates to prevent infinite loops.
+    at getRootForUpdatedFiber (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:2633:166)
+    at enqueueConcurrentHookUpdate (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:2619:11)
+    at dispatchSetStateInternal (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:5160:14)
+    at dispatchSetState (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:5133:4)
+    at http://localhost:5173/node_modules/.vite/deps/recharts.js?v=6a0705b4:28647:3
+    at http://localhost:5173/node_modules/.vite/deps/recharts.js?v=6a0705b4:9284:4
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:12908:5)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:851:66)
+    at commitHookEffectListUnmount (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:6642:149)
+    at commitHookPassiveUnmountEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:6655:55)
+[   37457ms] [WARNING] %s
+
+%s
+ An error occurred in the <JavascriptAnimate> component. Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries. @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:5257
+[   74078ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:5173/node_modules/.vite/deps/recharts.js?v=6a0705b4:6684
+[   74078ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://localhost:5173/node_modules/.vite/deps/recharts.js?v=6a0705b4:6684

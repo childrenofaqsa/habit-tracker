@@ -12,6 +12,7 @@ type Props = {
   value: ValueTracker;
   pastDays: PastDay[];
   handle?: React.ReactNode;
+  onEdit?: () => void;
 };
 
 function PastDayCell({ valueId, dateKey }: { valueId: string; dateKey: string }) {
@@ -33,7 +34,7 @@ function PastDayCell({ valueId, dateKey }: { valueId: string; dateKey: string })
   );
 }
 
-export function ValueRow({ value, pastDays, handle }: Props) {
+export function ValueRow({ value, pastDays, handle, onEdit }: Props) {
   const selectedDate = useSelectedDate();
   const editMode = useAppStore((state) => state.settings.editMode);
   const entry = useAppStore(selectValueEntry(value.id, selectedDate));

@@ -24,21 +24,21 @@ beforeEach(() => {
 describe("Navigation", () => {
   it("renders all nav items", () => {
     render(<Navigation orientation="bottom" />);
-    expect(screen.getByText("Daily")).toBeInTheDocument();
-    expect(screen.getByText("Values")).toBeInTheDocument();
-    expect(screen.getByText("To-Do")).toBeInTheDocument();
+    expect(screen.getByText("Routine")).toBeInTheDocument();
+    expect(screen.getByText("Update")).toBeInTheDocument();
+    expect(screen.getByText("To Do")).toBeInTheDocument();
     expect(screen.getByText("Analytics")).toBeInTheDocument();
   });
 
   it("marks active view with aria-current", () => {
     render(<Navigation orientation="bottom" />);
-    const dailyButton = screen.getByText("Daily").closest("button");
-    expect(dailyButton).toHaveAttribute("aria-current", "page");
+    const routineButton = screen.getByText("Routine").closest("button");
+    expect(routineButton).toHaveAttribute("aria-current", "page");
   });
 
   it("clicking nav item calls setActiveView", () => {
     render(<Navigation orientation="bottom" />);
-    fireEvent.click(screen.getByText("To-Do"));
+    fireEvent.click(screen.getByText("To Do"));
     expect(useUiStore.getState().activeView).toBe("todo");
   });
 

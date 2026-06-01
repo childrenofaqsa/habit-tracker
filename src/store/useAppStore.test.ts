@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { useAppStore } from "@/store/useAppStore";
 import { selectAppData } from "@/store/useAppStore";
 import { emptyAppData } from "@/lib/schema";
+import { todayKey } from "@/lib/date";
 import { buildHabit, buildTimeframe } from "@/test/factories";
 
 beforeEach(() => {
@@ -102,7 +103,7 @@ describe("useAppStore", () => {
       data.habits.push(buildHabit({ id: "h1" }));
       useAppStore.getState().hydrate(data);
       useAppStore.getState().setHabitStatusToday("h1", "done");
-      const today = new Date().toISOString().slice(0, 10);
+      const today = todayKey();
       expect(useAppStore.getState().history[today]?.habitStatus.h1).toBe("done");
     });
   });

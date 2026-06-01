@@ -1,0 +1,141 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e29]:
+      - navigation [ref=e31]:
+        - generic [ref=e32]:
+          - heading "Routinely" [level=2] [ref=e33]
+          - paragraph [ref=e34]: Productivity Workspace
+        - generic [ref=e35]:
+          - button "Routine" [ref=e36] [cursor=pointer]:
+            - img [ref=e37]
+            - generic [ref=e40]: Routine
+          - button "To Do" [ref=e41] [cursor=pointer]:
+            - img [ref=e42]
+            - generic [ref=e45]: To Do
+          - button "Update" [active] [ref=e46] [cursor=pointer]:
+            - img [ref=e47]
+            - generic [ref=e52]: Update
+          - button "Analytics" [ref=e53] [cursor=pointer]:
+            - img [ref=e54]
+            - generic [ref=e55]: Analytics
+        - generic [ref=e56]:
+          - button "Settings" [ref=e57] [cursor=pointer]:
+            - img [ref=e58]
+            - generic [ref=e61]: Settings
+          - button "Help" [ref=e62] [cursor=pointer]:
+            - img [ref=e63]
+            - generic [ref=e66]: Help
+      - generic [ref=e67]:
+        - banner [ref=e69]:
+          - heading "Update" [level=1] [ref=e1408]
+          - generic [ref=e72]:
+            - img [ref=e73]
+            - textbox "Search updates..." [ref=e1409]
+          - generic [ref=e77]:
+            - button [ref=e78] [cursor=pointer]:
+              - img [ref=e79]
+            - generic [ref=e84]: U
+            - generic [ref=e85]:
+              - button "Install" [ref=e86] [cursor=pointer]:
+                - img [ref=e87]
+                - text: Install
+              - button "Enter edit mode" [ref=e90] [cursor=pointer]:
+                - img [ref=e91]
+              - button "Backup and restore" [ref=e94] [cursor=pointer]:
+                - img [ref=e95]
+              - button "Settings" [ref=e101] [cursor=pointer]:
+                - img [ref=e102]
+        - generic [ref=e105]:
+          - img [ref=e107]
+          - main [ref=e112]:
+            - generic [ref=e1411]:
+              - generic [ref=e1412]:
+                - generic [ref=e1413]:
+                  - heading "Daily Updates" [level=2] [ref=e1414]
+                  - generic [ref=e1415] [cursor=pointer]:
+                    - img [ref=e1416]
+                    - generic [ref=e1418]: Monday, June 1, 2026
+                    - img [ref=e1419]
+                    - textbox "Monday, June 1, 2026" [ref=e1421]: 2026-06-01
+                - button "Create New" [ref=e1422] [cursor=pointer]:
+                  - img [ref=e1423]
+                  - text: Create New
+              - generic [ref=e1425]:
+                - generic [ref=e1426]: Habit
+                - generic [ref=e1427]: Today Progress
+                - generic [ref=e1428]: May 31
+                - generic [ref=e1429]: May 30
+                - generic [ref=e1430]: May 29
+                - generic [ref=e1431]: May 28
+                - generic [ref=e1432]: May 27
+                - generic [ref=e1433]: May 26
+                - generic [ref=e1434]: History
+              - generic [ref=e1435]:
+                - generic [ref=e1436]:
+                  - generic [ref=e1437]:
+                    - img [ref=e1439]
+                    - generic [ref=e1441]:
+                      - text: Water Intake
+                      - paragraph [ref=e1442]: "Value: 0"
+                  - generic [ref=e1444]:
+                    - button "Decrease" [ref=e1445] [cursor=pointer]:
+                      - img [ref=e1446]
+                    - generic [ref=e1447]:
+                      - generic [ref=e1448]: "0"
+                      - generic [ref=e1449]: count
+                    - button "Increase" [ref=e1450] [cursor=pointer]:
+                      - img [ref=e1451]
+                  - generic [ref=e1452]: —
+                  - generic [ref=e1453]: —
+                  - generic [ref=e1454]: —
+                  - generic [ref=e1455]: —
+                  - generic [ref=e1456]: —
+                  - generic [ref=e1457]: —
+                  - button "View history" [ref=e1459] [cursor=pointer]:
+                    - img [ref=e1460]
+                - generic [ref=e1462]:
+                  - generic [ref=e1463]:
+                    - img [ref=e1465]
+                    - generic [ref=e1467]:
+                      - text: Pages Read
+                      - paragraph [ref=e1468]: "Value: 0"
+                  - generic [ref=e1470]:
+                    - button "Decrease" [ref=e1471] [cursor=pointer]:
+                      - img [ref=e1472]
+                    - generic [ref=e1473]:
+                      - generic [ref=e1474]: "0"
+                      - generic [ref=e1475]: count
+                    - button "Increase" [ref=e1476] [cursor=pointer]:
+                      - img [ref=e1477]
+                  - generic [ref=e1478]: —
+                  - generic [ref=e1479]: —
+                  - generic [ref=e1480]: —
+                  - generic [ref=e1481]: —
+                  - generic [ref=e1482]: —
+                  - generic [ref=e1483]: —
+                  - button "View history" [ref=e1485] [cursor=pointer]:
+                    - img [ref=e1486]
+                - generic [ref=e1488]:
+                  - generic [ref=e1489]:
+                    - img [ref=e1491]
+                    - generic [ref=e1493]:
+                      - text: Coffee Cups
+                      - paragraph [ref=e1494]: "Value: 0"
+                  - generic [ref=e1496]:
+                    - button "Decrease" [ref=e1497] [cursor=pointer]:
+                      - img [ref=e1498]
+                    - generic [ref=e1499]:
+                      - generic [ref=e1500]: "0"
+                      - generic [ref=e1501]: count
+                    - button "Increase" [ref=e1502] [cursor=pointer]:
+                      - img [ref=e1503]
+                  - generic [ref=e1504]: —
+                  - generic [ref=e1505]: —
+                  - generic [ref=e1506]: —
+                  - generic [ref=e1507]: —
+                  - generic [ref=e1508]: —
+                  - generic [ref=e1509]: —
+                  - button "View history" [ref=e1511] [cursor=pointer]:
+                    - img [ref=e1512]
+    - region "Notifications alt+T"
+  - generic [ref=e1286]: "0"

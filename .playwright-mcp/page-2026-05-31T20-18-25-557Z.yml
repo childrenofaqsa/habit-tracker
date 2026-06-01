@@ -1,0 +1,50 @@
+- generic [ref=e2]:
+  - generic [ref=e29]:
+    - navigation [ref=e31]:
+      - generic [ref=e32]:
+        - heading "Routinely" [level=2] [ref=e33]
+        - paragraph [ref=e34]: Productivity Workspace
+      - generic [ref=e35]:
+        - button "Routine" [ref=e36] [cursor=pointer]:
+          - img [ref=e37]
+          - generic [ref=e40]: Routine
+        - button "To Do" [ref=e41] [cursor=pointer]:
+          - img [ref=e42]
+          - generic [ref=e45]: To Do
+        - button "Update" [ref=e46] [cursor=pointer]:
+          - img [ref=e47]
+          - generic [ref=e52]: Update
+        - button "Analytics" [active] [ref=e53] [cursor=pointer]:
+          - img [ref=e54]
+          - generic [ref=e55]: Analytics
+      - generic [ref=e56]:
+        - button "Settings" [ref=e57] [cursor=pointer]:
+          - img [ref=e58]
+          - generic [ref=e61]: Settings
+        - button "Help" [ref=e62] [cursor=pointer]:
+          - img [ref=e63]
+          - generic [ref=e66]: Help
+    - generic [ref=e67]:
+      - banner [ref=e69]:
+        - heading "Analytics" [level=1] [ref=e119]
+        - generic [ref=e72]:
+          - img [ref=e73]
+          - textbox "Search insights..." [ref=e120]
+        - generic [ref=e77]:
+          - button [ref=e78] [cursor=pointer]:
+            - img [ref=e79]
+          - generic [ref=e84]: U
+          - generic [ref=e85]:
+            - button "Install" [ref=e86] [cursor=pointer]:
+              - img [ref=e87]
+              - text: Install
+            - button "Enter edit mode" [ref=e90] [cursor=pointer]:
+              - img [ref=e91]
+            - button "Backup and restore" [ref=e94] [cursor=pointer]:
+              - img [ref=e95]
+            - button "Settings" [ref=e101] [cursor=pointer]:
+              - img [ref=e102]
+      - generic [ref=e105]:
+        - img [ref=e107]
+        - main [ref=e112]
+  - region "Notifications alt+T"

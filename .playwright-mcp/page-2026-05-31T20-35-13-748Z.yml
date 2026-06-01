@@ -1,0 +1,227 @@
+- generic [ref=e2]:
+  - generic [ref=e29]:
+    - navigation [ref=e31]:
+      - generic [ref=e32]:
+        - heading "Routinely" [level=2] [ref=e33]
+        - paragraph [ref=e34]: Productivity Workspace
+      - generic [ref=e35]:
+        - button "Routine" [active] [ref=e36] [cursor=pointer]:
+          - img [ref=e37]
+          - generic [ref=e40]: Routine
+        - button "To Do" [ref=e41] [cursor=pointer]:
+          - img [ref=e42]
+          - generic [ref=e45]: To Do
+        - button "Update" [ref=e46] [cursor=pointer]:
+          - img [ref=e47]
+          - generic [ref=e52]: Update
+        - button "Analytics" [ref=e53] [cursor=pointer]:
+          - img [ref=e54]
+          - generic [ref=e55]: Analytics
+      - generic [ref=e56]:
+        - button "Settings" [ref=e57] [cursor=pointer]:
+          - img [ref=e58]
+          - generic [ref=e61]: Settings
+        - button "Help" [ref=e62] [cursor=pointer]:
+          - img [ref=e63]
+          - generic [ref=e66]: Help
+    - generic [ref=e67]:
+      - banner [ref=e69]:
+        - heading "Routine" [level=1] [ref=e440]
+        - generic [ref=e72]:
+          - img [ref=e73]
+          - textbox "Search habits..." [ref=e441]
+        - generic [ref=e77]:
+          - button [ref=e78] [cursor=pointer]:
+            - img [ref=e79]
+          - generic [ref=e84]: U
+          - generic [ref=e85]:
+            - button "Install" [ref=e86] [cursor=pointer]:
+              - img [ref=e87]
+              - text: Install
+            - button "Enter edit mode" [ref=e90] [cursor=pointer]:
+              - img [ref=e91]
+            - button "Backup and restore" [ref=e94] [cursor=pointer]:
+              - img [ref=e95]
+            - button "Settings" [ref=e101] [cursor=pointer]:
+              - img [ref=e102]
+      - generic [ref=e105]:
+        - img [ref=e107]
+        - main [ref=e112]:
+          - generic [ref=e443]:
+            - heading "All Task" [level=2] [ref=e445]
+            - generic [ref=e446]:
+              - button "All" [ref=e447] [cursor=pointer]
+              - button "Health" [ref=e448] [cursor=pointer]
+              - button "Mind" [ref=e449] [cursor=pointer]
+              - button "Productivity" [ref=e450] [cursor=pointer]
+              - button "Self-Care" [ref=e451] [cursor=pointer]
+            - table [ref=e454]:
+              - rowgroup [ref=e455]:
+                - row "Habit Schedule Motivation Best Streak Action" [ref=e456]:
+                  - columnheader "Habit" [ref=e457]
+                  - columnheader "Schedule" [ref=e458]
+                  - columnheader "Motivation" [ref=e459]
+                  - columnheader "Best Streak" [ref=e460]
+                  - columnheader "Action" [ref=e461]
+              - rowgroup [ref=e462]:
+                - row "Health" [ref=e463]:
+                  - cell "Health" [ref=e464]
+                - row "✦ Morning Run High Priority 07:00 AM Daily • Morning Stay fit and energized 8 Days" [ref=e465]:
+                  - cell "✦ Morning Run High Priority" [ref=e466]:
+                    - generic [ref=e467]:
+                      - generic [ref=e468]: ✦
+                      - generic [ref=e469]:
+                        - text: Morning Run
+                        - generic [ref=e472]: High Priority
+                  - cell "07:00 AM Daily • Morning" [ref=e473]:
+                    - generic [ref=e474]: 07:00 AM
+                    - generic [ref=e475]: Daily • Morning
+                  - cell "Stay fit and energized" [ref=e476]
+                  - cell "8 Days" [ref=e477]
+                  - cell [ref=e478]:
+                    - button [ref=e479] [cursor=pointer]:
+                      - img [ref=e480]
+                - row "✦ Drink Water Medium Priority 07:30 AM Daily • Morning Stay hydrated throughout the day 12 Days" [ref=e484]:
+                  - cell "✦ Drink Water Medium Priority" [ref=e485]:
+                    - generic [ref=e486]:
+                      - generic [ref=e487]: ✦
+                      - generic [ref=e488]:
+                        - text: Drink Water
+                        - generic [ref=e491]: Medium Priority
+                  - cell "07:30 AM Daily • Morning" [ref=e492]:
+                    - generic [ref=e493]: 07:30 AM
+                    - generic [ref=e494]: Daily • Morning
+                  - cell "Stay hydrated throughout the day" [ref=e495]
+                  - cell "12 Days" [ref=e496]
+                  - cell [ref=e497]:
+                    - button [ref=e498] [cursor=pointer]:
+                      - img [ref=e499]
+                - row "✦ Healthy Breakfast Medium Priority 08:00 AM Daily • Morning Fuel body with nutrition 11 Days" [ref=e503]:
+                  - cell "✦ Healthy Breakfast Medium Priority" [ref=e504]:
+                    - generic [ref=e505]:
+                      - generic [ref=e506]: ✦
+                      - generic [ref=e507]:
+                        - text: Healthy Breakfast
+                        - generic [ref=e510]: Medium Priority
+                  - cell "08:00 AM Daily • Morning" [ref=e511]:
+                    - generic [ref=e512]: 08:00 AM
+                    - generic [ref=e513]: Daily • Morning
+                  - cell "Fuel body with nutrition" [ref=e514]
+                  - cell "11 Days" [ref=e515]
+                  - cell [ref=e516]:
+                    - button [ref=e517] [cursor=pointer]:
+                      - img [ref=e518]
+                - row "Mind" [ref=e522]:
+                  - cell "Mind" [ref=e523]
+                - row "✦ Meditation High Priority 06:30 AM Daily • Morning Clarity and inner peace 4 Days" [ref=e524]:
+                  - cell "✦ Meditation High Priority" [ref=e525]:
+                    - generic [ref=e526]:
+                      - generic [ref=e527]: ✦
+                      - generic [ref=e528]:
+                        - text: Meditation
+                        - generic [ref=e531]: High Priority
+                  - cell "06:30 AM Daily • Morning" [ref=e532]:
+                    - generic [ref=e533]: 06:30 AM
+                    - generic [ref=e534]: Daily • Morning
+                  - cell "Clarity and inner peace" [ref=e535]
+                  - cell "4 Days" [ref=e536]
+                  - cell [ref=e537]:
+                    - button [ref=e538] [cursor=pointer]:
+                      - img [ref=e539]
+                - row "✦ Read 20 Pages Medium Priority 08:30 AM Daily • Morning Expand knowledge daily 11 Days" [ref=e543]:
+                  - cell "✦ Read 20 Pages Medium Priority" [ref=e544]:
+                    - generic [ref=e545]:
+                      - generic [ref=e546]: ✦
+                      - generic [ref=e547]:
+                        - text: Read 20 Pages
+                        - generic [ref=e550]: Medium Priority
+                  - cell "08:30 AM Daily • Morning" [ref=e551]:
+                    - generic [ref=e552]: 08:30 AM
+                    - generic [ref=e553]: Daily • Morning
+                  - cell "Expand knowledge daily" [ref=e554]
+                  - cell "11 Days" [ref=e555]
+                  - cell [ref=e556]:
+                    - button [ref=e557] [cursor=pointer]:
+                      - img [ref=e558]
+                - row "✦ Journaling Low Priority 09:00 AM mon, wed, fri • Morning Process thoughts and feelings 9 Days" [ref=e562]:
+                  - cell "✦ Journaling Low Priority" [ref=e563]:
+                    - generic [ref=e564]:
+                      - generic [ref=e565]: ✦
+                      - generic [ref=e566]:
+                        - text: Journaling
+                        - generic [ref=e569]: Low Priority
+                  - cell "09:00 AM mon, wed, fri • Morning" [ref=e570]:
+                    - generic [ref=e571]: 09:00 AM
+                    - generic [ref=e572]: mon, wed, fri • Morning
+                  - cell "Process thoughts and feelings" [ref=e573]
+                  - cell "9 Days" [ref=e574]
+                  - cell [ref=e575]:
+                    - button [ref=e576] [cursor=pointer]:
+                      - img [ref=e577]
+                - row "Productivity" [ref=e581]:
+                  - cell "Productivity" [ref=e582]
+                - row "✦ Deep Work Block High Priority 10:00 AM mon, tue, wed, thu, fri • Evening Move projects forward 6 Days" [ref=e583]:
+                  - cell "✦ Deep Work Block High Priority" [ref=e584]:
+                    - generic [ref=e585]:
+                      - generic [ref=e586]: ✦
+                      - generic [ref=e587]:
+                        - text: Deep Work Block
+                        - generic [ref=e590]: High Priority
+                  - cell "10:00 AM mon, tue, wed, thu, fri • Evening" [ref=e591]:
+                    - generic [ref=e592]: 10:00 AM
+                    - generic [ref=e593]: mon, tue, wed, thu, fri • Evening
+                  - cell "Move projects forward" [ref=e594]
+                  - cell "6 Days" [ref=e595]
+                  - cell [ref=e596]:
+                    - button [ref=e597] [cursor=pointer]:
+                      - img [ref=e598]
+                - row "✦ Code Review Medium Priority 02:00 PM mon, tue, wed, thu, fri • Evening Maintain code quality 16 Days" [ref=e602]:
+                  - cell "✦ Code Review Medium Priority" [ref=e603]:
+                    - generic [ref=e604]:
+                      - generic [ref=e605]: ✦
+                      - generic [ref=e606]:
+                        - text: Code Review
+                        - generic [ref=e609]: Medium Priority
+                  - cell "02:00 PM mon, tue, wed, thu, fri • Evening" [ref=e610]:
+                    - generic [ref=e611]: 02:00 PM
+                    - generic [ref=e612]: mon, tue, wed, thu, fri • Evening
+                  - cell "Maintain code quality" [ref=e613]
+                  - cell "16 Days" [ref=e614]
+                  - cell [ref=e615]:
+                    - button [ref=e616] [cursor=pointer]:
+                      - img [ref=e617]
+                - row "Self-Care" [ref=e621]:
+                  - cell "Self-Care" [ref=e622]
+                - row "✦ Skincare Routine Low Priority 09:30 PM Daily • Night Take care of yourself 6 Days" [ref=e623]:
+                  - cell "✦ Skincare Routine Low Priority" [ref=e624]:
+                    - generic [ref=e625]:
+                      - generic [ref=e626]: ✦
+                      - generic [ref=e627]:
+                        - text: Skincare Routine
+                        - generic [ref=e630]: Low Priority
+                  - cell "09:30 PM Daily • Night" [ref=e631]:
+                    - generic [ref=e632]: 09:30 PM
+                    - generic [ref=e633]: Daily • Night
+                  - cell "Take care of yourself" [ref=e634]
+                  - cell "6 Days" [ref=e635]
+                  - cell [ref=e636]:
+                    - button [ref=e637] [cursor=pointer]:
+                      - img [ref=e638]
+                - row "✦ Sleep by 11 PM High Priority 11:00 PM Daily • Night Quality rest for recovery 8 Days" [ref=e642]:
+                  - cell "✦ Sleep by 11 PM High Priority" [ref=e643]:
+                    - generic [ref=e644]:
+                      - generic [ref=e645]: ✦
+                      - generic [ref=e646]:
+                        - text: Sleep by 11 PM
+                        - generic [ref=e649]: High Priority
+                  - cell "11:00 PM Daily • Night" [ref=e650]:
+                    - generic [ref=e651]: 11:00 PM
+                    - generic [ref=e652]: Daily • Night
+                  - cell "Quality rest for recovery" [ref=e653]
+                  - cell "8 Days" [ref=e654]
+                  - cell [ref=e655]:
+                    - button [ref=e656] [cursor=pointer]:
+                      - img [ref=e657]
+            - button [ref=e661] [cursor=pointer]:
+              - img [ref=e662]
+  - region "Notifications alt+T"

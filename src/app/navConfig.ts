@@ -1,4 +1,4 @@
-import { CalendarCheck, Gauge, ListTodo, BarChart3 } from "lucide-react";
+import { CalendarCheck, ListChecks, RefreshCw, BarChart2, Settings, HelpCircle } from "lucide-react";
 import type { ViewId } from "@/lib/constants";
 
 export type NavItem = {
@@ -8,15 +8,15 @@ export type NavItem = {
 };
 
 export const NAV_ITEMS: NavItem[] = [
-  { id: "daily", label: "Daily", icon: CalendarCheck },
-  { id: "values", label: "Updates", icon: Gauge },
-  { id: "todo", label: "To-Do", icon: ListTodo },
-  { id: "analytics", label: "Analytics", icon: BarChart3 },
+  { id: "daily", label: "Routine", icon: CalendarCheck },
+  { id: "todo", label: "To Do", icon: ListChecks },
+  { id: "values", label: "Update", icon: RefreshCw },
+  { id: "analytics", label: "Analytics", icon: BarChart2 },
 ];
 
 export const VIEW_TITLES: Record<ViewId, string> = {
-  daily: "Daily",
-  values: "Updates",
-  todo: "To-Do",
+  daily: "Routine",
+  values: "Update",
+  todo: "To Do",
   analytics: "Analytics",
 };

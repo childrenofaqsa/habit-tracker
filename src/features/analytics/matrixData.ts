@@ -1,9 +1,10 @@
-import type { Habit, ValueTracker, ValueType } from "@/lib/schema";
+import type { Category, Habit, ValueTracker, ValueType } from "@/lib/schema";
 
 export type MatrixRow = {
   id: string;
   name: string;
   kind: "habit" | "value";
+  category?: string;
   valueType?: ValueType;
 };
 
@@ -13,7 +14,9 @@ export function buildMatrixRows(
   habits: Habit[],
   values: ValueTracker[],
   filter: MatrixFilter = "all",
+  categories: Category[] = [],
 ): MatrixRow[] {
+  const categoryMap = new Map(categories.map((c) => [c.id, c.name]));
   const habitRows: MatrixRow[] =
     filter === "values"
       ? []
@@ -21,6 +24,7 @@ export function buildMatrixRows(
           id: habit.id,
           name: habit.title,
           kind: "habit",
+          category: categoryMap.get(habit.categoryId),
         }));
   const valueRows: MatrixRow[] =
     filter === "habits"

@@ -8,6 +8,8 @@ import type {
   Todo,
   MotionSettings,
   Settings,
+  Priority,
+  GoalType,
 } from "@/lib/schema";
 
 export type AppDataState = AppData & { hydrated: boolean };
@@ -31,7 +33,7 @@ export type HabitsActions = {
   addHabit: (categoryId: string, title: string) => string;
   updateHabit: (
     id: string,
-    patch: Partial<Pick<Habit, "title" | "details" | "imageId" | "linkedValueId">>,
+    patch: Partial<Pick<Habit, "title" | "details" | "imageId" | "linkedValueId" | "priority" | "motivation" | "scheduledTime" | "recurrence" | "notifications">>,
   ) => void;
   deleteHabit: (id: string) => void;
   reorderHabits: (categoryId: string, orderedIds: string[]) => void;
@@ -41,7 +43,7 @@ export type ValuesActions = {
   addValue: (name: string, type: ValueType) => string;
   updateValue: (
     id: string,
-    patch: Partial<Pick<ValueTracker, "name" | "linkedHabitId">>,
+    patch: Partial<Pick<ValueTracker, "name" | "linkedHabitId" | "unit" | "goalType" | "goalTarget">>,
   ) => void;
   deleteValue: (id: string) => void;
   reorderValues: (orderedIds: string[]) => void;
@@ -52,7 +54,7 @@ export type TodosActions = {
   addTodo: (title: string, date: string | null) => string;
   updateTodo: (
     id: string,
-    patch: Partial<Pick<Todo, "title" | "notes" | "date">>,
+    patch: Partial<Pick<Todo, "title" | "notes" | "date" | "priority" | "time" | "location">>,
   ) => void;
   deleteTodo: (id: string) => void;
   toggleTodo: (id: string) => void;

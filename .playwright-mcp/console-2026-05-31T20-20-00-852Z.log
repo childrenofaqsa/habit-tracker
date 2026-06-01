@@ -1,0 +1,19 @@
+[     510ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:14337
+[     844ms] [ERROR] The result of getSnapshot should be cached to avoid an infinite loop @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:4515
+[    1558ms] [ERROR] Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render. @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:2633
+[    1569ms] Error: Maximum update depth exceeded. This can happen when a component repeatedly calls setState inside componentWillUpdate or componentDidUpdate. React limits the number of nested updates to prevent infinite loops.
+    at getRootForUpdatedFiber (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:2633:166)
+    at enqueueConcurrentRenderForLane (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:2623:11)
+    at forceStoreRerender (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:4581:15)
+    at updateStoreInstance (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:4563:36)
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:12904:13)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:851:66)
+    at commitHookEffectListMount (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:6617:153)
+    at commitHookPassiveMountEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:6652:55)
+    at commitPassiveMountOnFiber (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:7618:22)
+    at recursivelyTraversePassiveMountEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:7606:5)
+[    1569ms] [WARNING] %s
+
+%s
+ An error occurred in the <DailyView> component. Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries. @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6a0705b4:5257
