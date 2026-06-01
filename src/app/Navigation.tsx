@@ -77,12 +77,13 @@ function SidebarFooterButton({
 export function Navigation({ orientation }: { orientation: "bottom" | "side" }) {
   const activeView = useUiStore((state) => state.activeView);
   const setActiveView = useUiStore((state) => state.setActiveView);
+  const setSettingsOpen = useUiStore((state) => state.setSettingsOpen);
   const haptic = useHaptics();
   const isSide = orientation === "side";
 
   if (isSide) {
     return (
-      <nav className="flex h-full w-60 flex-col border-r border-border bg-card/60">
+      <nav className="flex h-dvh w-60 flex-col border-r border-border bg-card/60">
         <div className="px-5 pb-4 pt-6">
           <h2 className="text-xl font-bold text-primary">Routinely</h2>
           <p className="mt-0.5 text-xs text-muted-foreground">
@@ -90,7 +91,7 @@ export function Navigation({ orientation }: { orientation: "bottom" | "side" }) 
           </p>
         </div>
 
-        <div className="flex flex-1 flex-col gap-1 px-3 py-2">
+        <div className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-2">
           {NAV_ITEMS.map((item) => (
             <NavButton
               key={item.id}
@@ -105,8 +106,8 @@ export function Navigation({ orientation }: { orientation: "bottom" | "side" }) 
           ))}
         </div>
 
-        <div className="mt-auto border-t border-border px-3 py-3">
-          <SidebarFooterButton icon={Settings} label="Settings" />
+        <div className="border-t border-border px-3 py-3">
+          <SidebarFooterButton icon={Settings} label="Settings" onClick={() => setSettingsOpen(true)} />
           <SidebarFooterButton icon={HelpCircle} label="Help" />
         </div>
       </nav>

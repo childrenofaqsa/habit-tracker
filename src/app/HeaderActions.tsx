@@ -9,7 +9,9 @@ export function HeaderActions() {
       <InstallButton />
       <EditModeToggle />
       <BackupButton />
-      <SettingsButton />
+      <div className="lg:hidden">
+        <SettingsButton />
+      </div>
     </div>
   );
 }

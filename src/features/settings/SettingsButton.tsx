@@ -13,6 +13,7 @@ import { Switch } from "@/common/components/ui/form/switch";
 import { Label } from "@/common/components/ui/form/label";
 import { Input } from "@/common/components/ui/form/input";
 import { useAppStore } from "@/store/useAppStore";
+import { useUiStore } from "@/store/useUiStore";
 import type { MotionSettings } from "@/lib/schema";
 import { Segmented } from "@/features/settings/Segmented";
 
@@ -36,9 +37,11 @@ export function SettingsButton() {
   const setTheme = useAppStore((state) => state.setTheme);
   const setDeviceLabel = useAppStore((state) => state.setDeviceLabel);
   const updateMotion = useAppStore((state) => state.updateMotion);
+  const settingsOpen = useUiStore((state) => state.settingsOpen);
+  const setSettingsOpen = useUiStore((state) => state.setSettingsOpen);
 
   return (
-    <Sheet>
+    <Sheet open={settingsOpen} onOpenChange={setSettingsOpen}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="touch-target" aria-label="Settings">
           <Settings className="size-5" />

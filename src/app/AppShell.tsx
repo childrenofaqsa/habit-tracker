@@ -16,6 +16,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           initial={{ opacity: 0, x: -16 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.16 }}
+          className="sticky top-0 h-dvh self-start"
         >
           <Navigation orientation="side" />
         </motion.div>
