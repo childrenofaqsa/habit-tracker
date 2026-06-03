@@ -307,19 +307,41 @@ function DateJumpButton({
   value: string;
   onChange: (d: string) => void;
 }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const openPicker = () => {
+    const input = inputRef.current;
+    if (!input) return;
+    if (typeof input.showPicker === "function") {
+      try {
+        input.showPicker();
+        return;
+      } catch {
+        // fall through to focus/click fallback
+      }
+    }
+    input.focus();
+    input.click();
+  };
   return (
-    <label
-      className="cursor-pointer rounded-xl border border-border bg-card p-2.5 shadow-sm transition-colors hover:bg-muted"
-      aria-label="Jump to date"
-    >
-      <Calendar className="size-5 text-foreground" />
+    <>
+      <button
+        type="button"
+        onClick={openPicker}
+        className="cursor-pointer rounded-xl border border-border bg-card p-2.5 shadow-sm transition-colors hover:bg-muted"
+        aria-label="Jump to date"
+      >
+        <Calendar className="size-5 text-foreground" />
+      </button>
       <input
+        ref={inputRef}
         type="date"
         className="sr-only"
+        tabIndex={-1}
+        aria-hidden="true"
         value={value}
         onChange={(e) => e.target.value && onChange(e.target.value)}
       />
-    </label>
+    </>
   );
 }
 
