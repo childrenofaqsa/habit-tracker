@@ -22,6 +22,12 @@ export const createTodosSlice: AppSlice<TodosActions> = (set) => ({
         completed: false,
         completedAt: null,
         order: maxOrder + 1,
+        projectId: input.projectId ?? null,
+        listId: input.listId ?? null,
+        status: input.status ?? "todo",
+        plan: input.plan ?? "",
+        goalCurrent: input.goalCurrent ?? 0,
+        goalTarget: input.goalTarget ?? 0,
         createdAt: now,
         updatedAt: now,
       });

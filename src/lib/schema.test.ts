@@ -67,6 +67,12 @@ describe("appDataSchema", () => {
       completed: false,
       completedAt: null,
       order: 0,
+      projectId: null,
+      listId: null,
+      status: "todo" as const,
+      plan: "",
+      goalCurrent: 0,
+      goalTarget: 0,
       createdAt: 1000,
       updatedAt: 1000,
     });

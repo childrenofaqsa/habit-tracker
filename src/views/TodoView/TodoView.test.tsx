@@ -2,11 +2,15 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { useAppStore } from "@/store/useAppStore";
 import { emptyAppData } from "@/lib/schema";
-import { buildTodo, todayStr, daysFromNow } from "@/test/factories";
+import { buildTodo, todayStr } from "@/test/factories";
 import type { StoreState } from "@/store/types";
 
 vi.mock("@/features/todos/components/EditTodoPage", () => ({
   EditTodoPage: () => <div data-testid="edit-todo-page" />,
+}));
+
+vi.mock("@/features/todos/components/EditProjectPage", () => ({
+  EditProjectPage: () => <div data-testid="edit-project-page" />,
 }));
 
 vi.mock("@/features/todos/components/TodoCard", () => ({
@@ -15,16 +19,12 @@ vi.mock("@/features/todos/components/TodoCard", () => ({
   ),
 }));
 
-vi.mock("@/features/todos/components/CalendarView", () => ({
-  CalendarView: () => <div data-testid="calendar-view" />,
+vi.mock("@/features/todos/components/ProjectCard", () => ({
+  ProjectCard: () => <div data-testid="project-card" />,
 }));
 
 vi.mock("@/common/components/DateScrollRow", () => ({
   DateScrollRow: () => <div data-testid="date-scroll" />,
-}));
-
-vi.mock("@/common/components/FloatingActionButton", () => ({
-  FloatingActionButton: () => null,
 }));
 
 const { TodoView } = await import("@/views/TodoView/TodoView");
@@ -34,23 +34,17 @@ beforeEach(() => {
 });
 
 describe("TodoView", () => {
-  it("renders empty state when no todos", () => {
+  it("renders tabs", () => {
     render(<TodoView />);
-    expect(screen.getByText(/nothing to do/i)).toBeInTheDocument();
+    expect(screen.getByText("To Do")).toBeInTheDocument();
+    expect(screen.getByText("Projects")).toBeInTheDocument();
   });
 
-  it("renders todos in correct buckets", () => {
+  it("renders today todo card", () => {
     const data = emptyAppData();
-    data.todos.push(
-      buildTodo({ id: "t1", title: "Inbox task", date: null }),
-      buildTodo({ id: "t2", title: "Today task", date: todayStr() }),
-      buildTodo({ id: "t3", title: "Future task", date: daysFromNow(5) }),
-      buildTodo({ id: "t4", title: "Done task", completed: true, completedAt: Date.now() }),
-    );
+    data.todos.push(buildTodo({ id: "t2", title: "Today task", date: todayStr() }));
     useAppStore.setState({ ...data, hydrated: true } as Partial<StoreState>);
-
     render(<TodoView />);
-    const items = screen.getAllByTestId("todo-item");
-    expect(items.length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByText("Today task")).toBeInTheDocument();
   });
 });

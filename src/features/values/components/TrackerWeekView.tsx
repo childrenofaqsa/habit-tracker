@@ -31,6 +31,7 @@ export function TrackerWeekView({ value, currentWeekStart }: Props) {
   const history = useAppStore((s) => s.history);
   const habits = useAppStore((s) => s.habits);
   const setValueEntry = useAppStore((s) => s.setValueEntry);
+  const editMode = useAppStore((s) => s.settings.editMode);
   const [editState, setEditState] = useState<EditState>(null);
   const [draft, setDraft] = useState("");
 
@@ -127,27 +128,38 @@ export function TrackerWeekView({ value, currentWeekStart }: Props) {
               const future = isFuture(date) && !today;
               const entry = getCell(dateKey, source.id);
               const hasEntry = entry !== undefined && entry !== "";
-              const display = hasEntry ? String(entry).slice(0, 5) : null;
+              const display = hasEntry ? String(entry) : null;
+              const interactive = editMode && !future;
+              const cellClass = cn(
+                "flex min-h-9 items-center justify-center rounded-md px-1 py-1 text-[10px] leading-tight transition-colors",
+                today ? "bg-primary/10 ring-1 ring-primary/30" : "bg-muted/30",
+                interactive && "cursor-pointer hover:bg-muted",
+                future && "opacity-40",
+              );
+              const content = display ? (
+                <span className="whitespace-pre-wrap break-words text-center font-semibold text-primary">
+                  {display}
+                </span>
+              ) : interactive ? (
+                <Pencil className="size-3 text-muted-foreground/40" />
+              ) : null;
+              if (!interactive) {
+                return (
+                  <div key={dateKey} className={cellClass}>
+                    {content}
+                  </div>
+                );
+              }
               return (
                 <button
                   key={dateKey}
                   type="button"
-                  disabled={future}
                   onClick={() =>
-                    !future &&
                     openEdit(dateKey, `${label} ${format(date, "d")}`, source.id, source.label)
                   }
-                  className={cn(
-                    "flex h-9 items-center justify-center rounded-md text-xs transition-colors",
-                    today ? "bg-primary/10 ring-1 ring-primary/30" : "bg-muted/30 hover:bg-muted",
-                    future && "cursor-not-allowed opacity-40",
-                  )}
+                  className={cellClass}
                 >
-                  {display ? (
-                    <span className="font-semibold text-primary">{display}</span>
-                  ) : !future ? (
-                    <Pencil className="size-3 text-muted-foreground/40" />
-                  ) : null}
+                  {content}
                 </button>
               );
             })}
@@ -162,23 +174,20 @@ export function TrackerWeekView({ value, currentWeekStart }: Props) {
             const today = isToday(date);
             const future = isFuture(date) && !today;
             const total = getTotal(dateKey);
-            const display =
-              total !== undefined && total !== ""
-                ? value.type === "numeric"
-                  ? String(total)
-                  : "…"
-                : "";
+            const display = total !== undefined && total !== "" ? String(total) : "";
             return (
               <div
                 key={dateKey}
                 className={cn(
-                  "flex h-9 items-center justify-center rounded-md text-xs",
+                  "flex min-h-9 items-center justify-center rounded-md px-1 py-1 text-[10px] leading-tight",
                   today ? "bg-primary/10" : "bg-muted/30",
                   future && "opacity-40",
                 )}
               >
                 {display ? (
-                  <span className="font-bold text-primary">{display}</span>
+                  <span className="whitespace-pre-wrap break-words text-center font-bold text-primary">
+                    {display}
+                  </span>
                 ) : (
                   <span className="text-muted-foreground/40">—</span>
                 )}

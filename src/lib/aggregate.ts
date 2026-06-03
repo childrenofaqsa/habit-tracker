@@ -25,5 +25,5 @@ export function aggregateValueEntries(
     .map((item) => (typeof item === "string" ? item : String(item)))
     .filter((s) => s.trim().length > 0);
   if (texts.length === 0) return undefined;
-  return texts.join(" · ");
+  return texts.join("\n");
 }

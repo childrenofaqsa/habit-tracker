@@ -8,6 +8,7 @@ import { selectTodaySummary } from "@/store/selectors";
 import { useShallow } from "zustand/react/shallow";
 import { calculateCurrentStreak, calculateBestStreak } from "@/lib/streak";
 import { CompletionChart } from "@/features/analytics/components/CompletionChart";
+import { TodosCompletedChart } from "@/features/analytics/components/TodosCompletedChart";
 import { HistoryMatrix } from "@/features/analytics/components/HistoryMatrix";
 import { Reveal } from "@/common/components/motion/Reveal";
 import { BackupButton } from "@/features/backup/BackupButton";
@@ -128,6 +129,18 @@ export function AnalyticsView() {
           </div>
 
           <CompletionChart days={days} />
+        </div>
+      </Reveal>
+
+      <Reveal delay={0.12}>
+        <div className="rounded-2xl border border-border bg-card p-5">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold">Tasks Completed</h2>
+              <p className="text-sm text-muted-foreground">To-dos completed by day</p>
+            </div>
+          </div>
+          <TodosCompletedChart days={days} />
         </div>
       </Reveal>
 

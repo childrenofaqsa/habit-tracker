@@ -56,6 +56,11 @@ export function mergeAppData(current: AppData, incoming: AppData): AppData {
     habits: mergeByUpdatedAt(current.habits, incoming.habits),
     values: mergeByUpdatedAt(current.values, incoming.values),
     todos: mergeByUpdatedAt(current.todos, incoming.todos),
+    projects: mergeByUpdatedAt(current.projects, incoming.projects),
+    todoLists: mergeByUpdatedAt(
+      current.todoLists ?? [],
+      incoming.todoLists ?? [],
+    ),
     history: mergeHistory(current.history, incoming.history),
     settings: current.settings,
   };

@@ -6,6 +6,8 @@ import type {
   ValueTracker,
   ValueType,
   Todo,
+  TodoStatus,
+  Project,
   MotionSettings,
   Settings,
 } from "@/lib/schema";
@@ -57,17 +59,49 @@ export type AddTodoInput = {
   time?: string | null;
   location?: string | null;
   notes?: string;
+  projectId?: string | null;
+  listId?: string | null;
+  status?: TodoStatus;
+  plan?: string;
+  goalCurrent?: number;
+  goalTarget?: number;
 };
 
 export type TodosActions = {
   addTodo: (input: AddTodoInput) => string;
   updateTodo: (
     id: string,
-    patch: Partial<Pick<Todo, "title" | "notes" | "date" | "priority" | "tag" | "time" | "location">>,
+    patch: Partial<Pick<Todo, "title" | "notes" | "date" | "priority" | "tag" | "time" | "location" | "projectId" | "listId" | "status" | "plan" | "goalCurrent" | "goalTarget">>,
   ) => void;
   deleteTodo: (id: string) => void;
   toggleTodo: (id: string) => void;
   reorderTodos: (orderedIds: string[]) => void;
+};
+
+export type AddProjectInput = {
+  name: string;
+  description?: string;
+  deadlineDate?: string | null;
+  deadlineTime?: string | null;
+  priority?: Project["priority"];
+  breadcrumb?: string[];
+};
+
+export type ProjectsActions = {
+  addProject: (input: AddProjectInput) => string;
+  updateProject: (
+    id: string,
+    patch: Partial<Pick<Project, "name" | "description" | "deadlineDate" | "deadlineTime" | "priority" | "breadcrumb">>,
+  ) => void;
+  deleteProject: (id: string) => void;
+  reorderProjects: (orderedIds: string[]) => void;
+};
+
+export type TodoListsActions = {
+  addTodoList: (name: string) => string;
+  renameTodoList: (id: string, name: string) => void;
+  deleteTodoList: (id: string) => void;
+  reorderTodoLists: (orderedIds: string[]) => void;
 };
 
 export type SettingsActions = {
@@ -90,6 +124,8 @@ export type StoreState = AppDataState &
   HabitsActions &
   ValuesActions &
   TodosActions &
+  ProjectsActions &
+  TodoListsActions &
   SettingsActions &
   SystemActions;
 

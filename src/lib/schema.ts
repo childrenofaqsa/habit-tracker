@@ -56,6 +56,9 @@ export const valueTrackerSchema = z.object({
   updatedAt: z.number(),
 });
 
+export const todoStatusSchema = z.enum(["todo", "in_progress", "blocked", "done"]);
+export type TodoStatus = z.infer<typeof todoStatusSchema>;
+
 export const todoSchema = z.object({
   id: z.string(),
   title: z.string(),
@@ -67,6 +70,33 @@ export const todoSchema = z.object({
   location: z.string().nullable().default(null),
   completed: z.boolean().default(false),
   completedAt: z.number().nullable().default(null),
+  order: z.number().default(0),
+  projectId: z.string().nullable().default(null),
+  listId: z.string().nullable().default(null),
+  status: todoStatusSchema.default("todo"),
+  plan: z.string().default(""),
+  goalCurrent: z.number().default(0),
+  goalTarget: z.number().default(0),
+  createdAt: z.number(),
+  updatedAt: z.number(),
+});
+
+export const projectSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().default(""),
+  deadlineDate: z.string().nullable().default(null),
+  deadlineTime: z.string().nullable().default(null),
+  priority: prioritySchema.nullable().default(null),
+  breadcrumb: z.array(z.string()).default([]),
+  order: z.number().default(0),
+  createdAt: z.number(),
+  updatedAt: z.number(),
+});
+
+export const todoListSchema = z.object({
+  id: z.string(),
+  name: z.string(),
   order: z.number().default(0),
   createdAt: z.number(),
   updatedAt: z.number(),
@@ -105,6 +135,8 @@ export const appDataSchema = z.object({
   habits: z.array(habitSchema).default([]),
   values: z.array(valueTrackerSchema).default([]),
   todos: z.array(todoSchema).default([]),
+  projects: z.array(projectSchema).default([]),
+  todoLists: z.array(todoListSchema).default([]),
   history: z.record(z.string(), dayRecordSchema).default({}),
   settings: settingsSchema.default(settingsSchema.parse({})),
 });
@@ -114,6 +146,8 @@ export type Category = z.infer<typeof categorySchema>;
 export type Habit = z.infer<typeof habitSchema>;
 export type ValueTracker = z.infer<typeof valueTrackerSchema>;
 export type Todo = z.infer<typeof todoSchema>;
+export type Project = z.infer<typeof projectSchema>;
+export type TodoList = z.infer<typeof todoListSchema>;
 export type DayRecord = z.infer<typeof dayRecordSchema>;
 export type MotionSettings = z.infer<typeof motionSettingsSchema>;
 export type Settings = z.infer<typeof settingsSchema>;

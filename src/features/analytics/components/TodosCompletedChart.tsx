@@ -9,13 +9,11 @@ import {
   Cell,
   LabelList,
 } from "recharts";
-import { reverseChronologicalKeys, formatShortDate } from "@/lib/date";
+import { reverseChronologicalKeys, formatShortDate, toDateKey } from "@/lib/date";
 import { useAppStore } from "@/store/useAppStore";
-import { selectScheduledCompletion } from "@/store/selectors";
 
-export function CompletionChart({ days }: { days: number }) {
-  const history = useAppStore((state) => state.history);
-  const habits = useAppStore((state) => state.habits);
+export function TodosCompletedChart({ days }: { days: number }) {
+  const todos = useAppStore((state) => state.todos);
   const [hasSize, setHasSize] = useState(false);
 
   const containerRef = useCallback((node: HTMLDivElement | null) => {
@@ -26,14 +24,17 @@ export function CompletionChart({ days }: { days: number }) {
 
   const data = useMemo(() => {
     const keys = reverseChronologicalKeys(days).reverse();
-    const state = useAppStore.getState();
+    const counts = new Map<string, number>(keys.map((k) => [k, 0]));
+    for (const todo of todos) {
+      if (!todo.completed || todo.completedAt === null) continue;
+      const key = toDateKey(new Date(todo.completedAt));
+      if (counts.has(key)) counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
     return keys.map((key) => ({
       day: formatShortDate(key),
-      completion: selectScheduledCompletion(state, key),
+      count: counts.get(key) ?? 0,
     }));
-    // history & habits drive recompute via subscription; selector reads via getState
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [history, habits, days]);
+  }, [todos, days]);
 
   return (
     <div ref={containerRef} className="h-48 w-full">
@@ -41,7 +42,7 @@ export function CompletionChart({ days }: { days: number }) {
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 18, right: 4, left: -24, bottom: 0 }}>
             <XAxis dataKey="day" tick={{ fontSize: 10 }} interval="preserveStartEnd" />
-            <YAxis tick={{ fontSize: 10 }} domain={[0, 100]} width={32} />
+            <YAxis tick={{ fontSize: 10 }} allowDecimals={false} width={32} />
             <Tooltip
               cursor={{ fill: "var(--color-muted)" }}
               contentStyle={{
@@ -50,17 +51,17 @@ export function CompletionChart({ days }: { days: number }) {
                 borderRadius: 8,
                 fontSize: 12,
               }}
-              formatter={(value: unknown) => [`${String(value)}%`, "Completion"]}
+              formatter={(value: unknown) => [String(value), "Completed"]}
             />
-            <Bar dataKey="completion" radius={[3, 3, 0, 0]} isAnimationActive>
+            <Bar dataKey="count" radius={[3, 3, 0, 0]} isAnimationActive>
               <LabelList
-                dataKey="completion"
+                dataKey="count"
                 position="top"
                 fontSize={10}
                 fill="var(--color-foreground)"
                 formatter={(value) => {
                   const num = Number(value);
-                  return num > 0 ? `${num}%` : "";
+                  return num > 0 ? String(num) : "";
                 }}
               />
               {data.map((entry) => (

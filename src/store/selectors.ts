@@ -1,8 +1,40 @@
-import { todayKey, reverseChronologicalKeys } from "@/lib/date";
-import type { HabitStatus } from "@/lib/schema";
+import { todayKey, reverseChronologicalKeys, parseDateKey } from "@/lib/date";
+import type { Habit, HabitStatus } from "@/lib/schema";
 import type { StoreState } from "@/store/types";
 import { calculateBestStreak } from "@/lib/streak";
 import { aggregateValueEntries, type ValueEntries } from "@/lib/aggregate";
+
+const DAY_CODES = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
+
+function dayCodeFor(dateKey: string): string {
+  return DAY_CODES[parseDateKey(dateKey).getDay()] ?? "sun";
+}
+
+export function isHabitScheduledOn(habit: Habit, dateKey: string): boolean {
+  const recurrence = habit.recurrence ?? ["everyday"];
+  if (recurrence.length === 0 || recurrence.includes("everyday")) return true;
+  return recurrence.includes(dayCodeFor(dateKey));
+}
+
+export function selectScheduledHabitCount(state: StoreState, dateKey: string): number {
+  let count = 0;
+  for (const habit of state.habits) {
+    if (isHabitScheduledOn(habit, dateKey)) count += 1;
+  }
+  return count;
+}
+
+export function selectScheduledCompletion(state: StoreState, dateKey: string): number {
+  const record = state.history[dateKey];
+  let total = 0;
+  let done = 0;
+  for (const habit of state.habits) {
+    if (!isHabitScheduledOn(habit, dateKey)) continue;
+    total += 1;
+    if (record?.habitStatus[habit.id] === "done") done += 1;
+  }
+  return total === 0 ? 0 : Math.round((done / total) * 100);
+}
 
 const byOrder = <T extends { order: number }>(a: T, b: T) => a.order - b.order;
 
@@ -65,15 +97,17 @@ export type DaySummary = {
 };
 
 export function selectTodaySummary(state: StoreState): DaySummary {
-  const record = state.history[todayKey()];
-  const total = state.habits.length;
+  const dateKey = todayKey();
+  const record = state.history[dateKey];
+  let total = 0;
   let done = 0;
   let missed = 0;
-  if (record) {
-    for (const status of Object.values(record.habitStatus)) {
-      if (status === "done") done += 1;
-      else if (status === "missed") missed += 1;
-    }
+  for (const habit of state.habits) {
+    if (!isHabitScheduledOn(habit, dateKey)) continue;
+    total += 1;
+    const status = record?.habitStatus[habit.id];
+    if (status === "done") done += 1;
+    else if (status === "missed") missed += 1;
   }
   const completion = total === 0 ? 0 : Math.round((done / total) * 100);
   return { done, missed, total, completion };

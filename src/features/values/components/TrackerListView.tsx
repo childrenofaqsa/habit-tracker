@@ -25,6 +25,7 @@ const DAY_ABBREVS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export function TrackerListView({ value, currentWeekStart }: Props) {
   const history = useAppStore((s) => s.history);
   const setValueEntry = useAppStore((s) => s.setValueEntry);
+  const editMode = useAppStore((s) => s.settings.editMode);
   const [editState, setEditState] = useState<EditState>(null);
   const [draft, setDraft] = useState("");
 
@@ -62,21 +63,10 @@ export function TrackerListView({ value, currentWeekStart }: Props) {
           const future = isFuture(date) && !today;
           const entry = getEntry(dateKey);
           const hasEntry = entry !== undefined && entry !== "";
+          const interactive = editMode && !future;
 
-          return (
-            <button
-              key={dateKey}
-              type="button"
-              disabled={future}
-              onClick={() => !future && openEdit(dateKey, `${abbrev} ${format(date, "MMM d")}`)}
-              className={cn(
-                "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors",
-                today
-                  ? "border-l-4 border-primary bg-primary/5"
-                  : "bg-muted/30 hover:bg-muted",
-                future && "opacity-40 cursor-not-allowed",
-              )}
-            >
+          const inner = (
+            <>
               <div className="w-10 shrink-0 text-center">
                 <p
                   className={cn(
@@ -92,19 +82,53 @@ export function TrackerListView({ value, currentWeekStart }: Props) {
               </div>
               <div className="min-w-0 flex-1">
                 {hasEntry ? (
-                  <p className="truncate text-sm font-semibold text-foreground">{String(entry)}</p>
+                  <p className="whitespace-pre-wrap break-words text-sm font-semibold text-foreground">
+                    {String(entry)}
+                  </p>
                 ) : (
                   <p className="text-sm text-muted-foreground/60">
-                    {future ? "Future day" : "No entry for this day yet. Click to log."}
+                    {future
+                      ? "Future day"
+                      : interactive
+                        ? "No entry for this day yet. Click to log."
+                        : "No entry."}
                   </p>
                 )}
               </div>
-              {!future &&
+              {interactive &&
                 (hasEntry ? (
                   <Pencil className="size-4 shrink-0 text-muted-foreground/60" />
                 ) : (
                   <Plus className="size-4 shrink-0 text-muted-foreground/60" />
                 ))}
+            </>
+          );
+
+          const rowClass = cn(
+            "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors",
+            today
+              ? "border-l-4 border-primary bg-primary/5"
+              : "bg-muted/30",
+            interactive && "hover:bg-muted",
+            future && "opacity-40",
+          );
+
+          if (!interactive) {
+            return (
+              <div key={dateKey} className={rowClass}>
+                {inner}
+              </div>
+            );
+          }
+
+          return (
+            <button
+              key={dateKey}
+              type="button"
+              onClick={() => openEdit(dateKey, `${abbrev} ${format(date, "MMM d")}`)}
+              className={rowClass}
+            >
+              {inner}
             </button>
           );
         })}

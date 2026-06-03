@@ -7,6 +7,8 @@ import { createHistorySlice } from "@/store/slices/historySlice";
 import { createHabitsSlice } from "@/store/slices/habitsSlice";
 import { createValuesSlice } from "@/store/slices/valuesSlice";
 import { createTodosSlice } from "@/store/slices/todosSlice";
+import { createProjectsSlice } from "@/store/slices/projectsSlice";
+import { createTodoListsSlice } from "@/store/slices/todoListsSlice";
 import { createSettingsSlice } from "@/store/slices/settingsSlice";
 import { createSystemSlice } from "@/store/slices/systemSlice";
 
@@ -18,6 +20,8 @@ export const useAppStore = create<StoreState>()(
     ...createHabitsSlice(...args),
     ...createValuesSlice(...args),
     ...createTodosSlice(...args),
+    ...createProjectsSlice(...args),
+    ...createTodoListsSlice(...args),
     ...createSettingsSlice(...args),
     ...createSystemSlice(...args),
   })),
@@ -31,6 +35,8 @@ export function selectAppData(state: StoreState): AppData {
     habits: state.habits,
     values: state.values,
     todos: state.todos,
+    projects: state.projects,
+    todoLists: state.todoLists,
     history: state.history,
     settings: state.settings,
   };

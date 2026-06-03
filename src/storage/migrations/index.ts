@@ -4,6 +4,7 @@ import { premigrationKey } from "@/storage/keys";
 import { migrateV1ToV2 } from "./v1ToV2";
 import { migrateV2ToV3 } from "./v2ToV3";
 import { migrateV3ToV4 } from "./v3ToV4";
+import { migrateV4ToV5 } from "./v4ToV5";
 
 type RawData = Record<string, unknown>;
 type Migration = (data: RawData) => RawData;
@@ -12,6 +13,7 @@ const migrations: Record<number, Migration> = {
   1: migrateV1ToV2,
   2: migrateV2ToV3,
   3: migrateV3ToV4,
+  4: migrateV4ToV5,
 };
 
 export async function runMigrations(raw: RawData): Promise<RawData> {

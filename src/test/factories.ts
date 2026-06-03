@@ -1,4 +1,4 @@
-import type { AppData, Habit, Todo, Timeframe, Category, ValueTracker, DayRecord } from "@/lib/schema";
+import type { AppData, Habit, Todo, Timeframe, Category, ValueTracker, Project, DayRecord } from "@/lib/schema";
 import { emptyAppData } from "@/lib/schema";
 import { toDateKey } from "@/lib/date";
 
@@ -68,6 +68,29 @@ export function buildTodo(overrides: Partial<Todo> = {}): Todo {
     location: null,
     completed: false,
     completedAt: null,
+    order: n,
+    projectId: null,
+    listId: null,
+    status: "todo" as const,
+    plan: "",
+    goalCurrent: 0,
+    goalTarget: 0,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    ...overrides,
+  };
+}
+
+export function buildProject(overrides: Partial<Project> = {}): Project {
+  const n = seq();
+  return {
+    id: `proj-${n}`,
+    name: `Project ${n}`,
+    description: "",
+    deadlineDate: null,
+    deadlineTime: null,
+    priority: null,
+    breadcrumb: [],
     order: n,
     createdAt: Date.now(),
     updatedAt: Date.now(),
