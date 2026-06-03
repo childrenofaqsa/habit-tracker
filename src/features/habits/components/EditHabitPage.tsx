@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import { ArrowLeft, Bell, Settings, Upload, Trash2 } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+import { ArrowLeft, Bell, Plus, Settings, Upload, Trash2 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { useAppStore } from "@/store/useAppStore";
 import { useHabitActions } from "@/features/habits/hooks/useHabitActions";
@@ -12,14 +12,13 @@ type EditHabitPageProps = {
   onBack: () => void;
 };
 
-const TIMEFRAME_OPTIONS = ["Morning", "Noon", "Evening", "Night"];
-const CATEGORY_OPTIONS = ["Mindset", "Health", "Productivity", "Creativity"];
 const DAY_OPTIONS = ["M", "T", "W", "T", "F", "S", "S"];
 const DAY_CODES = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 
 export function EditHabitPage({ habit, onBack }: EditHabitPageProps) {
   const updateHabit = useAppStore((s) => s.updateHabit);
   const deleteHabit = useAppStore((s) => s.deleteHabit);
+  const addCategory = useAppStore((s) => s.addCategory);
   const categories = useAppStore((s) => s.categories);
   const timeframes = useAppStore((s) => s.timeframes);
   const values = useAppStore((s) => s.values);
@@ -27,18 +26,19 @@ export function EditHabitPage({ habit, onBack }: EditHabitPageProps) {
   const imageUrl = useHabitImage(habit.imageId);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const currentCategory = categories.find((c) => c.id === habit.categoryId);
-  const currentTimeframe = timeframes.find(
-    (t) => t.id === currentCategory?.timeframeId,
+  const sortedTimeframes = useMemo(
+    () => [...timeframes].sort((a, b) => a.order - b.order),
+    [timeframes],
   );
+  const currentCategory = categories.find((c) => c.id === habit.categoryId);
 
   const [title, setTitle] = useState(habit.title);
   const [details, setDetails] = useState(habit.details);
-  const [selectedTimeframe, setSelectedTimeframe] = useState(
-    currentTimeframe?.name ?? "Morning",
+  const [selectedTimeframeId, setSelectedTimeframeId] = useState<string>(
+    currentCategory?.timeframeId ?? sortedTimeframes[0]?.id ?? "",
   );
-  const [selectedCategory, setSelectedCategory] = useState(
-    currentCategory?.name ?? "Health",
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
+    habit.categoryId,
   );
   const [recurrence, setRecurrence] = useState<string[]>(habit.recurrence);
   const [scheduledTime, setScheduledTime] = useState(habit.scheduledTime ?? "07:30");
@@ -46,6 +46,35 @@ export function EditHabitPage({ habit, onBack }: EditHabitPageProps) {
   const [linkedValueId, setLinkedValueId] = useState(habit.linkedValueId ?? "");
 
   const isEveryday = recurrence.includes("everyday");
+
+  const visibleCategories = useMemo(
+    () =>
+      categories
+        .filter((c) => c.timeframeId === selectedTimeframeId)
+        .sort((a, b) => a.order - b.order),
+    [categories, selectedTimeframeId],
+  );
+
+  const canSave = selectedCategoryId !== "" && title.trim() !== "";
+
+  function handleTimeframeChange(timeframeId: string) {
+    setSelectedTimeframeId(timeframeId);
+    const stillValid = categories.some(
+      (c) => c.id === selectedCategoryId && c.timeframeId === timeframeId,
+    );
+    if (!stillValid) {
+      const firstInTimeframe = categories
+        .filter((c) => c.timeframeId === timeframeId)
+        .sort((a, b) => a.order - b.order)[0];
+      setSelectedCategoryId(firstInTimeframe?.id ?? "");
+    }
+  }
+
+  function handleAddCategory() {
+    if (!selectedTimeframeId) return;
+    const id = addCategory(selectedTimeframeId, "New Category");
+    setSelectedCategoryId(id);
+  }
 
   function toggleDay(dayCode: string) {
     if (isEveryday) {
@@ -64,9 +93,11 @@ export function EditHabitPage({ habit, onBack }: EditHabitPageProps) {
   }
 
   function handleSave() {
+    if (!canSave) return;
     updateHabit(habit.id, {
       title,
       details,
+      categoryId: selectedCategoryId,
       scheduledTime,
       recurrence,
       notifications,
@@ -165,44 +196,66 @@ export function EditHabitPage({ habit, onBack }: EditHabitPageProps) {
 
       <div className="rounded-2xl border border-border bg-card p-5">
         <h3 className="mb-3 text-sm font-semibold">Ideal Timeframe</h3>
-        <div className="flex gap-2">
-          {TIMEFRAME_OPTIONS.map((tf) => (
-            <button
-              key={tf}
-              type="button"
-              onClick={() => setSelectedTimeframe(tf)}
-              className={cn(
-                "rounded-lg px-4 py-2 text-sm font-medium transition-colors",
-                selectedTimeframe === tf
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {tf}
-            </button>
-          ))}
-        </div>
+        {sortedTimeframes.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            No timeframes yet. Turn on Edit Mode to add one.
+          </p>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {sortedTimeframes.map((tf) => (
+              <button
+                key={tf.id}
+                type="button"
+                onClick={() => handleTimeframeChange(tf.id)}
+                className={cn(
+                  "rounded-lg px-4 py-2 text-sm font-medium transition-colors",
+                  selectedTimeframeId === tf.id
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {tf.name}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="rounded-2xl border border-border bg-card p-5">
         <h3 className="mb-3 text-sm font-semibold">Category</h3>
-        <div className="flex flex-wrap gap-2">
-          {CATEGORY_OPTIONS.map((cat) => (
+        <div className="flex flex-wrap items-center gap-2">
+          {visibleCategories.map((cat) => (
             <button
-              key={cat}
+              key={cat.id}
               type="button"
-              onClick={() => setSelectedCategory(cat)}
+              onClick={() => setSelectedCategoryId(cat.id)}
               className={cn(
                 "rounded-full px-4 py-2 text-sm font-medium transition-colors",
-                selectedCategory === cat
+                selectedCategoryId === cat.id
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:text-foreground",
               )}
             >
-              {cat}
+              {cat.name}
             </button>
           ))}
+          {selectedTimeframeId && (
+            <button
+              type="button"
+              onClick={handleAddCategory}
+              aria-label="Add category"
+              className="inline-flex items-center gap-1 rounded-full border border-dashed border-border px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+            >
+              <Plus className="size-3.5" />
+              Category
+            </button>
+          )}
         </div>
+        {visibleCategories.length === 0 && selectedTimeframeId && (
+          <p className="mt-2 text-xs text-muted-foreground">
+            No categories in this timeframe. Create one to save.
+          </p>
+        )}
       </div>
 
       <div className="rounded-2xl border border-border bg-card p-5">
@@ -281,7 +334,8 @@ export function EditHabitPage({ habit, onBack }: EditHabitPageProps) {
         <button
           type="button"
           onClick={handleSave}
-          className="flex-1 rounded-xl bg-primary py-3.5 text-center font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+          disabled={!canSave}
+          className="flex-1 rounded-xl bg-primary py-3.5 text-center font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Save Habit Changes
         </button>

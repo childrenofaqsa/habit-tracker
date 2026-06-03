@@ -72,7 +72,7 @@ describe("DailyView", () => {
     expect(screen.getByText("Morning")).toBeInTheDocument();
   });
 
-  it("switches to All Task view when toggle clicked", () => {
+  it("switches to All Habits view when toggle clicked", () => {
     const data = emptyAppData();
     data.timeframes.push(buildTimeframe({ id: "tf-1", name: "Morning", order: 0 }));
     data.categories.push(buildCategory({ id: "c-1", timeframeId: "tf-1", order: 0 }));
@@ -80,7 +80,7 @@ describe("DailyView", () => {
     useAppStore.setState({ ...data, hydrated: true } as Partial<StoreState>);
 
     render(<DailyView />);
-    fireEvent.click(screen.getByText("All Task"));
+    fireEvent.click(screen.getByText("All Habits"));
     expect(screen.getByTestId("habit-table")).toBeInTheDocument();
   });
 

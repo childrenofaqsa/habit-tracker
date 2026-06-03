@@ -1,4 +1,4 @@
-import { Trash2, GripVertical, ChevronDown, Sun, SunMedium, Sunset, Moon } from "lucide-react";
+import { Trash2, GripVertical, ChevronDown, Sun, SunMedium, Sunset, Moon, Plus } from "lucide-react";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { cn } from "@/lib/cn";
@@ -8,8 +8,13 @@ import { useAppStore } from "@/store/useAppStore";
 import { useUiStore } from "@/store/useUiStore";
 import { selectCategories } from "@/store/selectors";
 import { Button } from "@/common/components/ui/data/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/common/components/ui/overlay/dropdown-menu";
 import { EditableTitle } from "@/features/editmode/EditableTitle";
-import { AddInline } from "@/features/editmode/AddInline";
 import { DndList } from "@/features/editmode/DndList";
 import { Sortable } from "@/features/editmode/Sortable";
 import { CategorySection } from "@/features/habits/components/CategorySection";
@@ -31,11 +36,16 @@ export function TimeframeSection({ timeframe, handle }: Props) {
   const open = storedOpen ?? true;
   const editMode = useAppStore((state) => state.settings.editMode);
   const categories = useAppStore(useShallow(selectCategories(timeframe.id)));
+  const allCategories = useAppStore((state) => state.categories);
   const renameTimeframe = useAppStore((state) => state.renameTimeframe);
   const deleteTimeframe = useAppStore((state) => state.deleteTimeframe);
-  const addCategory = useAppStore((state) => state.addCategory);
+  const moveCategoryToTimeframe = useAppStore((state) => state.moveCategoryToTimeframe);
   const reorderCategories = useAppStore((state) => state.reorderCategories);
   const Icon = getTimeframeIcon(timeframe.name);
+
+  const availableCategories = allCategories.filter(
+    (c) => c.timeframeId !== timeframe.id,
+  );
 
   return (
     <Collapsible.Root
@@ -123,13 +133,35 @@ export function TimeframeSection({ timeframe, handle }: Props) {
           )}
 
           {editMode && (
-            <AddInline
-              label="Add Category"
-              placeholder="Category name"
-              size="sm"
-              variant="secondary"
-              onAdd={(name) => addCategory(timeframe.id, name)}
-            />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={availableCategories.length === 0}
+                  className="inline-flex items-center gap-2"
+                >
+                  <Plus className="size-4" />
+                  Add Category
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="max-h-72 overflow-y-auto">
+                {availableCategories.length === 0 ? (
+                  <DropdownMenuItem disabled>No other categories</DropdownMenuItem>
+                ) : (
+                  availableCategories.map((category) => (
+                    <DropdownMenuItem
+                      key={category.id}
+                      onSelect={() =>
+                        moveCategoryToTimeframe(category.id, timeframe.id)
+                      }
+                    >
+                      {category.name}
+                    </DropdownMenuItem>
+                  ))
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </Collapsible.Content>
       </section>

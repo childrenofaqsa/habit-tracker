@@ -25,6 +25,7 @@ import { LinkedValueDialog } from "@/features/values/components/LinkedValueDialo
 import { CategoryFilter } from "@/features/habits/components/CategoryFilter";
 import { HabitTable } from "@/features/habits/components/HabitTable";
 import { EditHabitPage } from "@/features/habits/components/EditHabitPage";
+import { EditModeToggle } from "@/features/editmode/EditModeToggle";
 import type { Habit } from "@/lib/schema";
 
 type RoutineView = "myday" | "alltask";
@@ -148,10 +149,11 @@ export function DailyView() {
                         : "text-muted-foreground hover:text-foreground",
                     )}
                   >
-                    All Task
+                    All Habits
                   </button>
                 </div>
                 <DateJumpButton value={selectedDate} onChange={setSelectedDate} />
+                <EditModeToggle />
               </div>
             </header>
 
@@ -282,7 +284,7 @@ function AllTaskView({
           onClick={handleAddTask}
           className="inline-flex shrink-0 items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-90"
         >
-          <Plus className="size-4" /> Add Task
+          <Plus className="size-4" /> Add Habit
         </button>
       </div>
       {habitCount === 0 ? (
@@ -390,6 +392,7 @@ function EditModeView({
         </div>
         <div className="flex items-center gap-3">
           <DateJumpButton value={selectedDate} onChange={setSelectedDate} />
+          <EditModeToggle />
           <button
             type="button"
             onClick={() => useAppStore.getState().setEditMode(false)}

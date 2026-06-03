@@ -80,6 +80,15 @@ export const createHabitsSlice: AppSlice<HabitsActions> = (set) => ({
       );
     }),
 
+  moveCategoryToTimeframe: (categoryId, timeframeId) =>
+    set((draft) => {
+      const category = draft.categories.find((item) => item.id === categoryId);
+      if (!category || category.timeframeId === timeframeId) return;
+      const siblings = draft.categories.filter((c) => c.timeframeId === timeframeId);
+      category.timeframeId = timeframeId;
+      category.order = nextOrder(siblings);
+    }),
+
   addHabit: (categoryId, title) => {
     const id = newId();
     const now = Date.now();

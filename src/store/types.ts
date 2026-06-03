@@ -31,6 +31,7 @@ export type HabitsActions = {
   renameCategory: (id: string, name: string) => void;
   deleteCategory: (id: string) => void;
   reorderCategories: (timeframeId: string, orderedIds: string[]) => void;
+  moveCategoryToTimeframe: (categoryId: string, timeframeId: string) => void;
   addHabit: (categoryId: string, title: string) => string;
   updateHabit: (
     id: string,
