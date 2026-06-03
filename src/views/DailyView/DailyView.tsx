@@ -340,6 +340,24 @@ function EditModeView({
 }) {
   const hideCompleted = useUiStore((state) => state.editHideCompleted);
   const setHideCompleted = useUiStore((state) => state.setEditHideCompleted);
+  const hideEmptyTimeframes = useUiStore((state) => state.editHideEmptyTimeframes);
+  const setHideEmptyTimeframes = useUiStore((state) => state.setEditHideEmptyTimeframes);
+  const allCategories = useAppStore((state) => state.categories);
+  const allHabits = useAppStore((state) => state.habits);
+  const dayStatus = useAppStore((state) => state.history[selectedDate]?.habitStatus);
+
+  const visibleTimeframes = useMemo(() => {
+    if (!hideEmptyTimeframes) return timeframes;
+    return timeframes.filter((tf) => {
+      const categoryIds = allCategories
+        .filter((c) => c.timeframeId === tf.id)
+        .map((c) => c.id);
+      const habits = allHabits.filter((h) => categoryIds.includes(h.categoryId));
+      if (habits.length === 0) return false;
+      return habits.some((h) => dayStatus?.[h.id] !== "done");
+    });
+  }, [hideEmptyTimeframes, timeframes, allCategories, allHabits, dayStatus]);
+
   return (
     <>
       <header className="flex items-start justify-between">
@@ -360,28 +378,44 @@ function EditModeView({
         </div>
       </header>
 
-      <button
-        type="button"
-        onClick={() => setHideCompleted(!hideCompleted)}
-        className={cn(
-          "inline-flex items-center gap-2 self-start rounded-full border px-4 py-2 text-sm font-medium transition-colors",
-          hideCompleted
-            ? "border-primary/40 bg-primary/10 text-primary"
-            : "border-border bg-card text-muted-foreground hover:text-foreground",
-        )}
-        aria-pressed={hideCompleted}
-      >
-        {hideCompleted ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
-        {hideCompleted ? "Show completed" : "Hide completed"}
-      </button>
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setHideCompleted(!hideCompleted)}
+          className={cn(
+            "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors",
+            hideCompleted
+              ? "border-primary/40 bg-primary/10 text-primary"
+              : "border-border bg-card text-muted-foreground hover:text-foreground",
+          )}
+          aria-pressed={hideCompleted}
+        >
+          {hideCompleted ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
+          {hideCompleted ? "Show completed" : "Hide completed"}
+        </button>
+        <button
+          type="button"
+          onClick={() => setHideEmptyTimeframes(!hideEmptyTimeframes)}
+          className={cn(
+            "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors",
+            hideEmptyTimeframes
+              ? "border-primary/40 bg-primary/10 text-primary"
+              : "border-border bg-card text-muted-foreground hover:text-foreground",
+          )}
+          aria-pressed={hideEmptyTimeframes}
+        >
+          {hideEmptyTimeframes ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
+          {hideEmptyTimeframes ? "Show empty timeframes" : "Hide empty timeframes"}
+        </button>
+      </div>
 
       <DndList
-        ids={timeframes.map((tf) => tf.id)}
+        ids={visibleTimeframes.map((tf) => tf.id)}
         strategy={verticalListSortingStrategy}
         onReorder={reorderTimeframes}
       >
         <div className="space-y-8">
-          {timeframes.map((timeframe) => (
+          {visibleTimeframes.map((timeframe) => (
             <Sortable key={timeframe.id} id={timeframe.id}>
               {({ attributes, listeners }) => (
                 <TimeframeSection
