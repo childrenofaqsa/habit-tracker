@@ -64,6 +64,7 @@ function ValuePromptForm({
 
 export function LinkedValueDialog() {
   const valuePromptId = useUiStore((state) => state.valuePromptId);
+  const valuePromptHabitId = useUiStore((state) => state.valuePromptHabitId);
   const closeValuePrompt = useUiStore((state) => state.closeValuePrompt);
   const values = useAppStore((state) => state.values);
   const setValueEntryToday = useAppStore((state) => state.setValueEntryToday);
@@ -78,7 +79,7 @@ export function LinkedValueDialog() {
             value={value}
             onSkip={closeValuePrompt}
             onSave={(entry) => {
-              setValueEntryToday(value.id, entry);
+              setValueEntryToday(value.id, entry, valuePromptHabitId ?? undefined);
               closeValuePrompt();
             }}
           />

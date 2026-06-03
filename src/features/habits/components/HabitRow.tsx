@@ -2,7 +2,9 @@ import { GripVertical } from "lucide-react";
 import { horizontalListSortingStrategy } from "@dnd-kit/sortable";
 import { useShallow } from "zustand/react/shallow";
 import { useAppStore } from "@/store/useAppStore";
+import { useUiStore } from "@/store/useUiStore";
 import { selectHabits } from "@/store/selectors";
+import { todayKey } from "@/lib/date";
 import { HabitCard } from "@/features/habits/components/HabitCard/HabitCard";
 import { AddHabitCard } from "@/features/habits/components/AddHabitCard";
 import { DndList } from "@/features/editmode/DndList";
@@ -10,9 +12,16 @@ import { Sortable } from "@/features/editmode/Sortable";
 
 export function HabitRow({ categoryId }: { categoryId: string }) {
   const editMode = useAppStore((state) => state.settings.editMode);
-  const habits = useAppStore(useShallow(selectHabits(categoryId)));
+  const allHabits = useAppStore(useShallow(selectHabits(categoryId)));
   const addHabit = useAppStore((state) => state.addHabit);
   const reorderHabits = useAppStore((state) => state.reorderHabits);
+  const hideCompleted = useUiStore((state) => state.editHideCompleted);
+  const todayStatus = useAppStore((state) => state.history[todayKey()]?.habitStatus);
+
+  const habits =
+    editMode && hideCompleted
+      ? allHabits.filter((h) => todayStatus?.[h.id] !== "done")
+      : allHabits;
 
   if (!editMode) {
     return (

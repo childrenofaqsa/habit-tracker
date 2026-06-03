@@ -2,6 +2,7 @@ import { todayKey, reverseChronologicalKeys } from "@/lib/date";
 import type { HabitStatus } from "@/lib/schema";
 import type { StoreState } from "@/store/types";
 import { calculateBestStreak } from "@/lib/streak";
+import { aggregateValueEntries, type ValueEntries } from "@/lib/aggregate";
 
 const byOrder = <T extends { order: number }>(a: T, b: T) => a.order - b.order;
 
@@ -26,15 +27,35 @@ export const selectHabitStatus =
   (state: StoreState): HabitStatus | undefined =>
     state.history[dateKey]?.habitStatus[habitId];
 
+function getValueType(state: StoreState, valueId: string) {
+  return state.values.find((v) => v.id === valueId)?.type ?? "numeric";
+}
+
 export const selectValueEntryToday =
   (valueId: string) =>
   (state: StoreState): number | string | undefined =>
-    state.history[todayKey()]?.valueEntries[valueId];
+    aggregateValueEntries(
+      state.history[todayKey()]?.valueEntries[valueId],
+      getValueType(state, valueId),
+    );
 
 export const selectValueEntry =
   (valueId: string, dateKey: string) =>
   (state: StoreState): number | string | undefined =>
+    aggregateValueEntries(
+      state.history[dateKey]?.valueEntries[valueId],
+      getValueType(state, valueId),
+    );
+
+export const selectValueEntries =
+  (valueId: string, dateKey: string) =>
+  (state: StoreState): ValueEntries | undefined =>
     state.history[dateKey]?.valueEntries[valueId];
+
+export const selectValueDirectEntry =
+  (valueId: string, dateKey: string) =>
+  (state: StoreState): number | string | undefined =>
+    state.history[dateKey]?.valueEntries[valueId]?.__direct__;
 
 export type DaySummary = {
   done: number;

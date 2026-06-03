@@ -28,7 +28,9 @@ vi.mock("@/features/editmode/DndList", () => ({
 }));
 
 vi.mock("@/features/editmode/Sortable", () => ({
-  Sortable: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  Sortable: ({ children }: { children: React.ReactNode | ((args: { attributes: object; listeners: object }) => React.ReactNode) }) => (
+    <div>{typeof children === "function" ? children({ attributes: {}, listeners: {} }) : children}</div>
+  ),
 }));
 
 const { ValuesView } = await import("@/views/ValuesView/ValuesView");

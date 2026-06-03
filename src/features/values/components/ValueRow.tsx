@@ -1,7 +1,7 @@
 import { Minus, Plus, Calendar, Droplet } from "lucide-react";
 import type { ValueTracker } from "@/lib/schema";
 import { useAppStore } from "@/store/useAppStore";
-import { selectValueEntry } from "@/store/selectors";
+import { selectValueEntry, selectValueDirectEntry } from "@/store/selectors";
 import { todayKey } from "@/lib/date";
 
 type Props = {
@@ -14,9 +14,11 @@ type Props = {
 
 export function ValueRow({ value, handle, dragMode = false, onNameClick, onLogClick }: Props) {
   const entry = useAppStore(selectValueEntry(value.id, todayKey()));
+  const directEntry = useAppStore(selectValueDirectEntry(value.id, todayKey()));
   const setValueEntryToday = useAppStore((s) => s.setValueEntryToday);
 
   const numericValue = typeof entry === "number" ? entry : 0;
+  const directNumeric = typeof directEntry === "number" ? directEntry : 0;
   const unit = value.unit || "count";
   const goalSubtitle =
     value.type === "numeric" && value.goalTarget
@@ -46,7 +48,7 @@ export function ValueRow({ value, handle, dragMode = false, onNameClick, onLogCl
           <button
             type="button"
             className="rounded-lg p-2 text-muted-foreground hover:bg-background"
-            onClick={() => setValueEntryToday(value.id, Math.max(0, numericValue - 1))}
+            onClick={() => setValueEntryToday(value.id, Math.max(0, directNumeric - 1))}
             aria-label="Decrease"
           >
             <Minus className="size-4" />
@@ -58,7 +60,7 @@ export function ValueRow({ value, handle, dragMode = false, onNameClick, onLogCl
           <button
             type="button"
             className="rounded-lg p-2 text-muted-foreground hover:bg-background"
-            onClick={() => setValueEntryToday(value.id, numericValue + 1)}
+            onClick={() => setValueEntryToday(value.id, directNumeric + 1)}
             aria-label="Increase"
           >
             <Plus className="size-4" />

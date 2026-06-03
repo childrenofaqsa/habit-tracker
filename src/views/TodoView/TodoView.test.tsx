@@ -5,8 +5,8 @@ import { emptyAppData } from "@/lib/schema";
 import { buildTodo, todayStr, daysFromNow } from "@/test/factories";
 import type { StoreState } from "@/store/types";
 
-vi.mock("@/features/todos/components/AddTodo", () => ({
-  AddTodo: () => <div data-testid="add-todo" />,
+vi.mock("@/features/todos/components/EditTodoPage", () => ({
+  EditTodoPage: () => <div data-testid="edit-todo-page" />,
 }));
 
 vi.mock("@/features/todos/components/TodoCard", () => ({

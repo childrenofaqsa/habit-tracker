@@ -61,10 +61,12 @@ describe("appDataSchema", () => {
       notes: "",
       date: "2024-06-01",
       priority: "medium" as const,
+      tag: "",
       time: null,
       location: null,
       completed: false,
       completedAt: null,
+      order: 0,
       createdAt: 1000,
       updatedAt: 1000,
     });

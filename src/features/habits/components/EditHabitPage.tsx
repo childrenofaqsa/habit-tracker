@@ -1,7 +1,10 @@
-import { useState } from "react";
-import { ArrowLeft, Bell, Settings } from "lucide-react";
+import { useRef, useState } from "react";
+import { ArrowLeft, Bell, Settings, Upload, Trash2 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { useAppStore } from "@/store/useAppStore";
+import { useHabitActions } from "@/features/habits/hooks/useHabitActions";
+import { useHabitImage } from "@/features/habits/hooks/useHabitImage";
+import { deleteImage, revokeImageUrl } from "@/storage/imageStore";
 import type { Habit } from "@/lib/schema";
 
 type EditHabitPageProps = {
@@ -16,9 +19,13 @@ const DAY_CODES = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 
 export function EditHabitPage({ habit, onBack }: EditHabitPageProps) {
   const updateHabit = useAppStore((s) => s.updateHabit);
+  const deleteHabit = useAppStore((s) => s.deleteHabit);
   const categories = useAppStore((s) => s.categories);
   const timeframes = useAppStore((s) => s.timeframes);
   const values = useAppStore((s) => s.values);
+  const { uploadImage } = useHabitActions();
+  const imageUrl = useHabitImage(habit.imageId);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const currentCategory = categories.find((c) => c.id === habit.categoryId);
   const currentTimeframe = timeframes.find(
@@ -26,6 +33,7 @@ export function EditHabitPage({ habit, onBack }: EditHabitPageProps) {
   );
 
   const [title, setTitle] = useState(habit.title);
+  const [details, setDetails] = useState(habit.details);
   const [selectedTimeframe, setSelectedTimeframe] = useState(
     currentTimeframe?.name ?? "Morning",
   );
@@ -58,11 +66,21 @@ export function EditHabitPage({ habit, onBack }: EditHabitPageProps) {
   function handleSave() {
     updateHabit(habit.id, {
       title,
+      details,
       scheduledTime,
       recurrence,
       notifications,
       linkedValueId: linkedValueId || null,
     });
+    onBack();
+  }
+
+  function handleDelete() {
+    if (habit.imageId) {
+      revokeImageUrl(habit.imageId);
+      void deleteImage(habit.imageId);
+    }
+    deleteHabit(habit.id);
     onBack();
   }
 
@@ -85,10 +103,40 @@ export function EditHabitPage({ habit, onBack }: EditHabitPageProps) {
       </header>
 
       <div className="rounded-2xl border border-border bg-card p-5">
-        <div className="flex items-center gap-4">
-          <div className="flex size-14 items-center justify-center rounded-xl bg-primary/10 text-2xl">
-            ✦
-          </div>
+        <div className="flex items-start gap-4">
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            aria-label={imageUrl ? "Change habit image" : "Upload habit image"}
+            className={cn(
+              "relative flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl",
+              imageUrl
+                ? "border border-border"
+                : "border-2 border-dashed border-border bg-primary/5 text-muted-foreground hover:border-primary hover:text-primary",
+            )}
+          >
+            {imageUrl ? (
+              <img src={imageUrl} alt="" className="size-full object-cover" />
+            ) : (
+              <Upload className="size-6" />
+            )}
+            {imageUrl && (
+              <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-black/55 py-0.5 text-center text-[10px] font-semibold uppercase tracking-wider text-white">
+                Change
+              </span>
+            )}
+          </button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              if (file) void uploadImage(habit, file);
+              event.target.value = "";
+            }}
+          />
           <div className="flex-1">
             <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Habit Name
@@ -100,6 +148,18 @@ export function EditHabitPage({ habit, onBack }: EditHabitPageProps) {
               className="mt-1 w-full rounded-lg border-0 bg-muted/60 px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
+        </div>
+        <div className="mt-4">
+          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Description
+          </label>
+          <textarea
+            value={details}
+            onChange={(e) => setDetails(e.target.value)}
+            placeholder="Add a note or description"
+            rows={3}
+            className="mt-1 w-full resize-none rounded-lg border-0 bg-muted/60 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+          />
         </div>
       </div>
 
@@ -217,13 +277,22 @@ export function EditHabitPage({ habit, onBack }: EditHabitPageProps) {
         </select>
       </div>
 
-      <button
-        type="button"
-        onClick={handleSave}
-        className="w-full rounded-xl bg-primary py-3.5 text-center font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-      >
-        Save Habit Changes
-      </button>
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <button
+          type="button"
+          onClick={handleSave}
+          className="flex-1 rounded-xl bg-primary py-3.5 text-center font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+        >
+          Save Habit Changes
+        </button>
+        <button
+          type="button"
+          onClick={handleDelete}
+          className="inline-flex items-center justify-center gap-2 rounded-xl border border-destructive/40 px-4 py-3.5 text-sm font-semibold text-destructive transition-colors hover:bg-destructive/10"
+        >
+          <Trash2 className="size-4" /> Delete habit
+        </button>
+      </div>
     </div>
   );
 }

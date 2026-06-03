@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { todayKey } from "@/lib/date";
 import { useAppStore } from "@/store/useAppStore";
@@ -80,12 +81,7 @@ export function AnalyticsView() {
       </Reveal>
 
       <Reveal delay={0.05}>
-        <div className="space-y-3">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            History — Last 180 Days
-          </h2>
-          <HistoryMatrix days={180} />
-        </div>
+        <HistorySection />
       </Reveal>
 
       <Reveal delay={0.1}>
@@ -148,6 +144,31 @@ export function AnalyticsView() {
           </div>
         </div>
       </Reveal>
+    </div>
+  );
+}
+
+function HistorySection() {
+  const open = useUiStore((s) => s.analyticsHistoryOpen);
+  const setOpen = useUiStore((s) => s.setAnalyticsHistoryOpen);
+  return (
+    <div className="space-y-3">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center justify-between rounded-lg px-1 text-left transition-colors hover:text-foreground"
+      >
+        <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+          History — Last 180 Days
+        </h2>
+        <ChevronDown
+          className={cn(
+            "size-4 text-muted-foreground transition-transform",
+            open && "rotate-180",
+          )}
+        />
+      </button>
+      {open && <HistoryMatrix days={180} />}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { Check, X, FileText } from "lucide-react";
 import type { DayRecord } from "@/lib/schema";
 import type { MatrixRow } from "@/features/analytics/matrixData";
+import { aggregateValueEntries } from "@/lib/aggregate";
 
 type Props = {
   row: MatrixRow;
@@ -17,23 +18,24 @@ export function MatrixCell({ row, record, height, onOpenText }: Props) {
     return (
       <div className={base} style={{ height }}>
         {status === "done" && (
-          <span className="grid size-5 place-items-center rounded-full bg-success/20">
-            <Check className="size-3 text-success" />
+          <span className="grid size-6 place-items-center rounded-md bg-[#19a337]">
+            <Check className="size-4 text-white" strokeWidth={3} />
           </span>
         )}
         {status === "missed" && (
-          <span className="grid size-5 place-items-center rounded-full bg-destructive/20">
-            <X className="size-3 text-destructive" />
+          <span className="grid size-6 place-items-center rounded-md bg-[#d92525]">
+            <X className="size-4 text-white" strokeWidth={3} />
           </span>
         )}
-        {!status && (
-          <span className="size-1.5 rounded-full bg-border" />
-        )}
+        {!status && <span className="size-1.5 rounded-full bg-border" />}
       </div>
     );
   }
 
-  const entry = record?.valueEntries[row.id];
+  const entry = aggregateValueEntries(
+    record?.valueEntries[row.id],
+    row.valueType ?? "numeric",
+  );
   if (entry === undefined) {
     return (
       <div className={base} style={{ height }}>

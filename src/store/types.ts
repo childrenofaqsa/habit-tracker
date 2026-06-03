@@ -16,8 +16,8 @@ export type HistoryActions = {
   setHabitStatusToday: (habitId: string, status: HabitStatus | null) => void;
   cycleHabitDone: (habitId: string) => void;
   cycleHabitMissed: (habitId: string) => void;
-  setValueEntryToday: (valueId: string, value: number | string | null) => void;
-  setValueEntry: (valueId: string, dateKey: string, value: number | string | null) => void;
+  setValueEntryToday: (valueId: string, value: number | string | null, habitId?: string) => void;
+  setValueEntry: (valueId: string, dateKey: string, value: number | string | null, habitId?: string) => void;
 };
 
 export type HabitsActions = {
@@ -49,14 +49,25 @@ export type ValuesActions = {
   linkHabitToValue: (habitId: string, valueId: string | null) => void;
 };
 
+export type AddTodoInput = {
+  title: string;
+  date?: string | null;
+  tag?: string;
+  priority?: Todo["priority"];
+  time?: string | null;
+  location?: string | null;
+  notes?: string;
+};
+
 export type TodosActions = {
-  addTodo: (title: string, date: string | null) => string;
+  addTodo: (input: AddTodoInput) => string;
   updateTodo: (
     id: string,
-    patch: Partial<Pick<Todo, "title" | "notes" | "date" | "priority" | "time" | "location">>,
+    patch: Partial<Pick<Todo, "title" | "notes" | "date" | "priority" | "tag" | "time" | "location">>,
   ) => void;
   deleteTodo: (id: string) => void;
   toggleTodo: (id: string) => void;
+  reorderTodos: (orderedIds: string[]) => void;
 };
 
 export type SettingsActions = {

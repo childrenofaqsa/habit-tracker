@@ -41,25 +41,40 @@ export const createHistorySlice: AppSlice<HistoryActions> = (set) => ({
       }
     }),
 
-  setValueEntryToday: (valueId, value) =>
+  setValueEntryToday: (valueId, value, habitId = "__direct__") =>
     set((draft) => {
       const day = ensureToday(draft.history);
+      const contribs = day.valueEntries[valueId] ?? {};
       if (value === null || value === "") {
-        delete day.valueEntries[valueId];
+        delete contribs[habitId];
+        if (Object.keys(contribs).length === 0) {
+          delete day.valueEntries[valueId];
+        } else {
+          day.valueEntries[valueId] = contribs;
+        }
       } else {
-        day.valueEntries[valueId] = value;
+        contribs[habitId] = value;
+        day.valueEntries[valueId] = contribs;
       }
     }),
 
-  setValueEntry: (valueId, dateKey, value) =>
+  setValueEntry: (valueId, dateKey, value, habitId = "__direct__") =>
     set((draft) => {
       if (!draft.history[dateKey]) {
         draft.history[dateKey] = { habitStatus: {}, valueEntries: {} };
       }
+      const day = draft.history[dateKey]!;
+      const contribs = day.valueEntries[valueId] ?? {};
       if (value === null || value === "") {
-        delete draft.history[dateKey]!.valueEntries[valueId];
+        delete contribs[habitId];
+        if (Object.keys(contribs).length === 0) {
+          delete day.valueEntries[valueId];
+        } else {
+          day.valueEntries[valueId] = contribs;
+        }
       } else {
-        draft.history[dateKey]!.valueEntries[valueId] = value;
+        contribs[habitId] = value;
+        day.valueEntries[valueId] = contribs;
       }
     }),
 });

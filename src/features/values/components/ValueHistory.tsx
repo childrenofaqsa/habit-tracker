@@ -6,6 +6,7 @@ import type { DateKey } from "@/lib/date";
 import { cn } from "@/lib/cn";
 import type { ValueTracker } from "@/lib/schema";
 import { useAppStore } from "@/store/useAppStore";
+import { aggregateValueEntries } from "@/lib/aggregate";
 import {
   Dialog,
   DialogContent,
@@ -37,7 +38,7 @@ export function ValueHistory({ value }: Props) {
     if (value.type !== "numeric") return 1;
     let max = 1;
     for (const dateKey of dates) {
-      const entry = history[dateKey]?.valueEntries[value.id];
+      const entry = aggregateValueEntries(history[dateKey]?.valueEntries[value.id], value.type);
       if (typeof entry === "number" && entry > max) max = entry;
     }
     return max;
@@ -53,7 +54,7 @@ export function ValueHistory({ value }: Props) {
       <p className="text-xs font-medium text-muted-foreground">History</p>
       <div className="grid grid-cols-7 gap-1">
         {dates.map((dateKey) => {
-          const entry = history[dateKey]?.valueEntries[value.id];
+          const entry = aggregateValueEntries(history[dateKey]?.valueEntries[value.id], value.type);
           const hasEntry = entry !== undefined && entry !== 0 && entry !== "";
 
           if (value.type === "numeric") {

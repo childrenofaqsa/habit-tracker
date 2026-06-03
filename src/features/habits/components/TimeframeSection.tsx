@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Trash2, GripVertical, ChevronDown, Sun, SunMedium, Sunset, Moon } from "lucide-react";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { verticalListSortingStrategy } from "@dnd-kit/sortable";
@@ -6,6 +5,7 @@ import { cn } from "@/lib/cn";
 import type { Timeframe } from "@/lib/schema";
 import { useShallow } from "zustand/react/shallow";
 import { useAppStore } from "@/store/useAppStore";
+import { useUiStore } from "@/store/useUiStore";
 import { selectCategories } from "@/store/selectors";
 import { Button } from "@/common/components/ui/data/button";
 import { EditableTitle } from "@/features/editmode/EditableTitle";
@@ -26,7 +26,9 @@ function getTimeframeIcon(name: string) {
 type Props = { timeframe: Timeframe; handle?: React.ReactNode };
 
 export function TimeframeSection({ timeframe, handle }: Props) {
-  const [open, setOpen] = useState(true);
+  const storedOpen = useUiStore((state) => state.timeframeOpen[timeframe.id]);
+  const setTimeframeOpen = useUiStore((state) => state.setTimeframeOpen);
+  const open = storedOpen ?? true;
   const editMode = useAppStore((state) => state.settings.editMode);
   const categories = useAppStore(useShallow(selectCategories(timeframe.id)));
   const renameTimeframe = useAppStore((state) => state.renameTimeframe);
@@ -36,7 +38,11 @@ export function TimeframeSection({ timeframe, handle }: Props) {
   const Icon = getTimeframeIcon(timeframe.name);
 
   return (
-    <Collapsible.Root open={open} onOpenChange={setOpen} asChild>
+    <Collapsible.Root
+      open={open}
+      onOpenChange={(next) => setTimeframeOpen(timeframe.id, next)}
+      asChild
+    >
       <section className="overflow-hidden rounded-3xl border border-indigo-50 bg-white shadow-sm dark:border-border dark:bg-card">
         <Collapsible.Trigger asChild>
           <button

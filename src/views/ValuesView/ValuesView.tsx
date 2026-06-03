@@ -21,7 +21,6 @@ type ValuesScreen =
 
 export function ValuesView() {
   const [screen, setScreen] = useState<ValuesScreen>({ type: "home" });
-  const [dragMode, setDragMode] = useState(false);
   const values = useAppStore(useShallow(selectValues));
   const reorderValues = useAppStore((s) => s.reorderValues);
   const searchQuery = useUiStore((s) => s.searchQuery);
@@ -73,34 +72,22 @@ export function ValuesView() {
     );
   }
 
+  const dragEnabled = !searchQuery.trim();
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Tracker Updates</h2>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setDragMode((d) => !d)}
-            className={`rounded-xl border px-3 py-2 text-sm font-semibold transition-colors ${
-              dragMode
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-border bg-card text-muted-foreground hover:text-foreground"
-            }`}
-            aria-label="Toggle drag reorder mode"
-          >
-            <GripVertical className="size-4" />
-          </button>
-          <button
-            type="button"
-            onClick={() => setScreen({ type: "create" })}
-            className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
-          >
-            <Plus className="size-4" /> Create New
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setScreen({ type: "create" })}
+          className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+        >
+          <Plus className="size-4" /> Create New
+        </button>
       </div>
 
-      {dragMode && !searchQuery.trim() ? (
+      {dragEnabled ? (
         <DndList
           ids={filteredValues.map((v) => v.id)}
           strategy={verticalListSortingStrategy}
@@ -112,7 +99,7 @@ export function ValuesView() {
                 {({ attributes, listeners }) => (
                   <ValueRow
                     value={value}
-                    dragMode={dragMode}
+                    dragMode
                     onNameClick={() => setScreen({ type: "edit", valueId: value.id })}
                     onLogClick={() => setScreen({ type: "detail", valueId: value.id })}
                     handle={

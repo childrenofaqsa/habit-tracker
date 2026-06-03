@@ -36,11 +36,15 @@ export function formatHumanDate(key: DateKey): string {
 }
 
 export function formatShortDate(key: DateKey): string {
-  return format(parseDateKey(key), "MMM d");
+  return format(parseDateKey(key), "d MMM");
+}
+
+export function formatDayMonth(key: DateKey): string {
+  return format(parseDateKey(key), "d MMM");
 }
 
 export function formatMatrixDate(key: DateKey): string {
-  return format(parseDateKey(key), "M/d");
+  return format(parseDateKey(key), "d MMM");
 }
 
 export function backupTimestamp(): string {

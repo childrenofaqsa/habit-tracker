@@ -65,7 +65,7 @@ describe("useAppStore", () => {
   describe("todosSlice", () => {
     it("addTodo adds a new todo", () => {
       useAppStore.getState().hydrate(emptyAppData());
-      useAppStore.getState().addTodo("Buy groceries", null);
+      useAppStore.getState().addTodo({ title: "Buy groceries" });
       const todos = useAppStore.getState().todos;
       expect(todos).toHaveLength(1);
       expect(todos[0]!.title).toBe("Buy groceries");
@@ -74,7 +74,7 @@ describe("useAppStore", () => {
 
     it("toggleTodo marks as completed", () => {
       useAppStore.getState().hydrate(emptyAppData());
-      useAppStore.getState().addTodo("Task", null);
+      useAppStore.getState().addTodo({ title: "Task" });
       const id = useAppStore.getState().todos[0]!.id;
       useAppStore.getState().toggleTodo(id);
       expect(useAppStore.getState().todos[0]!.completed).toBe(true);

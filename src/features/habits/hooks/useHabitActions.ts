@@ -22,7 +22,7 @@ export function useHabitActions() {
 
   const promptLinkedValue = useCallback(
     (habit: Habit) => {
-      if (habit.linkedValueId) openValuePrompt(habit.linkedValueId);
+      if (habit.linkedValueId) openValuePrompt(habit.linkedValueId, habit.id);
     },
     [openValuePrompt],
   );

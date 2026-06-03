@@ -14,7 +14,7 @@ import {
   DialogTitle,
 } from "@/common/components/ui/overlay/dialog";
 
-const BASE_COL = 46;
+const BASE_COL = 56;
 const BASE_ROW = 42;
 const BASE_HEADER = 30;
 const LABEL_WIDTH = 140;
@@ -31,10 +31,11 @@ export function HistoryMatrix({ days }: { days: number }) {
   const values = useAppStore((state) => state.values);
   const history = useAppStore((state) => state.history);
   const categories = useAppStore((state) => state.categories);
+  const timeframes = useAppStore((state) => state.timeframes);
   const [filter, setFilter] = useState<MatrixFilter>("all");
   const [visibleDays, setVisibleDays] = useState(Math.min(days, COLUMN_CHUNK));
 
-  const rows = buildMatrixRows(habits, values, filter, categories);
+  const rows = buildMatrixRows(habits, values, filter, categories, timeframes);
   const columns = reverseChronologicalKeys(visibleDays);
 
   const [scale, setScale] = useState(1);

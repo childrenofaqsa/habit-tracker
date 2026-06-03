@@ -1,40 +1,78 @@
 import { useMemo, useState } from "react";
-import { ListTodo, Calendar as CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
+import {
+  ListTodo,
+  Calendar as CalendarIcon,
+  ArrowUpDown,
+  Eye,
+  EyeOff,
+  GripVertical,
+} from "lucide-react";
+import { verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { todayKey } from "@/lib/date";
 import { useAppStore } from "@/store/useAppStore";
-import { useUiStore } from "@/store/useUiStore";
-import { buildTodoBuckets, buildDateGroupedTodos } from "@/store/todoSelectors";
+import { useUiStore, type TodoSortMode } from "@/store/useUiStore";
+import {
+  buildTodoBuckets,
+  buildDateGroupedTodos,
+} from "@/store/todoSelectors";
 import { cn } from "@/lib/cn";
 import { EmptyState } from "@/common/components/EmptyState";
 import { DateScrollRow } from "@/common/components/DateScrollRow";
-import { AddTodo } from "@/features/todos/components/AddTodo";
 import { TodoCard } from "@/features/todos/components/TodoCard";
 import { CalendarView } from "@/features/todos/components/CalendarView";
+import { EditTodoPage } from "@/features/todos/components/EditTodoPage";
 import { FloatingActionButton } from "@/common/components/FloatingActionButton";
+import { DndList } from "@/features/editmode/DndList";
+import { Sortable } from "@/features/editmode/Sortable";
 
 type ViewMode = "today" | "all" | "calendar";
+
+const SORT_LABELS: Record<TodoSortMode, string> = {
+  manual: "Manual",
+  time: "Time",
+  priority: "Priority",
+  createdAt: "Created",
+};
 
 export function TodoView() {
   const [selectedDate, setSelectedDate] = useState(todayKey);
   const [viewMode, setViewMode] = useState<ViewMode>("today");
-  const [showAddTodo, setShowAddTodo] = useState(false);
   const todos = useAppStore((state) => state.todos);
+  const reorderTodos = useAppStore((state) => state.reorderTodos);
   const searchQuery = useUiStore((state) => state.searchQuery);
+  const todoSort = useUiStore((state) => state.todoSort);
+  const setTodoSort = useUiStore((state) => state.setTodoSort);
+  const hideCompleted = useUiStore((state) => state.todoHideCompleted);
+  const setHideCompleted = useUiStore((state) => state.setTodoHideCompleted);
+  const editingTodoId = useUiStore((state) => state.editingTodoId);
+  const setEditingTodoId = useUiStore((state) => state.setEditingTodoId);
 
   const filteredTodos = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return todos;
-    return todos.filter(
-      (t) =>
-        t.title.toLowerCase().includes(q) ||
-        t.notes.toLowerCase().includes(q) ||
-        (t.location ?? "").toLowerCase().includes(q),
-    );
-  }, [todos, searchQuery]);
+    let result = todos;
+    if (q) {
+      result = result.filter(
+        (t) =>
+          t.title.toLowerCase().includes(q) ||
+          t.notes.toLowerCase().includes(q) ||
+          t.tag.toLowerCase().includes(q) ||
+          (t.location ?? "").toLowerCase().includes(q),
+      );
+    }
+    if (hideCompleted) result = result.filter((t) => !t.completed);
+    return result;
+  }, [todos, searchQuery, hideCompleted]);
 
-  const buckets = buildTodoBuckets(filteredTodos);
-  const dateGroups = buildDateGroupedTodos(filteredTodos);
+  if (editingTodoId) {
+    const editing =
+      editingTodoId === "new"
+        ? null
+        : todos.find((t) => t.id === editingTodoId) ?? null;
+    return <EditTodoPage todo={editing} />;
+  }
+
+  const buckets = buildTodoBuckets(filteredTodos, todoSort);
+  const dateGroups = buildDateGroupedTodos(filteredTodos, todoSort);
 
   if (viewMode === "calendar") {
     return (
@@ -46,6 +84,7 @@ export function TodoView() {
           </div>
         </header>
         <CalendarView onClose={() => setViewMode("today")} />
+        <FloatingActionButton onClick={() => setEditingTodoId("new")} />
       </div>
     );
   }
@@ -70,17 +109,23 @@ export function TodoView() {
 
       <DateScrollRow selectedDate={selectedDate} onDateChange={setSelectedDate} />
 
-      {showAddTodo && (
-        <AddTodo
-          defaultDate={selectedDate !== todayKey() ? selectedDate : null}
-        />
-      )}
+      <div className="flex items-center justify-between gap-2">
+        <SortDropdown value={todoSort} onChange={setTodoSort} />
+        <button
+          type="button"
+          onClick={() => setHideCompleted(!hideCompleted)}
+          className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground"
+        >
+          {hideCompleted ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+          {hideCompleted ? "Hidden" : "Visible"}
+        </button>
+      </div>
 
       {todos.length === 0 ? (
         <EmptyState
           icon={ListTodo}
           title="Nothing to do"
-          description="Add one-time tasks. Assign a date or leave them in your inbox."
+          description="Tap the + button to add a task."
         />
       ) : filteredTodos.length === 0 && searchQuery.trim() ? (
         <EmptyState
@@ -89,12 +134,20 @@ export function TodoView() {
           description={`No tasks match "${searchQuery.trim()}".`}
         />
       ) : viewMode === "today" ? (
-        <TodayView buckets={buckets} />
+        <TodayView
+          buckets={buckets}
+          sortMode={todoSort}
+          onReorder={reorderTodos}
+        />
       ) : (
-        <AllTasksView groups={dateGroups} />
+        <AllTasksView
+          groups={dateGroups}
+          sortMode={todoSort}
+          onReorder={reorderTodos}
+        />
       )}
 
-      <FloatingActionButton onClick={() => setShowAddTodo((p) => !p)} />
+      <FloatingActionButton onClick={() => setEditingTodoId("new")} />
     </div>
   );
 }
@@ -136,33 +189,135 @@ function ViewModeToggle({
   );
 }
 
-function TodayView({ buckets }: { buckets: ReturnType<typeof buildTodoBuckets> }) {
+function SortDropdown({
+  value,
+  onChange,
+}: {
+  value: TodoSortMode;
+  onChange: (m: TodoSortMode) => void;
+}) {
+  return (
+    <label className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold text-muted-foreground">
+      <ArrowUpDown className="size-4" />
+      <span>Sort:</span>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value as TodoSortMode)}
+        className="bg-transparent text-foreground focus:outline-none"
+      >
+        {(Object.keys(SORT_LABELS) as TodoSortMode[]).map((mode) => (
+          <option key={mode} value={mode}>
+            {SORT_LABELS[mode]}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+function TodoList({
+  todos,
+  sortMode,
+  onReorder,
+}: {
+  todos: import("@/lib/schema").Todo[];
+  sortMode: TodoSortMode;
+  onReorder: (ids: string[]) => void;
+}) {
+  if (sortMode === "manual") {
+    const ids = todos.map((t) => t.id);
+    return (
+      <DndList
+        ids={ids}
+        strategy={verticalListSortingStrategy}
+        onReorder={onReorder}
+      >
+        <div className="space-y-2">
+          {todos.map((todo) => (
+            <Sortable key={todo.id} id={todo.id}>
+              {({ attributes, listeners }) => (
+                <TodoCard
+                  todo={todo}
+                  showDragHandle
+                  dragHandle={
+                    <span
+                      {...attributes}
+                      {...listeners}
+                      className="cursor-grab touch-none text-muted-foreground/50 active:cursor-grabbing"
+                    >
+                      <GripVertical className="size-4" />
+                    </span>
+                  }
+                />
+              )}
+            </Sortable>
+          ))}
+        </div>
+      </DndList>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      {todos.map((todo) => (
+        <TodoCard key={todo.id} todo={todo} />
+      ))}
+    </div>
+  );
+}
+
+function TodayView({
+  buckets,
+  sortMode,
+  onReorder,
+}: {
+  buckets: ReturnType<typeof buildTodoBuckets>;
+  sortMode: TodoSortMode;
+  onReorder: (ids: string[]) => void;
+}) {
   return (
     <div className="space-y-6">
       {buckets.todayOverdue.length > 0 && (
-        <TodoSection
-          label="Overdue"
-          labelColor="text-red-500"
-          todos={buckets.todayOverdue}
-        />
+        <TodoSection label="Overdue / Today" labelColor="text-red-500">
+          <TodoList
+            todos={buckets.todayOverdue}
+            sortMode={sortMode}
+            onReorder={onReorder}
+          />
+        </TodoSection>
       )}
-      {buckets.todayOverdue.length > 0 || buckets.inbox.length > 0 ? (
-        <TodoSection label="Today" todos={buckets.todayOverdue.length > 0 ? [] : buckets.inbox} />
-      ) : null}
       {buckets.scheduled.length > 0 && (
-        <TodoSection label="Scheduled" todos={buckets.scheduled} />
+        <TodoSection label="Scheduled">
+          <TodoList
+            todos={buckets.scheduled}
+            sortMode={sortMode}
+            onReorder={onReorder}
+          />
+        </TodoSection>
       )}
-      {buckets.inbox.length > 0 && (
-        <TodoSection label="Inbox" todos={buckets.inbox} />
-      )}
+      {buckets.completed.length > 0 &&
+        !buckets.todayOverdue.length &&
+        !buckets.scheduled.length && (
+          <TodoSection label="Completed">
+            <div className="space-y-2">
+              {buckets.completed.map((todo) => (
+                <TodoCard key={todo.id} todo={todo} />
+              ))}
+            </div>
+          </TodoSection>
+        )}
     </div>
   );
 }
 
 function AllTasksView({
   groups,
+  sortMode,
+  onReorder,
 }: {
   groups: ReturnType<typeof buildDateGroupedTodos>;
+  sortMode: TodoSortMode;
+  onReorder: (ids: string[]) => void;
 }) {
   return (
     <div className="space-y-6">
@@ -170,10 +325,14 @@ function AllTasksView({
         <TodoSection
           key={group.date}
           label={group.label}
-          sublabel={group.date !== "inbox" ? format(new Date(group.date), "EEE, MMM d, yyyy") : undefined}
           labelColor={group.isOverdue ? "text-red-500" : undefined}
-          todos={group.todos}
-        />
+        >
+          <TodoList
+            todos={group.todos}
+            sortMode={sortMode}
+            onReorder={onReorder}
+          />
+        </TodoSection>
       ))}
     </div>
   );
@@ -181,32 +340,26 @@ function AllTasksView({
 
 function TodoSection({
   label,
-  sublabel,
   labelColor,
-  todos,
+  children,
 }: {
   label: string;
-  sublabel?: string;
   labelColor?: string;
-  todos: import("@/lib/schema").Todo[];
+  children: React.ReactNode;
 }) {
-  if (todos.length === 0 && label !== "Today") return null;
-
   return (
     <div>
       <div className="mb-2 flex items-center gap-2">
-        <h3 className={cn("text-sm font-bold uppercase", labelColor ?? "text-foreground")}>
+        <h3
+          className={cn(
+            "text-sm font-bold uppercase",
+            labelColor ?? "text-foreground",
+          )}
+        >
           {label}
         </h3>
-        {sublabel && (
-          <span className="text-xs text-muted-foreground">{sublabel}</span>
-        )}
       </div>
-      <div className="space-y-2">
-        {todos.map((todo) => (
-          <TodoCard key={todo.id} todo={todo} />
-        ))}
-      </div>
+      {children}
     </div>
   );
 }

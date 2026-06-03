@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CalendarPlus, GripVertical, Calendar, Plus } from "lucide-react";
+import { CalendarPlus, GripVertical, Calendar, Plus, EyeOff, Eye } from "lucide-react";
 import { format, parse } from "date-fns";
 import { verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useShallow } from "zustand/react/shallow";
@@ -33,7 +33,8 @@ export function DailyView() {
   const [selectedDate, setSelectedDate] = useState(todayKey);
   const [routineView, setRoutineView] = useState<RoutineView>("myday");
   const [activeCategory, setActiveCategory] = useState("All");
-  const [editingHabitId, setEditingHabitId] = useState<string | null>(null);
+  const editingHabitId = useUiStore((state) => state.editingHabitId);
+  const setEditingHabitId = useUiStore((state) => state.setEditingHabitId);
   const editMode = useAppStore((state) => state.settings.editMode);
   const timeframes = useAppStore(useShallow(selectTimeframes));
   const habits = useAppStore((state) => state.habits);
@@ -123,31 +124,34 @@ export function DailyView() {
                   Today's Journey
                 </p>
               </div>
-              <div className="shrink-0 rounded-full border border-border bg-muted p-1">
-                <button
-                  type="button"
-                  onClick={() => setRoutineView("myday")}
-                  className={cn(
-                    "rounded-full px-5 py-1.5 text-sm font-semibold transition-colors",
-                    routineView === "myday"
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground",
-                  )}
-                >
-                  My Day
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRoutineView("alltask")}
-                  className={cn(
-                    "rounded-full px-5 py-1.5 text-sm font-semibold transition-colors",
-                    routineView === "alltask"
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground",
-                  )}
-                >
-                  All Task
-                </button>
+              <div className="flex shrink-0 items-center gap-2">
+                <div className="rounded-full border border-border bg-muted p-1">
+                  <button
+                    type="button"
+                    onClick={() => setRoutineView("myday")}
+                    className={cn(
+                      "rounded-full px-5 py-1.5 text-sm font-semibold transition-colors",
+                      routineView === "myday"
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    My Day
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRoutineView("alltask")}
+                    className={cn(
+                      "rounded-full px-5 py-1.5 text-sm font-semibold transition-colors",
+                      routineView === "alltask"
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    All Task
+                  </button>
+                </div>
+                <DateJumpButton value={selectedDate} onChange={setSelectedDate} />
               </div>
             </header>
 
@@ -242,13 +246,45 @@ function AllTaskView({
   habitCount: number;
   onHabitAction: (id: string) => void;
 }) {
+  const timeframes = useAppStore(useShallow(selectTimeframes));
+  const categories = useAppStore((state) => state.categories);
+  const addCategory = useAppStore((state) => state.addCategory);
+  const addHabit = useAppStore((state) => state.addHabit);
+
+  const handleAddCategory = () => {
+    const firstTimeframe = timeframes[0];
+    if (!firstTimeframe) return;
+    addCategory(firstTimeframe.id, "New Category");
+  };
+
+  const handleAddTask = () => {
+    let targetCategoryId =
+      activeCategory !== "All"
+        ? categories.find((c) => c.name === activeCategory)?.id
+        : undefined;
+    if (!targetCategoryId) targetCategoryId = categories[0]?.id;
+    if (!targetCategoryId) return;
+    const id = addHabit(targetCategoryId, "New Habit");
+    onHabitAction(id);
+  };
+
   return (
     <>
-      <CategoryFilter
-        categories={filterCategories}
-        activeCategory={activeCategory}
-        onSelect={onCategoryChange}
-      />
+      <div className="flex items-center justify-between gap-2">
+        <CategoryFilter
+          categories={filterCategories}
+          activeCategory={activeCategory}
+          onSelect={onCategoryChange}
+          onAddCategory={timeframes.length > 0 ? handleAddCategory : undefined}
+        />
+        <button
+          type="button"
+          onClick={handleAddTask}
+          className="inline-flex shrink-0 items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-90"
+        >
+          <Plus className="size-4" /> Add Task
+        </button>
+      </div>
       {habitCount === 0 ? (
         <EmptyState
           icon={CalendarPlus}
@@ -261,6 +297,29 @@ function AllTaskView({
         </Reveal>
       )}
     </>
+  );
+}
+
+function DateJumpButton({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (d: string) => void;
+}) {
+  return (
+    <label
+      className="cursor-pointer rounded-xl border border-border bg-card p-2.5 shadow-sm transition-colors hover:bg-muted"
+      aria-label="Jump to date"
+    >
+      <Calendar className="size-5 text-foreground" />
+      <input
+        type="date"
+        className="sr-only"
+        value={value}
+        onChange={(e) => e.target.value && onChange(e.target.value)}
+      />
+    </label>
   );
 }
 
@@ -279,6 +338,8 @@ function EditModeView({
   addTimeframe: (name: string) => string;
   addHabit: (categoryId: string, title: string) => string;
 }) {
+  const hideCompleted = useUiStore((state) => state.editHideCompleted);
+  const setHideCompleted = useUiStore((state) => state.setEditHideCompleted);
   return (
     <>
       <header className="flex items-start justify-between">
@@ -288,15 +349,7 @@ function EditModeView({
           </h2>
         </div>
         <div className="flex items-center gap-3">
-          <label className="rounded-xl border border-border bg-card p-2.5 shadow-sm transition-colors hover:bg-muted">
-            <Calendar className="size-5 text-foreground" />
-            <input
-              type="date"
-              className="sr-only"
-              value={selectedDate}
-              onChange={(e) => e.target.value && setSelectedDate(e.target.value)}
-            />
-          </label>
+          <DateJumpButton value={selectedDate} onChange={setSelectedDate} />
           <button
             type="button"
             onClick={() => useAppStore.getState().setEditMode(false)}
@@ -306,6 +359,21 @@ function EditModeView({
           </button>
         </div>
       </header>
+
+      <button
+        type="button"
+        onClick={() => setHideCompleted(!hideCompleted)}
+        className={cn(
+          "inline-flex items-center gap-2 self-start rounded-full border px-4 py-2 text-sm font-medium transition-colors",
+          hideCompleted
+            ? "border-primary/40 bg-primary/10 text-primary"
+            : "border-border bg-card text-muted-foreground hover:text-foreground",
+        )}
+        aria-pressed={hideCompleted}
+      >
+        {hideCompleted ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
+        {hideCompleted ? "Show completed" : "Hide completed"}
+      </button>
 
       <DndList
         ids={timeframes.map((tf) => tf.id)}

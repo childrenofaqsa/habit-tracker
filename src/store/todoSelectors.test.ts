@@ -12,8 +12,7 @@ describe("buildTodoBuckets", () => {
     ];
     const buckets = buildTodoBuckets(todos);
     expect(buckets.todayOverdue).toHaveLength(1);
-    expect(buckets.inbox).toHaveLength(1);
-    expect(buckets.scheduled).toHaveLength(1);
+    expect(buckets.scheduled).toHaveLength(2);
     expect(buckets.completed).toHaveLength(1);
   });
 
@@ -21,7 +20,6 @@ describe("buildTodoBuckets", () => {
     const buckets = buildTodoBuckets([]);
     expect(buckets.todayOverdue).toHaveLength(0);
     expect(buckets.scheduled).toHaveLength(0);
-    expect(buckets.inbox).toHaveLength(0);
     expect(buckets.completed).toHaveLength(0);
   });
 
@@ -36,7 +34,7 @@ describe("buildTodoBuckets", () => {
       buildTodo({ id: "b", date: daysAgo(1) }),
       buildTodo({ id: "a", date: daysAgo(5) }),
     ];
-    const buckets = buildTodoBuckets(todos);
+    const buckets = buildTodoBuckets(todos, "createdAt");
     expect(buckets.todayOverdue[0]!.id).toBe("a");
     expect(buckets.todayOverdue[1]!.id).toBe("b");
   });
@@ -46,7 +44,7 @@ describe("buildTodoBuckets", () => {
       buildTodo({ id: "far", date: daysFromNow(10) }),
       buildTodo({ id: "near", date: daysFromNow(1) }),
     ];
-    const buckets = buildTodoBuckets(todos);
+    const buckets = buildTodoBuckets(todos, "time");
     expect(buckets.scheduled[0]!.id).toBe("near");
     expect(buckets.scheduled[1]!.id).toBe("far");
   });
@@ -61,11 +59,10 @@ describe("buildTodoBuckets", () => {
     expect(buckets.completed[1]!.id).toBe("old");
   });
 
-  it("all todos in inbox when no dates set", () => {
+  it("all todos in scheduled when no dates set", () => {
     const todos = [buildTodo(), buildTodo(), buildTodo()];
     const buckets = buildTodoBuckets(todos);
-    expect(buckets.inbox).toHaveLength(3);
+    expect(buckets.scheduled).toHaveLength(3);
     expect(buckets.todayOverdue).toHaveLength(0);
-    expect(buckets.scheduled).toHaveLength(0);
   });
 });

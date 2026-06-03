@@ -100,13 +100,13 @@ describe("formatHumanDate", () => {
 
 describe("formatShortDate", () => {
   it("formats as month day", () => {
-    expect(formatShortDate("2024-03-05")).toBe("Mar 5");
+    expect(formatShortDate("2024-03-05")).toBe("5 Mar");
   });
 });
 
 describe("formatMatrixDate", () => {
   it("formats as month/day numeric", () => {
-    expect(formatMatrixDate("2024-12-25")).toBe("12/25");
+    expect(formatMatrixDate("2024-12-25")).toBe("25 Dec");
   });
 });
 

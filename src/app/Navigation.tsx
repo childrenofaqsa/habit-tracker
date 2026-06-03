@@ -128,6 +128,18 @@ export function Navigation({ orientation }: { orientation: "bottom" | "side" }) 
           }}
         />
       ))}
+      <button
+        type="button"
+        onClick={() => {
+          haptic("tap");
+          setSettingsOpen(true);
+        }}
+        aria-label="Settings"
+        className="flex flex-1 flex-col items-center justify-center gap-1 py-2 text-[11px] font-medium text-muted-foreground hover:text-foreground"
+      >
+        <Settings className="size-5 shrink-0" />
+        <span>Settings</span>
+      </button>
     </nav>
   );
 }

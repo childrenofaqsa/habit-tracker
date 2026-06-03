@@ -13,11 +13,12 @@ import {
   startOfDay,
 } from "date-fns";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
-import type { ValueTracker } from "@/lib/schema";
+import type { ValueTracker, ValueType, DayRecord } from "@/lib/schema";
 import { useAppStore } from "@/store/useAppStore";
 import { useUiStore } from "@/store/useUiStore";
 import { cn } from "@/lib/cn";
 import { toDateKey } from "@/lib/date";
+import { aggregateValueEntries } from "@/lib/aggregate";
 import { TrackerMonthView } from "./TrackerMonthView";
 import { TrackerWeekView } from "./TrackerWeekView";
 import { TrackerListView } from "./TrackerListView";
@@ -42,8 +43,9 @@ function meetsGoal(entry: number | string | undefined, goalTarget: number | null
 }
 
 function calcMonthStats(
-  history: Record<string, { habitStatus: Record<string, unknown>; valueEntries: Record<string, number | string> }>,
+  history: Record<string, DayRecord>,
   valueId: string,
+  valueType: ValueType,
   monthDate: Date,
   goalTarget: number | null,
 ): { met: number; total: number } {
@@ -58,15 +60,16 @@ function calcMonthStats(
     if (isBefore(today, startOfDay(date))) break;
     total++;
     const dateKey = toDateKey(date);
-    const entry = history[dateKey]?.valueEntries[valueId];
+    const entry = aggregateValueEntries(history[dateKey]?.valueEntries[valueId], valueType);
     if (meetsGoal(entry, goalTarget)) met++;
   }
   return { met, total };
 }
 
 function calcWeekStats(
-  history: Record<string, { habitStatus: Record<string, unknown>; valueEntries: Record<string, number | string> }>,
+  history: Record<string, DayRecord>,
   valueId: string,
+  valueType: ValueType,
   weekStart: Date,
   goalTarget: number | null,
 ): { met: number; total: number } {
@@ -78,7 +81,7 @@ function calcWeekStats(
     if (isBefore(today, startOfDay(date))) break;
     total++;
     const dateKey = toDateKey(date);
-    const entry = history[dateKey]?.valueEntries[valueId];
+    const entry = aggregateValueEntries(history[dateKey]?.valueEntries[valueId], valueType);
     if (meetsGoal(entry, goalTarget)) met++;
   }
   return { met, total };
@@ -107,8 +110,8 @@ export function TrackerDetailView({ value, onBack }: Props) {
 
   const { met, total } =
     trackerLogView === "month"
-      ? calcMonthStats(history, value.id, currentMonth, value.goalTarget)
-      : calcWeekStats(history, value.id, currentWeekStart, value.goalTarget);
+      ? calcMonthStats(history, value.id, value.type, currentMonth, value.goalTarget)
+      : calcWeekStats(history, value.id, value.type, currentWeekStart, value.goalTarget);
 
   const completionRate = total > 0 ? Math.round((met / total) * 100) : 0;
 

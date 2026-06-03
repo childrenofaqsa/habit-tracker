@@ -61,18 +61,22 @@ export const todoSchema = z.object({
   title: z.string(),
   notes: z.string().default(""),
   date: z.string().nullable().default(null),
-  priority: prioritySchema.default("medium"),
+  priority: prioritySchema.nullable().default(null),
+  tag: z.string().default(""),
   time: z.string().nullable().default(null),
   location: z.string().nullable().default(null),
   completed: z.boolean().default(false),
   completedAt: z.number().nullable().default(null),
+  order: z.number().default(0),
   createdAt: z.number(),
   updatedAt: z.number(),
 });
 
 export const dayRecordSchema = z.object({
   habitStatus: z.record(z.string(), habitStatusSchema).default({}),
-  valueEntries: z.record(z.string(), z.union([z.number(), z.string()])).default({}),
+  valueEntries: z
+    .record(z.string(), z.record(z.string(), z.union([z.number(), z.string()])))
+    .default({}),
 });
 
 export const motionSettingsSchema = z.object({

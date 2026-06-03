@@ -36,15 +36,15 @@ describe("mergeAppData", () => {
 
   it("deep merges history for the same day", () => {
     const current = emptyAppData();
-    current.history["2024-01-01"] = { habitStatus: { h1: "done" }, valueEntries: { v1: 5 } };
+    current.history["2024-01-01"] = { habitStatus: { h1: "done" }, valueEntries: { v1: { __direct__: 5 } } };
     const incoming = emptyAppData();
-    incoming.history["2024-01-01"] = { habitStatus: { h2: "missed" }, valueEntries: { v2: 10 } };
+    incoming.history["2024-01-01"] = { habitStatus: { h2: "missed" }, valueEntries: { v2: { __direct__: 10 } } };
     const merged = mergeAppData(current, incoming);
     const day = merged.history["2024-01-01"]!;
     expect(day.habitStatus.h1).toBe("done");
     expect(day.habitStatus.h2).toBe("missed");
-    expect(day.valueEntries.v1).toBe(5);
-    expect(day.valueEntries.v2).toBe(10);
+    expect(day.valueEntries.v1?.__direct__).toBe(5);
+    expect(day.valueEntries.v2?.__direct__).toBe(10);
   });
 
   it("adds new timeframes from incoming (union by id)", () => {

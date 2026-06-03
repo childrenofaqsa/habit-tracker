@@ -11,6 +11,7 @@ import {
   SheetTitle,
 } from "@/common/components/ui/overlay/sheet";
 import { toDateKey } from "@/lib/date";
+import { aggregateValueEntries } from "@/lib/aggregate";
 
 type Props = {
   value: ValueTracker;
@@ -33,7 +34,7 @@ export function TrackerListView({ value, currentWeekStart }: Props) {
   });
 
   function getEntry(dateKey: string): number | string | undefined {
-    return history[dateKey]?.valueEntries[value.id];
+    return aggregateValueEntries(history[dateKey]?.valueEntries[value.id], value.type);
   }
 
   function openEdit(dateKey: string, dayLabel: string) {

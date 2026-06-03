@@ -114,7 +114,7 @@ export function CalendarView({ onClose: _onClose }: CalendarViewProps) {
           <div>
             <h3 className="font-semibold">Planned Tasks</h3>
             <p className="text-sm text-muted-foreground">
-              {format(selectedDay, "EEEE, MMM d")}
+              {format(selectedDay, "EEEE, d MMM")}
             </p>
           </div>
           <button

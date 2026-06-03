@@ -20,6 +20,17 @@ function mergeByUpdatedAt<T extends Timestamped>(current: T[], incoming: T[]): T
   return Array.from(map.values());
 }
 
+function mergeValueEntries(
+  current: Record<string, Record<string, number | string>>,
+  incoming: Record<string, Record<string, number | string>>,
+): Record<string, Record<string, number | string>> {
+  const merged: Record<string, Record<string, number | string>> = { ...current };
+  for (const [valueId, contribs] of Object.entries(incoming)) {
+    merged[valueId] = { ...(merged[valueId] ?? {}), ...contribs };
+  }
+  return merged;
+}
+
 function mergeHistory(
   current: Record<string, DayRecord>,
   incoming: Record<string, DayRecord>,
@@ -30,7 +41,7 @@ function mergeHistory(
     merged[day] = existing
       ? {
           habitStatus: { ...existing.habitStatus, ...record.habitStatus },
-          valueEntries: { ...existing.valueEntries, ...record.valueEntries },
+          valueEntries: mergeValueEntries(existing.valueEntries, record.valueEntries),
         }
       : record;
   }

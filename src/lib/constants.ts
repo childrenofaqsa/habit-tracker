@@ -1,4 +1,4 @@
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 4;
 
 export const STORAGE_KEYS = {
   appData: "APP_DATA",

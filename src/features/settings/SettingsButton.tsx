@@ -1,12 +1,9 @@
-import { Settings } from "lucide-react";
-import { Button } from "@/common/components/ui/data/button";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetDescription,
-  SheetTrigger,
 } from "@/common/components/ui/overlay/sheet";
 import { Separator } from "@/common/components/ui/data/separator";
 import { Switch } from "@/common/components/ui/form/switch";
@@ -16,6 +13,8 @@ import { useAppStore } from "@/store/useAppStore";
 import { useUiStore } from "@/store/useUiStore";
 import type { MotionSettings } from "@/lib/schema";
 import { Segmented } from "@/features/settings/Segmented";
+import { BackupSection } from "@/features/backup/BackupSection";
+import { InstallSection } from "@/features/install/InstallSection";
 
 const motionToggles: {
   key: Exclude<keyof MotionSettings, "intensity">;
@@ -42,12 +41,7 @@ export function SettingsButton() {
 
   return (
     <Sheet open={settingsOpen} onOpenChange={setSettingsOpen}>
-      <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="touch-target" aria-label="Settings">
-          <Settings className="size-5" />
-        </Button>
-      </SheetTrigger>
-      <SheetContent side="right" className="space-y-6">
+      <SheetContent side="right" className="space-y-6 overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Settings</SheetTitle>
           <SheetDescription>Personalize appearance and motion.</SheetDescription>
@@ -102,6 +96,12 @@ export function SettingsButton() {
             </div>
           ))}
         </div>
+
+        <Separator />
+        <InstallSection />
+
+        <Separator />
+        <BackupSection />
       </SheetContent>
     </Sheet>
   );

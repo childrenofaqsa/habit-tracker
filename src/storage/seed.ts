@@ -3,26 +3,6 @@ import { appDataSchema, type AppData } from "@/lib/schema";
 import { newId } from "@/lib/id";
 import { format, subDays } from "date-fns";
 
-function generateHistory(habitIds: string[], days: number) {
-  const history: Record<string, { habitStatus: Record<string, "done" | "missed">; valueEntries: Record<string, number | string> }> = {};
-  const today = new Date();
-
-  for (let i = 0; i < days; i++) {
-    const dateKey = format(subDays(today, i), "yyyy-MM-dd");
-    const habitStatus: Record<string, "done" | "missed"> = {};
-
-    for (const id of habitIds) {
-      const chance = Math.random();
-      if (chance < 0.7) habitStatus[id] = "done";
-      else if (chance < 0.85) habitStatus[id] = "missed";
-    }
-
-    history[dateKey] = { habitStatus, valueEntries: {} };
-  }
-
-  return history;
-}
-
 export function createSeedData(): AppData {
   const now = Date.now();
   const timeframes = DEFAULT_TIMEFRAMES.map((name, index) => ({
@@ -73,13 +53,13 @@ export function createSeedData(): AppData {
   const tomorrowKey = format(subDays(new Date(), -1), "yyyy-MM-dd");
 
   const todos = [
-    { id: newId(), title: "Review project proposal", notes: "", date: yesterdayKey, priority: "high" as const, time: "10:00 AM", location: null, completed: false, completedAt: null, createdAt: now, updatedAt: now },
-    { id: newId(), title: "Schedule dentist appointment", notes: "", date: yesterdayKey, priority: "medium" as const, time: null, location: null, completed: false, completedAt: null, createdAt: now, updatedAt: now },
-    { id: newId(), title: "Buy groceries for the week", notes: "", date: todayKey, priority: "medium" as const, time: "06:00 PM", location: "Supermarket", completed: false, completedAt: null, createdAt: now, updatedAt: now },
-    { id: newId(), title: "Prepare meeting presentation", notes: "", date: todayKey, priority: "high" as const, time: "09:00 AM", location: "Office", completed: false, completedAt: null, createdAt: now, updatedAt: now },
-    { id: newId(), title: "Call plumber for leak", notes: "", date: todayKey, priority: "low" as const, time: null, location: null, completed: false, completedAt: null, createdAt: now, updatedAt: now },
-    { id: newId(), title: "Submit expense report", notes: "", date: tomorrowKey, priority: "medium" as const, time: "02:00 PM", location: null, completed: false, completedAt: null, createdAt: now, updatedAt: now },
-    { id: newId(), title: "Plan weekend trip", notes: "", date: tomorrowKey, priority: "low" as const, time: null, location: null, completed: false, completedAt: null, createdAt: now, updatedAt: now },
+    { id: newId(), title: "Review project proposal", notes: "", date: yesterdayKey, priority: "high" as const, tag: "Work", time: "10:00", location: null, completed: false, completedAt: null, order: 0, createdAt: now, updatedAt: now },
+    { id: newId(), title: "Schedule dentist appointment", notes: "", date: yesterdayKey, priority: "medium" as const, tag: "Personal", time: null, location: null, completed: false, completedAt: null, order: 1, createdAt: now, updatedAt: now },
+    { id: newId(), title: "Buy groceries for the week", notes: "", date: todayKey, priority: "medium" as const, tag: "Errands", time: "18:00", location: "Supermarket", completed: false, completedAt: null, order: 2, createdAt: now, updatedAt: now },
+    { id: newId(), title: "Prepare meeting presentation", notes: "", date: todayKey, priority: "high" as const, tag: "Work", time: "09:00", location: "Office", completed: false, completedAt: null, order: 3, createdAt: now, updatedAt: now },
+    { id: newId(), title: "Call plumber for leak", notes: "", date: todayKey, priority: "low" as const, tag: "Home", time: null, location: null, completed: false, completedAt: null, order: 4, createdAt: now, updatedAt: now },
+    { id: newId(), title: "Submit expense report", notes: "", date: tomorrowKey, priority: "medium" as const, tag: "Work", time: "14:00", location: null, completed: false, completedAt: null, order: 5, createdAt: now, updatedAt: now },
+    { id: newId(), title: "Plan weekend trip", notes: "", date: tomorrowKey, priority: "low" as const, tag: "Personal", time: null, location: null, completed: false, completedAt: null, order: 6, createdAt: now, updatedAt: now },
   ];
 
   const values = [
@@ -88,8 +68,6 @@ export function createSeedData(): AppData {
     { id: newId(), name: "Coffee Cups", type: "numeric" as const, linkedHabitId: null, unit: "cups", goalType: "daily" as const, goalTarget: 3, order: 2, createdAt: now, updatedAt: now },
   ];
 
-  const history = generateHistory(habits.map((h) => h.id), 30);
-
   return appDataSchema.parse({
     version: SCHEMA_VERSION,
     timeframes,
@@ -97,6 +75,6 @@ export function createSeedData(): AppData {
     habits,
     values,
     todos,
-    history,
+    history: {},
   });
 }

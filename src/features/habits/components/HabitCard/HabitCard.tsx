@@ -5,12 +5,12 @@ import { cn } from "@/lib/cn";
 import { springs } from "@/lib/motionTokens";
 import type { Habit } from "@/lib/schema";
 import { useAppStore } from "@/store/useAppStore";
+import { useUiStore } from "@/store/useUiStore";
 import { selectHabitStatus } from "@/store/selectors";
 import { useSelectedDate } from "@/common/hooks/useSelectedDate";
 import { useHabitImage } from "@/features/habits/hooks/useHabitImage";
 import { useCardGesture } from "@/features/habits/hooks/useCardGesture";
 import { useHabitActions } from "@/features/habits/hooks/useHabitActions";
-import { HabitDetailSheet } from "@/features/habits/components/HabitCard/HabitDetailSheet";
 import { RadialMenu } from "@/features/habits/components/HabitCard/RadialMenu";
 import { deleteImage, revokeImageUrl } from "@/storage/imageStore";
 
@@ -19,9 +19,9 @@ export function HabitCard({ habit }: { habit: Habit }) {
   const selectedDate = useSelectedDate();
   const status = useAppStore(selectHabitStatus(habit.id, selectedDate));
   const deleteHabit = useAppStore((state) => state.deleteHabit);
+  const openEdit = useUiStore((state) => state.setEditingHabitId);
   const imageUrl = useHabitImage(habit.imageId);
   const { toggleDone, forceDone, toggleMissed, uploadImage } = useHabitActions();
-  const [detailOpen, setDetailOpen] = useState(false);
   const [radialOpen, setRadialOpen] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -29,7 +29,7 @@ export function HabitCard({ habit }: { habit: Habit }) {
   const gesture = useCardGesture({
     enabled: true,
     onTap: editMode
-      ? () => setDetailOpen(true)
+      ? () => openEdit(habit.id)
       : () => toggleDone(habit, cardRef.current),
     onLongPress: editMode ? () => setRadialOpen(true) : () => toggleMissed(habit),
     onDoubleTap: editMode ? undefined : () => forceDone(habit, cardRef.current),
@@ -84,7 +84,7 @@ export function HabitCard({ habit }: { habit: Habit }) {
         <RadialMenu
           open={radialOpen}
           onClose={() => setRadialOpen(false)}
-          onRename={() => setDetailOpen(true)}
+          onRename={() => openEdit(habit.id)}
           onReplaceImage={() => fileRef.current?.click()}
           onDelete={handleDelete}
         />
@@ -101,8 +101,6 @@ export function HabitCard({ habit }: { habit: Habit }) {
           event.target.value = "";
         }}
       />
-
-      <HabitDetailSheet habit={habit} open={detailOpen} onOpenChange={setDetailOpen} />
     </>
   );
 }

@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { Navigation } from "@/app/Navigation";
 import { Header } from "@/app/Header";
 import { EditModeBanner } from "@/features/editmode/EditModeBanner";
+import { SettingsButton } from "@/features/settings/SettingsButton";
 import { useResponsiveLayout } from "@/common/hooks/useResponsiveLayout";
 import { PullToRefresh } from "@/common/components/motion/PullToRefresh";
 import { bootstrapStore } from "@/store/bootstrap";
@@ -50,6 +51,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <Navigation orientation="bottom" />
         </motion.div>
       )}
+      <SettingsButton />
     </div>
   );
 }

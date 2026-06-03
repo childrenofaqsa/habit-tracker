@@ -7,6 +7,7 @@ import {
   XAxis,
   YAxis,
   Cell,
+  LabelList,
 } from "recharts";
 import { reverseChronologicalKeys, formatShortDate } from "@/lib/date";
 import { useAppStore } from "@/store/useAppStore";
@@ -44,7 +45,7 @@ export function CompletionChart({ days }: { days: number }) {
     <div ref={containerRef} className="h-48 w-full">
       {hasSize && (
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 8, right: 4, left: -24, bottom: 0 }}>
+          <BarChart data={data} margin={{ top: 18, right: 4, left: -24, bottom: 0 }}>
             <XAxis dataKey="day" tick={{ fontSize: 10 }} interval="preserveStartEnd" />
             <YAxis tick={{ fontSize: 10 }} domain={[0, 100]} width={32} />
             <Tooltip
@@ -58,6 +59,16 @@ export function CompletionChart({ days }: { days: number }) {
               formatter={(value: unknown) => [`${String(value)}%`, "Completion"]}
             />
             <Bar dataKey="completion" radius={[3, 3, 0, 0]} isAnimationActive>
+              <LabelList
+                dataKey="completion"
+                position="top"
+                fontSize={10}
+                fill="var(--color-foreground)"
+                formatter={(value) => {
+                  const num = Number(value);
+                  return num > 0 ? `${num}%` : "";
+                }}
+              />
               {data.map((entry) => (
                 <Cell key={entry.day} fill="var(--color-primary)" />
               ))}

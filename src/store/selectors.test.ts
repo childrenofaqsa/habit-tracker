@@ -151,16 +151,28 @@ describe("selectValueEntryToday", () => {
     const state = stateWith();
     state.history[toDateKey(new Date())] = {
       habitStatus: {},
-      valueEntries: { v1: 42 },
+      valueEntries: { v1: { __direct__: 42 } },
     };
     expect(selectValueEntryToday("v1")(state)).toBe(42);
   });
 
   it("returns string entry", () => {
     const state = stateWith();
+    state.values.push({
+      id: "v1",
+      name: "Note",
+      type: "text",
+      linkedHabitId: null,
+      unit: "",
+      goalType: "daily",
+      goalTarget: null,
+      order: 0,
+      createdAt: 1,
+      updatedAt: 1,
+    });
     state.history[toDateKey(new Date())] = {
       habitStatus: {},
-      valueEntries: { v1: "journal entry" },
+      valueEntries: { v1: { __direct__: "journal entry" } },
     };
     expect(selectValueEntryToday("v1")(state)).toBe("journal entry");
   });

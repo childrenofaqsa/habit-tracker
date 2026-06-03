@@ -2,6 +2,7 @@ import { format, getDaysInMonth, getDay, startOfMonth, isToday } from "date-fns"
 import type { ValueTracker } from "@/lib/schema";
 import { useAppStore } from "@/store/useAppStore";
 import { cn } from "@/lib/cn";
+import { aggregateValueEntries } from "@/lib/aggregate";
 
 type Props = {
   value: ValueTracker;
@@ -33,7 +34,7 @@ export function TrackerMonthView({ value, currentMonth }: Props) {
 
   function getEntry(day: number): number | string | undefined {
     const dateKey = format(new Date(year, month, day), "yyyy-MM-dd");
-    return history[dateKey]?.valueEntries[value.id];
+    return aggregateValueEntries(history[dateKey]?.valueEntries[value.id], value.type);
   }
 
   return (
