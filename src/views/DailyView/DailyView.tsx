@@ -3,6 +3,7 @@ import { CalendarPlus, GripVertical, Calendar, Plus, EyeOff, Eye } from "lucide-
 import { format, parse } from "date-fns";
 import { verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useShallow } from "zustand/react/shallow";
+import { toast } from "sonner";
 import { todayKey } from "@/lib/date";
 import { cn } from "@/lib/cn";
 import { useAppStore } from "@/store/useAppStore";
@@ -466,7 +467,18 @@ function EditModeView({
       <AddInline
         label="Add Timeframe"
         placeholder="Timeframe name"
-        onAdd={(name) => addTimeframe(name)}
+        onAdd={(name) => {
+          const trimmed = name.trim();
+          if (!trimmed) return;
+          const exists = timeframes.some(
+            (tf) => tf.name.trim().toLowerCase() === trimmed.toLowerCase(),
+          );
+          if (exists) {
+            toast.error("Timeframe already exists");
+            return;
+          }
+          addTimeframe(trimmed);
+        }}
       />
 
       <button

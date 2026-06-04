@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
-import { Gauge, GripVertical, Plus } from "lucide-react";
+import { Gauge, Plus } from "lucide-react";
 import { verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useShallow } from "zustand/react/shallow";
 import { useAppStore } from "@/store/useAppStore";
 import { useUiStore } from "@/store/useUiStore";
 import { selectValues } from "@/store/selectors";
+import { cn } from "@/lib/cn";
 import { EmptyState } from "@/common/components/EmptyState";
 import { DndList } from "@/features/editmode/DndList";
 import { Sortable } from "@/features/editmode/Sortable";
@@ -92,28 +93,26 @@ export function ValuesView() {
           ids={filteredValues.map((v) => v.id)}
           strategy={verticalListSortingStrategy}
           onReorder={reorderValues}
+          mode="longpress"
         >
           <div className="space-y-4">
             {filteredValues.map((value) => (
               <Sortable key={value.id} id={value.id}>
-                {({ attributes, listeners }) => (
-                  <ValueRow
-                    value={value}
-                    dragMode
-                    onNameClick={() => setScreen({ type: "edit", valueId: value.id })}
-                    onLogClick={() => setScreen({ type: "detail", valueId: value.id })}
-                    handle={
-                      <button
-                        type="button"
-                        aria-label="Drag to reorder"
-                        className="grid size-6 cursor-grab touch-none place-items-center rounded-md text-muted-foreground active:cursor-grabbing"
-                        {...attributes}
-                        {...listeners}
-                      >
-                        <GripVertical className="size-4" />
-                      </button>
-                    }
-                  />
+                {({ attributes, listeners, isDragging }) => (
+                  <div
+                    {...attributes}
+                    {...listeners}
+                    className={cn(
+                      "touch-none select-none",
+                      isDragging && "cursor-grabbing",
+                    )}
+                  >
+                    <ValueRow
+                      value={value}
+                      onNameClick={() => setScreen({ type: "edit", valueId: value.id })}
+                      onLogClick={() => setScreen({ type: "detail", valueId: value.id })}
+                    />
+                  </div>
                 )}
               </Sortable>
             ))}
@@ -131,7 +130,6 @@ export function ValuesView() {
             <ValueRow
               key={value.id}
               value={value}
-              dragMode={false}
               onNameClick={() => setScreen({ type: "edit", valueId: value.id })}
               onLogClick={() => setScreen({ type: "detail", valueId: value.id })}
             />

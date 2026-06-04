@@ -6,13 +6,11 @@ import { todayKey } from "@/lib/date";
 
 type Props = {
   value: ValueTracker;
-  handle?: React.ReactNode;
-  dragMode?: boolean;
   onNameClick?: () => void;
   onLogClick?: () => void;
 };
 
-export function ValueRow({ value, handle, dragMode = false, onNameClick, onLogClick }: Props) {
+export function ValueRow({ value, onNameClick, onLogClick }: Props) {
   const entry = useAppStore(selectValueEntry(value.id, todayKey()));
   const directEntry = useAppStore(selectValueDirectEntry(value.id, todayKey()));
   const setValueEntryToday = useAppStore((s) => s.setValueEntryToday);
@@ -29,7 +27,6 @@ export function ValueRow({ value, handle, dragMode = false, onNameClick, onLogCl
 
   return (
     <div className="flex items-center gap-4 rounded-3xl border border-border bg-card p-4 shadow-sm">
-      {dragMode && handle && <div className="shrink-0">{handle}</div>}
       <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
         <Droplet className="size-6" />
       </div>

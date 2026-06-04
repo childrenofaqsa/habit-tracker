@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Trash2, GripVertical, ChevronDown, Sun, SunMedium, Sunset, Moon, Plus } from "lucide-react";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { toast } from "sonner";
 import { cn } from "@/lib/cn";
 import type { Timeframe } from "@/lib/schema";
 import { useShallow } from "zustand/react/shallow";
@@ -9,11 +11,11 @@ import { useUiStore } from "@/store/useUiStore";
 import { selectCategories } from "@/store/selectors";
 import { Button } from "@/common/components/ui/data/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/common/components/ui/overlay/dropdown-menu";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/common/components/ui/overlay/popover";
+import { Input } from "@/common/components/ui/form/input";
 import { EditableTitle } from "@/features/editmode/EditableTitle";
 import { DndList } from "@/features/editmode/DndList";
 import { Sortable } from "@/features/editmode/Sortable";
@@ -39,13 +41,21 @@ export function TimeframeSection({ timeframe, handle }: Props) {
   const allCategories = useAppStore((state) => state.categories);
   const renameTimeframe = useAppStore((state) => state.renameTimeframe);
   const deleteTimeframe = useAppStore((state) => state.deleteTimeframe);
-  const moveCategoryToTimeframe = useAppStore((state) => state.moveCategoryToTimeframe);
+  const addCategory = useAppStore((state) => state.addCategory);
   const reorderCategories = useAppStore((state) => state.reorderCategories);
   const Icon = getTimeframeIcon(timeframe.name);
 
-  const availableCategories = allCategories.filter(
-    (c) => c.timeframeId !== timeframe.id,
+  const localNames = new Set(
+    categories.map((c) => c.name.trim().toLowerCase()),
   );
+  const pickableNames = Array.from(
+    new Set(
+      allCategories
+        .filter((c) => c.timeframeId !== timeframe.id)
+        .map((c) => c.name)
+        .filter((name) => !localNames.has(name.trim().toLowerCase())),
+    ),
+  ).sort((a, b) => a.localeCompare(b));
 
   return (
     <Collapsible.Root
@@ -133,38 +143,139 @@ export function TimeframeSection({ timeframe, handle }: Props) {
           )}
 
           {editMode && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  disabled={availableCategories.length === 0}
-                  className="inline-flex items-center gap-2"
-                >
-                  <Plus className="size-4" />
-                  Add Category
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="max-h-72 overflow-y-auto">
-                {availableCategories.length === 0 ? (
-                  <DropdownMenuItem disabled>No other categories</DropdownMenuItem>
-                ) : (
-                  availableCategories.map((category) => (
-                    <DropdownMenuItem
-                      key={category.id}
-                      onSelect={() =>
-                        moveCategoryToTimeframe(category.id, timeframe.id)
-                      }
-                    >
-                      {category.name}
-                    </DropdownMenuItem>
-                  ))
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <AddCategoryPopover
+              timeframeId={timeframe.id}
+              pickableNames={pickableNames}
+              localNames={localNames}
+              addCategory={addCategory}
+            />
           )}
         </Collapsible.Content>
       </section>
     </Collapsible.Root>
+  );
+}
+
+type AddCategoryPopoverProps = {
+  timeframeId: string;
+  pickableNames: string[];
+  localNames: Set<string>;
+  addCategory: (timeframeId: string, name: string) => string;
+};
+
+function AddCategoryPopover({
+  timeframeId,
+  pickableNames,
+  localNames,
+  addCategory,
+}: AddCategoryPopoverProps) {
+  const allCategories = useAppStore((state) => state.categories);
+  const [open, setOpen] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [draft, setDraft] = useState("");
+
+  function reset() {
+    setCreating(false);
+    setDraft("");
+  }
+
+  function handleSelect(name: string) {
+    addCategory(timeframeId, name);
+    setOpen(false);
+    reset();
+  }
+
+  function handleCreate() {
+    const trimmed = draft.trim();
+    if (!trimmed) {
+      reset();
+      return;
+    }
+    const lower = trimmed.toLowerCase();
+    if (localNames.has(lower)) {
+      toast.error("Category already exists in this timeframe");
+      return;
+    }
+    const existsElsewhere = allCategories.some(
+      (c) => c.name.trim().toLowerCase() === lower,
+    );
+    if (existsElsewhere) {
+      toast.error("Category name already exists — pick it from the list instead");
+      return;
+    }
+    addCategory(timeframeId, trimmed);
+    setOpen(false);
+    reset();
+  }
+
+  return (
+    <Popover
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next);
+        if (!next) reset();
+      }}
+    >
+      <PopoverTrigger asChild>
+        <Button variant="secondary" size="sm" className="inline-flex items-center gap-2">
+          <Plus className="size-4" />
+          Add Category
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-64 p-2">
+        <div className="max-h-56 space-y-0.5 overflow-y-auto">
+          {pickableNames.length === 0 ? (
+            <p className="px-2 py-1.5 text-xs text-muted-foreground">
+              No other categories
+            </p>
+          ) : (
+            pickableNames.map((name) => (
+              <button
+                key={name}
+                type="button"
+                onClick={() => handleSelect(name)}
+                className="block w-full rounded-md px-2 py-1.5 text-left text-sm hover:bg-muted"
+              >
+                {name}
+              </button>
+            ))
+          )}
+        </div>
+        <div className="mt-2 border-t border-border pt-2">
+          {creating ? (
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                handleCreate();
+              }}
+              className="flex items-center gap-1"
+            >
+              <Input
+                autoFocus
+                value={draft}
+                placeholder="New category"
+                onChange={(event) => setDraft(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") reset();
+                }}
+                className="h-8 flex-1 text-sm"
+              />
+              <Button type="submit" size="sm" className="h-8">
+                Add
+              </Button>
+            </form>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setCreating(true)}
+              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm font-medium text-primary hover:bg-primary/10"
+            >
+              <Plus className="size-4" />
+              Create New
+            </button>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }

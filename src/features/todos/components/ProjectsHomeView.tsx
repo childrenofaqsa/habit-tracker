@@ -1,16 +1,21 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
+import { verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useAppStore } from "@/store/useAppStore";
 import { useUiStore } from "@/store/useUiStore";
 import { useShallow } from "zustand/react/shallow";
 import { DateScrollRow } from "@/common/components/DateScrollRow";
 import { ProjectCard } from "@/features/todos/components/ProjectCard";
+import { DndList } from "@/features/editmode/DndList";
+import { Sortable } from "@/features/editmode/Sortable";
+import { cn } from "@/lib/cn";
 import { todayKey } from "@/lib/date";
 
 export function ProjectsHomeView() {
   const [selectedDate, setSelectedDate] = useState(todayKey());
   const projects = useAppStore(useShallow((s) => s.projects));
   const todos = useAppStore(useShallow((s) => s.todos));
+  const reorderProjects = useAppStore((s) => s.reorderProjects);
   const expandedProjectId = useUiStore((s) => s.expandedProjectId);
   const setExpandedProjectId = useUiStore((s) => s.setExpandedProjectId);
   const setEditingProjectId = useUiStore((s) => s.setEditingProjectId);
@@ -37,22 +42,47 @@ export function ProjectsHomeView() {
             No projects yet. Tap “Add Project” to create one.
           </div>
         )}
-        {sorted.map((project) => {
-          const tasks = todos
-            .filter((t) => t.projectId === project.id)
-            .sort((a, b) => a.order - b.order);
-          return (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              tasks={tasks}
-              expanded={expandedProjectId === project.id}
-              onToggle={() =>
-                setExpandedProjectId(expandedProjectId === project.id ? null : project.id)
-              }
-            />
-          );
-        })}
+        {sorted.length > 0 && (
+          <DndList
+            ids={sorted.map((p) => p.id)}
+            strategy={verticalListSortingStrategy}
+            onReorder={reorderProjects}
+            mode="longpress"
+          >
+            <div className="space-y-3">
+              {sorted.map((project) => {
+                const tasks = todos
+                  .filter((t) => t.projectId === project.id)
+                  .sort((a, b) => a.order - b.order);
+                return (
+                  <Sortable key={project.id} id={project.id}>
+                    {({ attributes, listeners, isDragging }) => (
+                      <div
+                        {...attributes}
+                        {...listeners}
+                        className={cn(
+                          "touch-none select-none",
+                          isDragging && "cursor-grabbing",
+                        )}
+                      >
+                        <ProjectCard
+                          project={project}
+                          tasks={tasks}
+                          expanded={expandedProjectId === project.id}
+                          onToggle={() =>
+                            setExpandedProjectId(
+                              expandedProjectId === project.id ? null : project.id,
+                            )
+                          }
+                        />
+                      </div>
+                    )}
+                  </Sortable>
+                );
+              })}
+            </div>
+          </DndList>
+        )}
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Clock } from "lucide-react";
+import { Calendar, Clock } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { useAppStore } from "@/store/useAppStore";
 import { useUiStore } from "@/store/useUiStore";
@@ -57,6 +57,7 @@ export function EditTodoPage({ todo }: EditTodoPageProps) {
   const setCreatingTodoListId = useUiStore((s) => s.setCreatingTodoListId);
 
   const [title, setTitle] = useState(todo?.title ?? "");
+  const [date, setDate] = useState<string>(todo?.date ?? "");
   const [time, setTime] = useState<string>(todo?.time ?? "");
   const [priority, setPriority] = useState<Priority | null>(todo?.priority ?? "medium");
   const [tag, setTag] = useState<string>(todo?.tag ?? "");
@@ -74,6 +75,7 @@ export function EditTodoPage({ todo }: EditTodoPageProps) {
       addTodo({
         title: trimmed,
         notes: notes.trim(),
+        date: date || null,
         time: time || null,
         tag: tag.trim(),
         priority,
@@ -83,6 +85,7 @@ export function EditTodoPage({ todo }: EditTodoPageProps) {
       updateTodo(todo.id, {
         title: trimmed,
         notes: notes.trim(),
+        date: date || null,
         time: time || null,
         tag: tag.trim(),
         priority,
@@ -122,16 +125,31 @@ export function EditTodoPage({ todo }: EditTodoPageProps) {
           <TextField value={title} onChange={setTitle} placeholder="Task title" autoFocus={isNew} />
         </div>
 
-        <div>
-          <FieldLabel>Time</FieldLabel>
-          <div className="relative mt-2">
-            <input
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              className="h-12 w-full rounded-xl bg-muted/60 px-4 pr-12 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
-            />
-            <Clock className="pointer-events-none absolute right-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <FieldLabel>Date</FieldLabel>
+            <div className="relative mt-2">
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="h-12 w-full rounded-xl bg-muted/60 px-4 pr-12 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+              />
+              <Calendar className="pointer-events-none absolute right-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            </div>
+          </div>
+
+          <div>
+            <FieldLabel>Time</FieldLabel>
+            <div className="relative mt-2">
+              <input
+                type="time"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                className="h-12 w-full rounded-xl bg-muted/60 px-4 pr-12 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+              />
+              <Clock className="pointer-events-none absolute right-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            </div>
           </div>
         </div>
 

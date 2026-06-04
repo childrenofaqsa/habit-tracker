@@ -13,19 +13,32 @@ function nextOrder(items: { order: number }[]): number {
   return items.reduce((max, item) => Math.max(max, item.order + 1), 0);
 }
 
-export const createHabitsSlice: AppSlice<HabitsActions> = (set) => ({
+function nameEquals(a: string, b: string): boolean {
+  return a.trim().toLowerCase() === b.trim().toLowerCase();
+}
+
+export const createHabitsSlice: AppSlice<HabitsActions> = (set, get) => ({
   addTimeframe: (name) => {
+    const trimmed = name.trim();
+    const existing = get().timeframes.find((tf) => nameEquals(tf.name, trimmed));
+    if (existing) return existing.id;
     const id = newId();
     set((draft) => {
-      draft.timeframes.push({ id, name, order: nextOrder(draft.timeframes) });
+      draft.timeframes.push({ id, name: trimmed, order: nextOrder(draft.timeframes) });
     });
     return id;
   },
 
   renameTimeframe: (id, name) =>
     set((draft) => {
+      const trimmed = name.trim();
+      if (!trimmed) return;
+      const collision = draft.timeframes.some(
+        (tf) => tf.id !== id && nameEquals(tf.name, trimmed),
+      );
+      if (collision) return;
       const timeframe = draft.timeframes.find((item) => item.id === id);
-      if (timeframe) timeframe.name = name;
+      if (timeframe) timeframe.name = trimmed;
     }),
 
   deleteTimeframe: (id) =>
@@ -49,18 +62,33 @@ export const createHabitsSlice: AppSlice<HabitsActions> = (set) => ({
     }),
 
   addCategory: (timeframeId, name) => {
+    const trimmed = name.trim();
+    const existing = get().categories.find(
+      (c) => c.timeframeId === timeframeId && nameEquals(c.name, trimmed),
+    );
+    if (existing) return existing.id;
     const id = newId();
     set((draft) => {
       const siblings = draft.categories.filter((c) => c.timeframeId === timeframeId);
-      draft.categories.push({ id, timeframeId, name, order: nextOrder(siblings) });
+      draft.categories.push({ id, timeframeId, name: trimmed, order: nextOrder(siblings) });
     });
     return id;
   },
 
   renameCategory: (id, name) =>
     set((draft) => {
-      const category = draft.categories.find((item) => item.id === id);
-      if (category) category.name = name;
+      const trimmed = name.trim();
+      if (!trimmed) return;
+      const target = draft.categories.find((item) => item.id === id);
+      if (!target) return;
+      const collision = draft.categories.some(
+        (c) =>
+          c.id !== id &&
+          c.timeframeId === target.timeframeId &&
+          nameEquals(c.name, trimmed),
+      );
+      if (collision) return;
+      target.name = trimmed;
     }),
 
   deleteCategory: (id) =>
@@ -84,6 +112,13 @@ export const createHabitsSlice: AppSlice<HabitsActions> = (set) => ({
     set((draft) => {
       const category = draft.categories.find((item) => item.id === categoryId);
       if (!category || category.timeframeId === timeframeId) return;
+      const collision = draft.categories.some(
+        (c) =>
+          c.id !== categoryId &&
+          c.timeframeId === timeframeId &&
+          nameEquals(c.name, category.name),
+      );
+      if (collision) return;
       const siblings = draft.categories.filter((c) => c.timeframeId === timeframeId);
       category.timeframeId = timeframeId;
       category.order = nextOrder(siblings);

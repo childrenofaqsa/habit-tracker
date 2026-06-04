@@ -28,8 +28,8 @@ vi.mock("@/features/editmode/DndList", () => ({
 }));
 
 vi.mock("@/features/editmode/Sortable", () => ({
-  Sortable: ({ children }: { children: React.ReactNode | ((args: { attributes: object; listeners: object }) => React.ReactNode) }) => (
-    <div>{typeof children === "function" ? children({ attributes: {}, listeners: {} }) : children}</div>
+  Sortable: ({ children }: { children: React.ReactNode | ((args: { attributes: object; listeners: object; isDragging: boolean }) => React.ReactNode) }) => (
+    <div>{typeof children === "function" ? children({ attributes: {}, listeners: {}, isDragging: false }) : children}</div>
   ),
 }));
 

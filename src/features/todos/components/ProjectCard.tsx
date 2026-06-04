@@ -10,10 +10,13 @@ import {
   CheckCircle2,
   Clock,
 } from "lucide-react";
+import { verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { cn } from "@/lib/cn";
 import type { Project, Todo, Priority } from "@/lib/schema";
 import { useAppStore } from "@/store/useAppStore";
 import { useUiStore } from "@/store/useUiStore";
+import { DndList } from "@/features/editmode/DndList";
+import { Sortable } from "@/features/editmode/Sortable";
 import { formatHumanDate } from "@/lib/date";
 
 type ProjectCardProps = {
@@ -40,6 +43,7 @@ export function ProjectCard({ project, tasks, expanded, onToggle }: ProjectCardP
   const setEditingProjectId = useUiStore((s) => s.setEditingProjectId);
   const setEditingTodoId = useUiStore((s) => s.setEditingTodoId);
   const deleteProject = useAppStore((s) => s.deleteProject);
+  const reorderTodos = useAppStore((s) => s.reorderTodos);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -189,57 +193,36 @@ export function ProjectCard({ project, tasks, expanded, onToggle }: ProjectCardP
                   {tasks.length === 0 && (
                     <p className="text-xs text-muted-foreground">No tasks yet.</p>
                   )}
-                  {tasks.map((t) => {
-                    const badge = statusBadge(t);
-                    const goalPct =
-                      t.goalTarget > 0 ? Math.min(100, Math.round((t.goalCurrent / t.goalTarget) * 100)) : 0;
-                    return (
-                      <div
-                        key={t.id}
-                        className="flex items-center gap-3 rounded-xl border border-border bg-background/40 p-3"
-                      >
-                        <div className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
-                          {t.completed ? <CheckCircle2 className="size-5" /> : <Clock className="size-5" />}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-semibold">{t.title}</p>
-                          {t.plan && (
-                            <p className="truncate text-[11px] text-muted-foreground">{t.plan}</p>
-                          )}
-                          {t.goalTarget > 0 && (
-                            <div className="mt-1.5 flex items-center gap-2">
-                              <span className="text-[10px] font-medium text-muted-foreground">
-                                Goal: {t.goalCurrent}/{t.goalTarget}
-                              </span>
-                              <div className="h-1.5 w-20 overflow-hidden rounded-full bg-muted">
-                                <div
-                                  className="h-full bg-primary"
-                                  style={{ width: `${goalPct}%` }}
+                  {tasks.length > 0 && (
+                    <DndList
+                      ids={tasks.map((t) => t.id)}
+                      strategy={verticalListSortingStrategy}
+                      onReorder={reorderTodos}
+                      mode="longpress"
+                    >
+                      <div className="space-y-2">
+                        {tasks.map((t) => (
+                          <Sortable key={t.id} id={t.id}>
+                            {({ attributes, listeners, isDragging }) => (
+                              <div
+                                {...attributes}
+                                {...listeners}
+                                className={cn(
+                                  "touch-none select-none",
+                                  isDragging && "cursor-grabbing",
+                                )}
+                              >
+                                <ProjectTaskRow
+                                  task={t}
+                                  onEdit={() => setEditingTodoId(t.id)}
                                 />
                               </div>
-                              <span className="text-[10px] font-bold">{goalPct}%</span>
-                            </div>
-                          )}
-                        </div>
-                        <button
-                          type="button"
-                          aria-label="Edit task"
-                          onClick={() => setEditingTodoId(t.id)}
-                          className="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
-                        >
-                          <Pencil className="size-4" />
-                        </button>
-                        <span
-                          className={cn(
-                            "rounded-md px-2 py-0.5 text-[10px] font-bold tracking-wide",
-                            badge.cls,
-                          )}
-                        >
-                          {badge.label}
-                        </span>
+                            )}
+                          </Sortable>
+                        ))}
                       </div>
-                    );
-                  })}
+                    </DndList>
+                  )}
                   <button
                     type="button"
                     onClick={() => setEditingTodoId("new")}
@@ -253,6 +236,51 @@ export function ProjectCard({ project, tasks, expanded, onToggle }: ProjectCardP
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
+  );
+}
+
+function ProjectTaskRow({ task: t, onEdit }: { task: Todo; onEdit: () => void }) {
+  const badge = statusBadge(t);
+  const goalPct =
+    t.goalTarget > 0 ? Math.min(100, Math.round((t.goalCurrent / t.goalTarget) * 100)) : 0;
+  return (
+    <div className="flex items-center gap-3 rounded-xl border border-border bg-background/40 p-3">
+      <div className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
+        {t.completed ? <CheckCircle2 className="size-5" /> : <Clock className="size-5" />}
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-semibold">{t.title}</p>
+        {t.plan && <p className="truncate text-[11px] text-muted-foreground">{t.plan}</p>}
+        {t.goalTarget > 0 && (
+          <div className="mt-1.5 flex items-center gap-2">
+            <span className="text-[10px] font-medium text-muted-foreground">
+              Goal: {t.goalCurrent}/{t.goalTarget}
+            </span>
+            <div className="h-1.5 w-20 overflow-hidden rounded-full bg-muted">
+              <div className="h-full bg-primary" style={{ width: `${goalPct}%` }} />
+            </div>
+            <span className="text-[10px] font-bold">{goalPct}%</span>
+          </div>
+        )}
+      </div>
+      <button
+        type="button"
+        aria-label="Edit task"
+        onClick={onEdit}
+        onPointerDown={(e) => e.stopPropagation()}
+        className="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+      >
+        <Pencil className="size-4" />
+      </button>
+      <span
+        className={cn(
+          "rounded-md px-2 py-0.5 text-[10px] font-bold tracking-wide",
+          badge.cls,
+        )}
+      >
+        {badge.label}
+      </span>
     </div>
   );
 }

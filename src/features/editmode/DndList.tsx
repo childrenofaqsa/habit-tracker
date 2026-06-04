@@ -3,6 +3,7 @@ import {
   closestCenter,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -18,11 +19,23 @@ type Props = {
   strategy: SortingStrategy;
   onReorder: (ids: string[]) => void;
   children: React.ReactNode;
+  mode?: "distance" | "longpress";
 };
 
-export function DndList({ ids, strategy, onReorder, children }: Props) {
+export function DndList({ ids, strategy, onReorder, children, mode = "distance" }: Props) {
+  const pointerActivation =
+    mode === "longpress"
+      ? { delay: 250, tolerance: 5 }
+      : { distance: 8 };
+
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(PointerSensor, { activationConstraint: pointerActivation }),
+    useSensor(TouchSensor, {
+      activationConstraint:
+        mode === "longpress"
+          ? { delay: 250, tolerance: 5 }
+          : { delay: 0, tolerance: 5 },
+    }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 

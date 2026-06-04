@@ -1,9 +1,12 @@
 import { useMemo, useState } from "react";
 import { Plus, X } from "lucide-react";
+import { verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useAppStore } from "@/store/useAppStore";
 import { useUiStore } from "@/store/useUiStore";
 import { useShallow } from "zustand/react/shallow";
 import { TodoCard } from "@/features/todos/components/TodoCard";
+import { DndList } from "@/features/editmode/DndList";
+import { Sortable } from "@/features/editmode/Sortable";
 import { cn } from "@/lib/cn";
 
 export function ListsView() {
@@ -11,6 +14,7 @@ export function ListsView() {
   const todoLists = useAppStore(useShallow((s) => s.todoLists));
   const addTodoList = useAppStore((s) => s.addTodoList);
   const deleteTodoList = useAppStore((s) => s.deleteTodoList);
+  const reorderTodos = useAppStore((s) => s.reorderTodos);
 
   const activeListId = useUiStore((s) => s.activeTodoListId);
   const setActiveListId = useUiStore((s) => s.setActiveTodoListId);
@@ -109,15 +113,37 @@ export function ListsView() {
         Create Task
       </button>
 
-      <div className="space-y-2">
-        {visibleTodos.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border bg-card/40 p-10 text-center text-sm text-muted-foreground">
-            No tasks in this list.
+      {visibleTodos.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-border bg-card/40 p-10 text-center text-sm text-muted-foreground">
+          No tasks in this list.
+        </div>
+      ) : (
+        <DndList
+          ids={visibleTodos.map((t) => t.id)}
+          strategy={verticalListSortingStrategy}
+          onReorder={reorderTodos}
+          mode="longpress"
+        >
+          <div className="space-y-2">
+            {visibleTodos.map((todo) => (
+              <Sortable key={todo.id} id={todo.id}>
+                {({ attributes, listeners, isDragging }) => (
+                  <div
+                    {...attributes}
+                    {...listeners}
+                    className={cn(
+                      "touch-none select-none",
+                      isDragging && "cursor-grabbing",
+                    )}
+                  >
+                    <TodoCard todo={todo} />
+                  </div>
+                )}
+              </Sortable>
+            ))}
           </div>
-        ) : (
-          visibleTodos.map((todo) => <TodoCard key={todo.id} todo={todo} />)
-        )}
-      </div>
+        </DndList>
+      )}
     </div>
   );
 }

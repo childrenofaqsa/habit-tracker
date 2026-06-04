@@ -35,7 +35,7 @@ export type HabitsActions = {
   addHabit: (categoryId: string, title: string) => string;
   updateHabit: (
     id: string,
-    patch: Partial<Pick<Habit, "title" | "details" | "imageId" | "linkedValueId" | "priority" | "motivation" | "scheduledTime" | "recurrence" | "notifications">>,
+    patch: Partial<Pick<Habit, "title" | "details" | "categoryId" | "imageId" | "linkedValueId" | "priority" | "motivation" | "scheduledTime" | "recurrence" | "notifications">>,
   ) => void;
   deleteHabit: (id: string) => void;
   reorderHabits: (categoryId: string, orderedIds: string[]) => void;
