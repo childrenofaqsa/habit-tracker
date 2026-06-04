@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CalendarPlus, GripVertical, Calendar, Plus, EyeOff, Eye } from "lucide-react";
+import { CalendarPlus, GripVertical, Calendar, Plus, EyeOff, Eye, Search, X } from "lucide-react";
 import { format, parse } from "date-fns";
 import { verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useShallow } from "zustand/react/shallow";
@@ -43,6 +43,25 @@ export function DailyView() {
   const categories = useAppStore((state) => state.categories);
   const habitCount = habits.length;
   const searchQuery = useUiStore((state) => state.searchQuery);
+  const setSearchQuery = useUiStore((state) => state.setSearchQuery);
+  const [searchOpen, setSearchOpen] = useState(searchQuery.length > 0);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (searchOpen) searchInputRef.current?.focus();
+  }, [searchOpen]);
+
+  useEffect(() => {
+    if (routineView !== "alltask" && searchOpen) {
+      setSearchOpen(false);
+      setSearchQuery("");
+    }
+  }, [routineView, searchOpen, setSearchQuery]);
+
+  function closeSearch() {
+    setSearchQuery("");
+    setSearchOpen(false);
+  }
   const addTimeframe = useAppStore((state) => state.addTimeframe);
   const reorderTimeframes = useAppStore((state) => state.reorderTimeframes);
   const addHabit = useAppStore((state) => state.addHabit);
@@ -153,8 +172,49 @@ export function DailyView() {
                     All Habits
                   </button>
                 </div>
-                <DateJumpButton value={selectedDate} onChange={setSelectedDate} />
-                <EditModeToggle />
+                {routineView === "myday" ? (
+                  <>
+                    <EditModeToggle />
+                    <DateJumpButton value={selectedDate} onChange={setSelectedDate} />
+                  </>
+                ) : (
+                  <>
+                    {searchOpen ? (
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                        <input
+                          ref={searchInputRef}
+                          type="text"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Escape") closeSearch();
+                          }}
+                          placeholder="Search habits..."
+                          className="h-9 w-56 rounded-full border border-border bg-muted/50 pl-9 pr-8 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                        />
+                        <button
+                          type="button"
+                          onClick={closeSearch}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+                          aria-label="Close search"
+                        >
+                          <X className="size-3.5" />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setSearchOpen(true)}
+                        className="cursor-pointer rounded-xl border border-border bg-card p-2.5 shadow-sm transition-colors hover:bg-muted"
+                        aria-label="Search habits"
+                      >
+                        <Search className="size-5 text-foreground" />
+                      </button>
+                    )}
+                    <DateJumpButton value={selectedDate} onChange={setSelectedDate} />
+                  </>
+                )}
               </div>
             </header>
 

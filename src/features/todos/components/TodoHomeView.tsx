@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { format, parseISO } from "date-fns";
-import { Plus, Calendar as CalendarIcon } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { useUiStore } from "@/store/useUiStore";
 import { useShallow } from "zustand/react/shallow";
@@ -8,13 +8,6 @@ import { DateScrollRow } from "@/common/components/DateScrollRow";
 import { TodoCard } from "@/features/todos/components/TodoCard";
 import { todayKey } from "@/lib/date";
 import { cn } from "@/lib/cn";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/common/components/ui/overlay/popover";
-import { Calendar as CalendarPicker } from "@/common/components/ui/form/calendar";
-import { toDateKey, parseDateKey } from "@/lib/date";
 
 function groupByDate(todos: ReturnType<typeof useAppStore.getState>["todos"]) {
   const map = new Map<string, typeof todos>();
@@ -93,29 +86,6 @@ export function TodoHomeView() {
             }}
           />
         </div>
-        <Popover>
-          <PopoverTrigger asChild>
-            <button
-              type="button"
-              aria-label="Pick date"
-              className="grid size-9 shrink-0 place-items-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-muted/70"
-            >
-              <CalendarIcon className="size-4" />
-            </button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="end">
-            <CalendarPicker
-              mode="single"
-              selected={parseDateKey(selectedDate)}
-              onSelect={(d) => {
-                if (d) {
-                  setSelectedDate(toDateKey(d));
-                  setShowAll(false);
-                }
-              }}
-            />
-          </PopoverContent>
-        </Popover>
       </div>
 
       <div className="flex justify-end">
