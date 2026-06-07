@@ -11,7 +11,7 @@ import {
   SheetTitle,
 } from "@/common/components/ui/overlay/sheet";
 import { toDateKey } from "@/lib/date";
-import { aggregateValueEntries } from "@/lib/aggregate";
+import { aggregateValueEntries, mergeTextEntries } from "@/lib/aggregate";
 
 type Props = {
   value: ValueTracker;
@@ -68,7 +68,13 @@ export function TrackerWeekView({ value, currentWeekStart }: Props) {
   }
 
   function getTotal(dateKey: string): number | string | undefined {
-    return aggregateValueEntries(history[dateKey]?.valueEntries[value.id], value.type);
+    const entries = history[dateKey]?.valueEntries[value.id];
+    if (value.type === "text") {
+      const names: Record<string, string> = {};
+      for (const h of linkedHabits) names[h.id] = h.title;
+      return mergeTextEntries(entries, names);
+    }
+    return aggregateValueEntries(entries, value.type);
   }
 
   function openEdit(dateKey: string, dayLabel: string, habitId: string, sourceLabel: string) {

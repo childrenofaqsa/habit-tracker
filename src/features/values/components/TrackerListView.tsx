@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { addDays, format, isToday, isFuture } from "date-fns";
 import { Pencil, Plus } from "lucide-react";
 import type { ValueTracker } from "@/lib/schema";
@@ -11,7 +11,7 @@ import {
   SheetTitle,
 } from "@/common/components/ui/overlay/sheet";
 import { toDateKey } from "@/lib/date";
-import { aggregateValueEntries } from "@/lib/aggregate";
+import { aggregateValueEntries, mergeTextEntries } from "@/lib/aggregate";
 
 type Props = {
   value: ValueTracker;
@@ -24,10 +24,17 @@ const DAY_ABBREVS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export function TrackerListView({ value, currentWeekStart }: Props) {
   const history = useAppStore((s) => s.history);
+  const habits = useAppStore((s) => s.habits);
   const setValueEntry = useAppStore((s) => s.setValueEntry);
   const editMode = useAppStore((s) => s.settings.editMode);
   const [editState, setEditState] = useState<EditState>(null);
   const [draft, setDraft] = useState("");
+
+  const habitNames = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const habit of habits) map[habit.id] = habit.title;
+    return map;
+  }, [habits]);
 
   const days = Array.from({ length: 7 }, (_, i) => {
     const date = addDays(currentWeekStart, i);
@@ -35,7 +42,9 @@ export function TrackerListView({ value, currentWeekStart }: Props) {
   });
 
   function getEntry(dateKey: string): number | string | undefined {
-    return aggregateValueEntries(history[dateKey]?.valueEntries[value.id], value.type);
+    const entries = history[dateKey]?.valueEntries[value.id];
+    if (value.type === "text") return mergeTextEntries(entries, habitNames);
+    return aggregateValueEntries(entries, value.type);
   }
 
   function openEdit(dateKey: string, dayLabel: string) {

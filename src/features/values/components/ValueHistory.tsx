@@ -6,7 +6,7 @@ import type { DateKey } from "@/lib/date";
 import { cn } from "@/lib/cn";
 import type { ValueTracker } from "@/lib/schema";
 import { useAppStore } from "@/store/useAppStore";
-import { aggregateValueEntries } from "@/lib/aggregate";
+import { aggregateValueEntries, mergeTextEntries } from "@/lib/aggregate";
 import {
   Dialog,
   DialogContent,
@@ -29,10 +29,17 @@ function getDateRange(daysBack: number): DateKey[] {
 
 export function ValueHistory({ value }: Props) {
   const history = useAppStore((state) => state.history);
+  const habits = useAppStore((state) => state.habits);
   const [visibleDays, setVisibleDays] = useState(CHUNK_SIZE);
   const [noteDialog, setNoteDialog] = useState<{ date: string; text: string } | null>(null);
 
   const dates = useMemo(() => getDateRange(visibleDays), [visibleDays]);
+
+  const habitNames = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const habit of habits) map[habit.id] = habit.title;
+    return map;
+  }, [habits]);
 
   const maxNumeric = useMemo(() => {
     if (value.type !== "numeric") return 1;
@@ -54,7 +61,11 @@ export function ValueHistory({ value }: Props) {
       <p className="text-xs font-medium text-muted-foreground">History</p>
       <div className="grid grid-cols-7 gap-1">
         {dates.map((dateKey) => {
-          const entry = aggregateValueEntries(history[dateKey]?.valueEntries[value.id], value.type);
+          const entries = history[dateKey]?.valueEntries[value.id];
+          const entry =
+            value.type === "text"
+              ? mergeTextEntries(entries, habitNames)
+              : aggregateValueEntries(entries, value.type);
           const hasEntry = entry !== undefined && entry !== 0 && entry !== "";
 
           if (value.type === "numeric") {

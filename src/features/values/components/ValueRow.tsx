@@ -3,6 +3,7 @@ import type { ValueTracker } from "@/lib/schema";
 import { useAppStore } from "@/store/useAppStore";
 import { selectValueEntry, selectValueDirectEntry } from "@/store/selectors";
 import { todayKey } from "@/lib/date";
+import { TextTrackerField } from "@/features/values/components/TextTrackerField";
 
 type Props = {
   value: ValueTracker;
@@ -64,13 +65,7 @@ export function ValueRow({ value, onNameClick, onLogClick }: Props) {
           </button>
         </div>
       ) : (
-        <input
-          type="text"
-          className="w-36 rounded-xl border border-border bg-muted/50 px-3 py-2 text-sm"
-          placeholder="Log entry..."
-          value={typeof entry === "string" ? entry : ""}
-          onChange={(e) => setValueEntryToday(value.id, e.target.value)}
-        />
+        <TextTrackerField value={value} />
       )}
       <button
         type="button"

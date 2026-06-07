@@ -2,7 +2,7 @@ import { Trash2, Link2 } from "lucide-react";
 import type { ValueTracker } from "@/lib/schema";
 import { cn } from "@/lib/cn";
 import { useAppStore } from "@/store/useAppStore";
-import { selectValueEntry, selectHabitStatus } from "@/store/selectors";
+import { selectValueEntry, selectValueTextDisplay, selectHabitStatus } from "@/store/selectors";
 import { useSelectedDate } from "@/common/hooks/useSelectedDate";
 import {
   Card,
@@ -23,6 +23,7 @@ export function ValueCard({ value, handle }: Props) {
   const selectedDate = useSelectedDate();
   const editMode = useAppStore((state) => state.settings.editMode);
   const entry = useAppStore(selectValueEntry(value.id, selectedDate));
+  const textValue = useAppStore(selectValueTextDisplay(value.id, selectedDate));
   const linkedStatus = useAppStore(selectHabitStatus(value.linkedHabitId ?? "", selectedDate));
   const habits = useAppStore((state) => state.habits);
   const setValueEntryToday = useAppStore((state) => state.setValueEntryToday);
@@ -32,7 +33,6 @@ export function ValueCard({ value, handle }: Props) {
 
   const synced = Boolean(value.linkedHabitId) && linkedStatus === "done";
   const numericValue = typeof entry === "number" ? entry : 0;
-  const textValue = typeof entry === "string" ? entry : "";
 
   return (
     <Card className={cn(synced && "ring-1 ring-success")}>

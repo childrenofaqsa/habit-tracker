@@ -2,7 +2,7 @@ import { todayKey, reverseChronologicalKeys, parseDateKey } from "@/lib/date";
 import type { Habit, HabitStatus } from "@/lib/schema";
 import type { StoreState } from "@/store/types";
 import { calculateBestStreak } from "@/lib/streak";
-import { aggregateValueEntries, type ValueEntries } from "@/lib/aggregate";
+import { aggregateValueEntries, mergeTextEntries, type ValueEntries } from "@/lib/aggregate";
 
 const DAY_CODES = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
 
@@ -88,6 +88,20 @@ export const selectValueDirectEntry =
   (valueId: string, dateKey: string) =>
   (state: StoreState): number | string | undefined =>
     state.history[dateKey]?.valueEntries[valueId]?.__direct__;
+
+function habitNameMap(state: StoreState): Record<string, string> {
+  const map: Record<string, string> = {};
+  for (const habit of state.habits) map[habit.id] = habit.title;
+  return map;
+}
+
+export const selectValueTextDisplay =
+  (valueId: string, dateKey: string) =>
+  (state: StoreState): string =>
+    mergeTextEntries(
+      state.history[dateKey]?.valueEntries[valueId],
+      habitNameMap(state),
+    ) ?? "";
 
 export type DaySummary = {
   done: number;
