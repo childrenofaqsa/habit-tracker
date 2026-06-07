@@ -41,6 +41,10 @@ function mergeHistory(
     merged[day] = existing
       ? {
           habitStatus: { ...existing.habitStatus, ...record.habitStatus },
+          habitStatusTimes: {
+            ...(existing.habitStatusTimes ?? {}),
+            ...(record.habitStatusTimes ?? {}),
+          },
           valueEntries: mergeValueEntries(existing.valueEntries, record.valueEntries),
         }
       : record;

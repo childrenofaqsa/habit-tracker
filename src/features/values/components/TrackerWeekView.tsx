@@ -118,9 +118,9 @@ export function TrackerWeekView({ value, currentWeekStart }: Props) {
         {sources.map((source) => (
           <div
             key={source.id}
-            className="grid grid-cols-[110px_repeat(7,1fr)] items-center gap-1"
+            className="grid grid-cols-[110px_repeat(7,1fr)] items-stretch gap-1"
           >
-            <div className="truncate pr-2 text-xs font-medium text-foreground">
+            <div className="flex items-center pr-2 text-xs font-medium leading-snug text-foreground break-words">
               {source.label}
             </div>
             {days.map(({ date, dateKey, label }) => {
@@ -131,7 +131,7 @@ export function TrackerWeekView({ value, currentWeekStart }: Props) {
               const display = hasEntry ? String(entry) : null;
               const interactive = editMode && !future;
               const cellClass = cn(
-                "flex min-h-9 items-center justify-center rounded-md px-1 py-1 text-[10px] leading-tight transition-colors",
+                "flex min-h-12 w-full items-center justify-center rounded-md px-1.5 py-1.5 text-xs leading-snug transition-colors",
                 today ? "bg-primary/10 ring-1 ring-primary/30" : "bg-muted/30",
                 interactive && "cursor-pointer hover:bg-muted",
                 future && "opacity-40",
@@ -166,8 +166,8 @@ export function TrackerWeekView({ value, currentWeekStart }: Props) {
           </div>
         ))}
 
-        <div className="grid grid-cols-[110px_repeat(7,1fr)] items-center gap-1 pt-1">
-          <div className="pr-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+        <div className="grid grid-cols-[110px_repeat(7,1fr)] items-stretch gap-1 pt-1">
+          <div className="flex items-center pr-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
             Total
           </div>
           {days.map(({ date, dateKey }) => {
@@ -179,7 +179,7 @@ export function TrackerWeekView({ value, currentWeekStart }: Props) {
               <div
                 key={dateKey}
                 className={cn(
-                  "flex min-h-9 items-center justify-center rounded-md px-1 py-1 text-[10px] leading-tight",
+                  "flex min-h-12 w-full items-center justify-center rounded-md px-1.5 py-1.5 text-xs leading-snug",
                   today ? "bg-primary/10" : "bg-muted/30",
                   future && "opacity-40",
                 )}

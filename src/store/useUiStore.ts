@@ -25,6 +25,7 @@ type UiState = {
   activeTodoListId: string | null;
   creatingTodoListId: string | null;
   analyticsHistoryOpen: boolean;
+  analyticsTimeLogOpen: boolean;
   setActiveView: (view: ViewId) => void;
   setSearchQuery: (query: string) => void;
   openValuePrompt: (valueId: string, habitId?: string | null) => void;
@@ -44,6 +45,7 @@ type UiState = {
   setActiveTodoListId: (id: string | null) => void;
   setCreatingTodoListId: (id: string | null) => void;
   setAnalyticsHistoryOpen: (value: boolean) => void;
+  setAnalyticsTimeLogOpen: (value: boolean) => void;
 };
 
 export const useUiStore = create<UiState>((set) => ({
@@ -66,6 +68,7 @@ export const useUiStore = create<UiState>((set) => ({
   activeTodoListId: null,
   creatingTodoListId: null,
   analyticsHistoryOpen: true,
+  analyticsTimeLogOpen: true,
   setActiveView: (view) => set({ activeView: view, searchQuery: "" }),
   setSearchQuery: (query) => set({ searchQuery: query }),
   openValuePrompt: (valueId, habitId = null) =>
@@ -87,4 +90,5 @@ export const useUiStore = create<UiState>((set) => ({
   setActiveTodoListId: (id) => set({ activeTodoListId: id }),
   setCreatingTodoListId: (id) => set({ creatingTodoListId: id }),
   setAnalyticsHistoryOpen: (value) => set({ analyticsHistoryOpen: value }),
+  setAnalyticsTimeLogOpen: (value) => set({ analyticsTimeLogOpen: value }),
 }));

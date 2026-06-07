@@ -47,6 +47,24 @@ export function formatMatrixDate(key: DateKey): string {
   return format(parseDateKey(key), "d MMM");
 }
 
+export function formatMatrixDayNumber(key: DateKey): string {
+  return format(parseDateKey(key), "d");
+}
+
+export function formatMatrixMonthShort(key: DateKey): string {
+  return format(parseDateKey(key), "MMM").toUpperCase();
+}
+
+export function formatClockTime12h(hhmm: string): string {
+  const [hStr, mStr] = hhmm.split(":");
+  const h = Number(hStr);
+  const m = Number(mStr);
+  if (!Number.isFinite(h) || !Number.isFinite(m)) return hhmm;
+  const period = h >= 12 ? "PM" : "AM";
+  const hour12 = h % 12 === 0 ? 12 : h % 12;
+  return `${String(hour12).padStart(2, "0")}:${String(m).padStart(2, "0")} ${period}`;
+}
+
 export function backupTimestamp(): string {
   return format(new Date(), "yyyy-MM-dd_HHmm");
 }

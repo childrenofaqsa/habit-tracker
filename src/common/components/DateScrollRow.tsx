@@ -84,18 +84,47 @@ export function DateScrollRow({ selectedDate, onDateChange }: Props) {
     onDateChange(key);
   };
 
+  const todayDate = parseDateKey(today);
+
   return (
     <div className="flex items-center gap-2">
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="shrink-0 rounded-full bg-muted text-muted-foreground hover:bg-muted/70"
+            aria-label="Pick date"
+          >
+            <CalendarDays className="size-4" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={parseDateKey(selectedDate)}
+            onSelect={handleCalendarSelect}
+          />
+        </PopoverContent>
+      </Popover>
+
       <div
         ref={scrollRef}
-        className="no-scrollbar flex flex-1 gap-1 overflow-x-auto scroll-smooth py-1"
+        className="no-scrollbar flex flex-1 gap-2 overflow-x-auto scroll-smooth py-1"
       >
         {dates.map((dateKey) => {
           const date = parseDateKey(dateKey);
           const isSelected = dateKey === selectedDate;
           const isToday = dateKey === today;
-          const dayName = format(date, "EEE");
-          const dayNum = format(date, "d");
+          const diffDays = Math.round(
+            (date.getTime() - todayDate.getTime()) / 86_400_000,
+          );
+
+          let label: string;
+          if (diffDays === 0) label = "Today";
+          else if (diffDays === -1) label = "Yesterday";
+          else if (diffDays === 1) label = "Tomorrow";
+          else label = format(date, "EEE, MMM d");
 
           return (
             <button
@@ -104,21 +133,19 @@ export function DateScrollRow({ selectedDate, onDateChange }: Props) {
               type="button"
               onClick={() => onDateChange(dateKey)}
               className={cn(
-                "relative flex shrink-0 flex-col items-center rounded-xl px-3 py-2 text-xs transition-colors",
+                "relative shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors",
                 isSelected
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : isToday
                     ? "bg-muted text-foreground ring-1 ring-primary/40"
-                    : "text-muted-foreground hover:bg-muted",
+                    : "bg-muted/60 text-muted-foreground hover:bg-muted",
               )}
             >
-              <span className="text-[10px] font-medium uppercase">{dayName}</span>
-              <span className="text-sm font-bold">{dayNum}</span>
+              <span className="relative z-10">{label}</span>
               {isSelected && (
                 <motion.div
                   layoutId="date-scroll-indicator"
-                  className="absolute inset-0 rounded-xl bg-primary"
-                  style={{ zIndex: -1 }}
+                  className="absolute inset-0 rounded-full bg-primary"
                   transition={springs.snappy}
                 />
               )}
@@ -126,21 +153,6 @@ export function DateScrollRow({ selectedDate, onDateChange }: Props) {
           );
         })}
       </div>
-
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon" className="shrink-0" aria-label="Pick date">
-            <CalendarDays className="size-5" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="end">
-          <Calendar
-            mode="single"
-            selected={parseDateKey(selectedDate)}
-            onSelect={handleCalendarSelect}
-          />
-        </PopoverContent>
-      </Popover>
     </div>
   );
 }

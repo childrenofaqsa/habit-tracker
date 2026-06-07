@@ -104,6 +104,7 @@ export const todoListSchema = z.object({
 
 export const dayRecordSchema = z.object({
   habitStatus: z.record(z.string(), habitStatusSchema).default({}),
+  habitStatusTimes: z.record(z.string(), z.string()).optional(),
   valueEntries: z
     .record(z.string(), z.record(z.string(), z.union([z.number(), z.string()])))
     .default({}),

@@ -27,18 +27,18 @@ describe("mergeAppData", () => {
 
   it("never deletes existing history and unions days", () => {
     const current = emptyAppData();
-    current.history["2024-01-01"] = { habitStatus: { h1: "done" }, valueEntries: {} };
+    current.history["2024-01-01"] = { habitStatus: { h1: "done" }, habitStatusTimes: {}, valueEntries: {} };
     const incoming = emptyAppData();
-    incoming.history["2024-01-02"] = { habitStatus: { h2: "missed" }, valueEntries: {} };
+    incoming.history["2024-01-02"] = { habitStatus: { h2: "missed" }, habitStatusTimes: {}, valueEntries: {} };
     const merged = mergeAppData(current, incoming);
     expect(Object.keys(merged.history).sort()).toEqual(["2024-01-01", "2024-01-02"]);
   });
 
   it("deep merges history for the same day", () => {
     const current = emptyAppData();
-    current.history["2024-01-01"] = { habitStatus: { h1: "done" }, valueEntries: { v1: { __direct__: 5 } } };
+    current.history["2024-01-01"] = { habitStatus: { h1: "done" }, habitStatusTimes: { h1: "08:00" }, valueEntries: { v1: { __direct__: 5 } } };
     const incoming = emptyAppData();
-    incoming.history["2024-01-01"] = { habitStatus: { h2: "missed" }, valueEntries: { v2: { __direct__: 10 } } };
+    incoming.history["2024-01-01"] = { habitStatus: { h2: "missed" }, habitStatusTimes: { h2: "09:00" }, valueEntries: { v2: { __direct__: 10 } } };
     const merged = mergeAppData(current, incoming);
     const day = merged.history["2024-01-01"]!;
     expect(day.habitStatus.h1).toBe("done");

@@ -10,6 +10,42 @@ export type MatrixRow = {
 
 export type MatrixFilter = "all" | "habits" | "values";
 
+const byOrder = <T extends { order: number }>(a: T, b: T) => a.order - b.order;
+
+export function sortHabitsByRoutine(
+  habits: Habit[],
+  categories: Category[],
+  timeframes: Timeframe[],
+): Habit[] {
+  const orderedTimeframes = [...timeframes].sort(byOrder);
+  const habitsByCategory = new Map<string, Habit[]>();
+  for (const habit of habits) {
+    const list = habitsByCategory.get(habit.categoryId);
+    if (list) list.push(habit);
+    else habitsByCategory.set(habit.categoryId, [habit]);
+  }
+
+  const ordered: Habit[] = [];
+  const seen = new Set<string>();
+  for (const timeframe of orderedTimeframes) {
+    const tfCategories = categories
+      .filter((c) => c.timeframeId === timeframe.id)
+      .sort(byOrder);
+    for (const category of tfCategories) {
+      const bucket = habitsByCategory.get(category.id);
+      if (!bucket) continue;
+      for (const habit of [...bucket].sort(byOrder)) {
+        ordered.push(habit);
+        seen.add(habit.id);
+      }
+    }
+  }
+  for (const habit of habits) {
+    if (!seen.has(habit.id)) ordered.push(habit);
+  }
+  return ordered;
+}
+
 export function buildMatrixRows(
   habits: Habit[],
   values: ValueTracker[],
@@ -18,37 +54,22 @@ export function buildMatrixRows(
   timeframes: Timeframe[] = [],
 ): MatrixRow[] {
   const categoryMap = new Map(categories.map((c) => [c.id, c]));
-  const timeframeOrder = new Map(
-    timeframes.map((t, idx) => [t.id, t.order ?? idx]),
-  );
 
   const habitRows: MatrixRow[] =
     filter === "values"
       ? []
-      : [...habits]
-          .sort((a, b) => {
-            const catA = categoryMap.get(a.categoryId);
-            const catB = categoryMap.get(b.categoryId);
-            const tfA = catA ? timeframeOrder.get(catA.timeframeId) ?? 999 : 999;
-            const tfB = catB ? timeframeOrder.get(catB.timeframeId) ?? 999 : 999;
-            if (tfA !== tfB) return tfA - tfB;
-            const coA = catA?.order ?? 999;
-            const coB = catB?.order ?? 999;
-            if (coA !== coB) return coA - coB;
-            return a.order - b.order;
-          })
-          .map((habit) => ({
-            id: habit.id,
-            name: habit.title,
-            kind: "habit",
-            category: categoryMap.get(habit.categoryId)?.name,
-          }));
+      : sortHabitsByRoutine(habits, categories, timeframes).map((habit) => ({
+          id: habit.id,
+          name: habit.title,
+          kind: "habit",
+          category: categoryMap.get(habit.categoryId)?.name,
+        }));
 
   const valueRows: MatrixRow[] =
     filter === "habits"
       ? []
       : [...values]
-          .sort((a, b) => a.order - b.order)
+          .sort(byOrder)
           .map((value) => ({
             id: value.id,
             name: value.name,

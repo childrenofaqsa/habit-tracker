@@ -1,7 +1,6 @@
 import { motion } from "motion/react";
 import { Navigation } from "@/app/Navigation";
 import { Header } from "@/app/Header";
-import { EditModeBanner } from "@/features/editmode/EditModeBanner";
 import { SettingsButton } from "@/features/settings/SettingsButton";
 import { useResponsiveLayout } from "@/common/hooks/useResponsiveLayout";
 import { PullToRefresh } from "@/common/components/motion/PullToRefresh";
@@ -30,7 +29,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         >
           <Header />
         </motion.div>
-        <EditModeBanner />
         <PullToRefresh onRefresh={async () => void (await bootstrapStore())}>
           <motion.main
             initial={{ opacity: 0, y: 10 }}

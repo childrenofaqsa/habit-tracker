@@ -10,6 +10,8 @@ import { calculateCurrentStreak, calculateBestStreak } from "@/lib/streak";
 import { CompletionChart } from "@/features/analytics/components/CompletionChart";
 import { TodosCompletedChart } from "@/features/analytics/components/TodosCompletedChart";
 import { HistoryMatrix } from "@/features/analytics/components/HistoryMatrix";
+import { TimeLogMatrix } from "@/features/analytics/components/TimeLogMatrix";
+import { sortHabitsByRoutine } from "@/features/analytics/matrixData";
 import { Reveal } from "@/common/components/motion/Reveal";
 import { BackupButton } from "@/features/backup/BackupButton";
 import type { HabitStatus } from "@/lib/schema";
@@ -26,14 +28,17 @@ export function AnalyticsView() {
   const [selectedRange, setSelectedRange] = useState<number>(30);
   const summary = useAppStore(useShallow(selectTodaySummary));
   const habits = useAppStore((state) => state.habits);
+  const categories = useAppStore((state) => state.categories);
+  const timeframes = useAppStore((state) => state.timeframes);
   const history = useAppStore((state) => state.history);
   const searchQuery = useUiStore((state) => state.searchQuery);
 
   const matchingHabits = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return [];
-    return habits.filter((h) => h.title.toLowerCase().includes(q));
-  }, [habits, searchQuery]);
+    const filtered = habits.filter((h) => h.title.toLowerCase().includes(q));
+    return sortHabitsByRoutine(filtered, categories, timeframes);
+  }, [habits, categories, timeframes, searchQuery]);
 
   const days = selectedRange === 0 ? allDays : selectedRange;
 
@@ -83,6 +88,10 @@ export function AnalyticsView() {
 
       <Reveal delay={0.05}>
         <HistorySection />
+      </Reveal>
+
+      <Reveal delay={0.07}>
+        <TimeLogSection />
       </Reveal>
 
       <Reveal delay={0.1}>
@@ -182,6 +191,31 @@ function HistorySection() {
         />
       </button>
       {open && <HistoryMatrix days={180} />}
+    </div>
+  );
+}
+
+function TimeLogSection() {
+  const open = useUiStore((s) => s.analyticsTimeLogOpen);
+  const setOpen = useUiStore((s) => s.setAnalyticsTimeLogOpen);
+  return (
+    <div className="space-y-3">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center justify-between rounded-lg px-1 text-left transition-colors hover:text-foreground"
+      >
+        <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+          Time Log
+        </h2>
+        <ChevronDown
+          className={cn(
+            "size-4 text-muted-foreground transition-transform",
+            open && "rotate-180",
+          )}
+        />
+      </button>
+      {open && <TimeLogMatrix days={180} />}
     </div>
   );
 }
