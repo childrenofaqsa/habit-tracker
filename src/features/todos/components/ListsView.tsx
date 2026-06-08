@@ -8,6 +8,15 @@ import { TodoCard } from "@/features/todos/components/TodoCard";
 import { DndList } from "@/features/editmode/DndList";
 import { Sortable } from "@/features/editmode/Sortable";
 import { cn } from "@/lib/cn";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/common/components/ui/overlay/dialog";
+import { Button } from "@/common/components/ui/data/button";
 
 export function ListsView() {
   const todos = useAppStore(useShallow((s) => s.todos));
@@ -23,6 +32,7 @@ export function ListsView() {
 
   const [adding, setAdding] = useState(false);
   const [newName, setNewName] = useState("");
+  const [listToDelete, setListToDelete] = useState<{ id: string; name: string } | null>(null);
 
   const visibleTodos = useMemo(() => {
     const filtered = activeListId
@@ -69,8 +79,7 @@ export function ListsView() {
             label={list.name}
             onClick={() => setActiveListId(list.id)}
             onDelete={() => {
-              deleteTodoList(list.id);
-              if (activeListId === list.id) setActiveListId(null);
+              setListToDelete({ id: list.id, name: list.name });
             }}
           />
         ))}
@@ -144,6 +153,36 @@ export function ListsView() {
           </div>
         </DndList>
       )}
+
+      <Dialog open={!!listToDelete} onOpenChange={(open) => !open && setListToDelete(null)}>
+        <DialogContent className="max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>Delete List</DialogTitle>
+            <DialogDescription>
+              Do you want to delete the list &ldquo;{listToDelete?.name}&rdquo;?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="ghost" onClick={() => setListToDelete(null)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                if (listToDelete) {
+                  deleteTodoList(listToDelete.id);
+                  if (activeListId === listToDelete.id) {
+                    setActiveListId(null);
+                  }
+                  setListToDelete(null);
+                }
+              }}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
