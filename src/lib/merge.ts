@@ -61,6 +61,8 @@ export function mergeAppData(current: AppData, incoming: AppData): AppData {
     values: mergeByUpdatedAt(current.values, incoming.values),
     todos: mergeByUpdatedAt(current.todos, incoming.todos),
     projects: mergeByUpdatedAt(current.projects, incoming.projects),
+    fields: mergeByUpdatedAt(current.fields ?? [], incoming.fields ?? []),
+    entities: mergeByUpdatedAt(current.entities ?? [], incoming.entities ?? []),
     todoLists: mergeByUpdatedAt(
       current.todoLists ?? [],
       incoming.todoLists ?? [],

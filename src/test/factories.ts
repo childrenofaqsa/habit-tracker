@@ -48,6 +48,7 @@ export function buildValue(overrides: Partial<ValueTracker> = {}): ValueTracker 
     unit: "",
     goalType: null,
     goalTarget: null,
+    analyzerEnabled: false,
     order: n,
     createdAt: Date.now(),
     updatedAt: Date.now(),

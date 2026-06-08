@@ -5,6 +5,7 @@ import type {
   Habit,
   ValueTracker,
   ValueType,
+  Entity,
   Todo,
   TodoStatus,
   Project,
@@ -45,11 +46,26 @@ export type ValuesActions = {
   addValue: (name: string, type: ValueType) => string;
   updateValue: (
     id: string,
-    patch: Partial<Pick<ValueTracker, "name" | "linkedHabitId" | "unit" | "goalType" | "goalTarget" | "type">>,
+    patch: Partial<Pick<ValueTracker, "name" | "linkedHabitId" | "unit" | "goalType" | "goalTarget" | "type" | "analyzerEnabled">>,
   ) => void;
   deleteValue: (id: string) => void;
   reorderValues: (orderedIds: string[]) => void;
   linkHabitToValue: (habitId: string, valueId: string | null) => void;
+};
+
+export type FieldsActions = {
+  addField: (name: string) => string;
+  renameField: (id: string, name: string) => void;
+  deleteField: (id: string) => void;
+  reorderFields: (orderedIds: string[]) => void;
+};
+
+export type EntitiesActions = {
+  addEntity: (name: string) => string;
+  updateEntity: (id: string, patch: Partial<Pick<Entity, "name" | "fieldIds">>) => void;
+  toggleEntityField: (entityId: string, fieldId: string) => void;
+  deleteEntity: (id: string) => void;
+  reorderEntities: (orderedIds: string[]) => void;
 };
 
 export type AddTodoInput = {
@@ -124,6 +140,8 @@ export type StoreState = AppDataState &
   HistoryActions &
   HabitsActions &
   ValuesActions &
+  FieldsActions &
+  EntitiesActions &
   TodosActions &
   ProjectsActions &
   TodoListsActions &

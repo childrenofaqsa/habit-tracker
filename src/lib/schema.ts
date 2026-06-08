@@ -51,6 +51,24 @@ export const valueTrackerSchema = z.object({
   unit: z.string().default(""),
   goalType: goalTypeSchema.nullable().default(null),
   goalTarget: z.number().nullable().default(null),
+  analyzerEnabled: z.boolean().default(false),
+  order: z.number(),
+  createdAt: z.number(),
+  updatedAt: z.number(),
+});
+
+export const fieldSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  order: z.number(),
+  createdAt: z.number(),
+  updatedAt: z.number(),
+});
+
+export const entitySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  fieldIds: z.array(z.string()).default([]),
   order: z.number(),
   createdAt: z.number(),
   updatedAt: z.number(),
@@ -135,6 +153,8 @@ export const appDataSchema = z.object({
   categories: z.array(categorySchema).default([]),
   habits: z.array(habitSchema).default([]),
   values: z.array(valueTrackerSchema).default([]),
+  fields: z.array(fieldSchema).default([]),
+  entities: z.array(entitySchema).default([]),
   todos: z.array(todoSchema).default([]),
   projects: z.array(projectSchema).default([]),
   todoLists: z.array(todoListSchema).default([]),
@@ -146,6 +166,8 @@ export type Timeframe = z.infer<typeof timeframeSchema>;
 export type Category = z.infer<typeof categorySchema>;
 export type Habit = z.infer<typeof habitSchema>;
 export type ValueTracker = z.infer<typeof valueTrackerSchema>;
+export type Field = z.infer<typeof fieldSchema>;
+export type Entity = z.infer<typeof entitySchema>;
 export type Todo = z.infer<typeof todoSchema>;
 export type Project = z.infer<typeof projectSchema>;
 export type TodoList = z.infer<typeof todoListSchema>;

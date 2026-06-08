@@ -6,6 +6,8 @@ import type { StoreState } from "@/store/types";
 import { createHistorySlice } from "@/store/slices/historySlice";
 import { createHabitsSlice } from "@/store/slices/habitsSlice";
 import { createValuesSlice } from "@/store/slices/valuesSlice";
+import { createFieldsSlice } from "@/store/slices/fieldsSlice";
+import { createEntitiesSlice } from "@/store/slices/entitiesSlice";
 import { createTodosSlice } from "@/store/slices/todosSlice";
 import { createProjectsSlice } from "@/store/slices/projectsSlice";
 import { createTodoListsSlice } from "@/store/slices/todoListsSlice";
@@ -19,6 +21,8 @@ export const useAppStore = create<StoreState>()(
     ...createHistorySlice(...args),
     ...createHabitsSlice(...args),
     ...createValuesSlice(...args),
+    ...createFieldsSlice(...args),
+    ...createEntitiesSlice(...args),
     ...createTodosSlice(...args),
     ...createProjectsSlice(...args),
     ...createTodoListsSlice(...args),
@@ -34,6 +38,8 @@ export function selectAppData(state: StoreState): AppData {
     categories: state.categories,
     habits: state.habits,
     values: state.values,
+    fields: state.fields,
+    entities: state.entities,
     todos: state.todos,
     projects: state.projects,
     todoLists: state.todoLists,

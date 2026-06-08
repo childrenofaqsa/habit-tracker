@@ -49,6 +49,10 @@ export const selectHabits = (categoryId: string) => (state: StoreState) =>
 
 export const selectValues = (state: StoreState) => [...state.values].sort(byOrder);
 
+export const selectFields = (state: StoreState) => [...state.fields].sort(byOrder);
+
+export const selectEntities = (state: StoreState) => [...state.entities].sort(byOrder);
+
 export const selectHabitStatusToday =
   (habitId: string) =>
   (state: StoreState): HabitStatus | undefined =>

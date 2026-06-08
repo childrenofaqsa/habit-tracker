@@ -13,6 +13,7 @@ import { ValueRow } from "@/features/values/components/ValueRow";
 import { EditUpdatePage } from "@/features/values/components/EditUpdatePage";
 import { CreateTrackerPage } from "@/features/values/components/CreateTrackerPage";
 import { TrackerDetailView } from "@/features/values/components/TrackerDetailView";
+import { FieldTab, type FieldSubTab } from "@/features/fields/components/FieldTab";
 
 type ValuesScreen =
   | { type: "home" }
@@ -20,8 +21,18 @@ type ValuesScreen =
   | { type: "edit"; valueId: string }
   | { type: "detail"; valueId: string };
 
+type TopTab = "updates" | "fields";
+
+const TOP_TABS: { id: TopTab; label: string }[] = [
+  { id: "updates", label: "Tracker Updates" },
+  { id: "fields", label: "Field" },
+];
+
 export function ValuesView() {
   const [screen, setScreen] = useState<ValuesScreen>({ type: "home" });
+  const [tab, setTab] = useState<TopTab>("updates");
+  const [fieldSubTab, setFieldSubTab] = useState<FieldSubTab>("names");
+  const [createNonce, setCreateNonce] = useState(0);
   const values = useAppStore(useShallow(selectValues));
   const reorderValues = useAppStore((s) => s.reorderValues);
   const searchQuery = useUiStore((s) => s.searchQuery);
@@ -51,44 +62,53 @@ export function ValuesView() {
     return <TrackerDetailView value={value} onBack={() => setScreen({ type: "home" })} />;
   }
 
-  if (values.length === 0) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Tracker Updates</h2>
-          <button
-            type="button"
-            onClick={() => setScreen({ type: "create" })}
-            className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
-          >
-            <Plus className="size-4" /> Create New
-          </button>
-        </div>
-        <EmptyState
-          icon={Gauge}
-          title="No trackers yet"
-          description="Create your first tracker to start recording daily progress."
-        />
-      </div>
-    );
+  function handleCreate() {
+    if (tab === "updates") setScreen({ type: "create" });
+    else setCreateNonce((n) => n + 1);
   }
 
   const dragEnabled = !searchQuery.trim();
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Tracker Updates</h2>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-5">
+          {TOP_TABS.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setTab(item.id)}
+              className={cn(
+                "text-2xl font-bold transition-colors",
+                tab === item.id ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
         <button
           type="button"
-          onClick={() => setScreen({ type: "create" })}
-          className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+          onClick={handleCreate}
+          className="flex shrink-0 items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
         >
           <Plus className="size-4" /> Create New
         </button>
       </div>
 
-      {dragEnabled ? (
+      {tab === "fields" ? (
+        <FieldTab
+          subTab={fieldSubTab}
+          onSubTabChange={setFieldSubTab}
+          createNonce={createNonce}
+        />
+      ) : values.length === 0 ? (
+        <EmptyState
+          icon={Gauge}
+          title="No trackers yet"
+          description="Create your first tracker to start recording daily progress."
+        />
+      ) : dragEnabled ? (
         <DndList
           ids={filteredValues.map((v) => v.id)}
           strategy={verticalListSortingStrategy}

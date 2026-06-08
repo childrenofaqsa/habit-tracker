@@ -23,6 +23,7 @@ export const createValuesSlice: AppSlice<ValuesActions> = (set) => ({
         unit: "",
         goalType: null,
         goalTarget: null,
+        analyzerEnabled: false,
         order,
         createdAt: now,
         updatedAt: now,

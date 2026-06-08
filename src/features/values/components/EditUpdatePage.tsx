@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ArrowLeft, Trash2, Link2, Plus, X, Flag } from "lucide-react";
+import { ArrowLeft, Trash2, Link2, Plus, X, Flag, Sparkles } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { useAppStore } from "@/store/useAppStore";
 import type { ValueTracker, GoalType } from "@/lib/schema";
+import { Switch } from "@/common/components/ui/form/switch";
 import { HabitPickerSheet } from "./HabitPickerSheet";
 
 type Props = {
@@ -30,6 +31,7 @@ export function EditUpdatePage({ value, onBack }: Props) {
   const [inputMode, setInputMode] = useState<"numeric" | "text">(value.type);
   const [goalType, setGoalType] = useState<GoalType>(value.goalType ?? "daily");
   const [goalTarget, setGoalTarget] = useState(value.goalTarget ?? 0);
+  const [analyzerEnabled, setAnalyzerEnabled] = useState(value.analyzerEnabled);
   const [linkedHabitIds, setLinkedHabitIds] = useState<string[]>(linkedHabits.map((h) => h.id));
   const [pickerOpen, setPickerOpen] = useState(false);
 
@@ -50,6 +52,7 @@ export function EditUpdatePage({ value, onBack }: Props) {
       type: inputMode,
       goalType,
       goalTarget: goalTarget > 0 ? goalTarget : null,
+      analyzerEnabled,
     });
     const originalIds = linkedHabits.map((h) => h.id);
     for (const id of originalIds) {
@@ -184,6 +187,21 @@ export function EditUpdatePage({ value, onBack }: Props) {
               className="w-20 bg-transparent text-right text-sm font-semibold focus:outline-none"
             />
           </div>
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <Sparkles className="size-4 text-primary" />
+            <div>
+              <h3 className="text-sm font-semibold">Turn on Analyzer</h3>
+              <p className="text-xs text-muted-foreground">
+                Analyze this tracker's values by field and entity.
+              </p>
+            </div>
+          </div>
+          <Switch checked={analyzerEnabled} onCheckedChange={setAnalyzerEnabled} />
         </div>
       </div>
 

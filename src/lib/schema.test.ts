@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { emptyAppData, appDataSchema } from "@/lib/schema";
+import { emptyAppData, appDataSchema, valueTrackerSchema, entitySchema, fieldSchema } from "@/lib/schema";
 
 describe("emptyAppData", () => {
   it("creates valid AppData that passes schema", () => {
@@ -14,6 +14,8 @@ describe("emptyAppData", () => {
     expect(data.categories).toHaveLength(0);
     expect(data.habits).toHaveLength(0);
     expect(data.values).toHaveLength(0);
+    expect(data.fields).toHaveLength(0);
+    expect(data.entities).toHaveLength(0);
     expect(data.todos).toHaveLength(0);
   });
 
@@ -77,6 +79,42 @@ describe("appDataSchema", () => {
       updatedAt: 1000,
     });
     const result = appDataSchema.safeParse(data);
+    expect(result.success).toBe(true);
+  });
+});
+
+describe("fields and entities", () => {
+  it("defaults analyzerEnabled to false on a tracker", () => {
+    const parsed = valueTrackerSchema.parse({
+      id: "v1",
+      name: "Calories",
+      type: "numeric",
+      order: 0,
+      createdAt: 1,
+      updatedAt: 1,
+    });
+    expect(parsed.analyzerEnabled).toBe(false);
+  });
+
+  it("defaults entity fieldIds to an empty array", () => {
+    const parsed = entitySchema.parse({
+      id: "e1",
+      name: "fish",
+      order: 0,
+      createdAt: 1,
+      updatedAt: 1,
+    });
+    expect(parsed.fieldIds).toEqual([]);
+  });
+
+  it("validates a field", () => {
+    const result = fieldSchema.safeParse({
+      id: "f1",
+      name: "protein",
+      order: 0,
+      createdAt: 1,
+      updatedAt: 1,
+    });
     expect(result.success).toBe(true);
   });
 });

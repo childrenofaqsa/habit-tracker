@@ -12,6 +12,7 @@ import { TodosCompletedChart } from "@/features/analytics/components/TodosComple
 import { HistoryMatrix } from "@/features/analytics/components/HistoryMatrix";
 import { TimeLogMatrix } from "@/features/analytics/components/TimeLogMatrix";
 import { sortHabitsByRoutine } from "@/features/analytics/matrixData";
+import { TrackerAnalysisList } from "@/features/analytics/components/TrackerAnalysisList";
 import { Reveal } from "@/common/components/motion/Reveal";
 import { BackupButton } from "@/features/backup/BackupButton";
 import type { HabitStatus } from "@/lib/schema";
@@ -151,6 +152,10 @@ export function AnalyticsView() {
           </div>
           <TodosCompletedChart days={days} />
         </div>
+      </Reveal>
+
+      <Reveal delay={0.13}>
+        <TrackerAnalysisList />
       </Reveal>
 
       <Reveal delay={0.15}>

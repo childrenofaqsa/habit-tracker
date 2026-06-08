@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ArrowLeft, Link2, Plus, X, Flag } from "lucide-react";
+import { ArrowLeft, Link2, Plus, X, Flag, Sparkles } from "lucide-react";
 import type { GoalType } from "@/lib/schema";
 import { cn } from "@/lib/cn";
 import { useAppStore } from "@/store/useAppStore";
+import { Switch } from "@/common/components/ui/form/switch";
 import { HabitPickerSheet } from "./HabitPickerSheet";
 
 type Props = {
@@ -27,6 +28,7 @@ export function CreateTrackerPage({ onBack }: Props) {
   const [inputMode, setInputMode] = useState<"numeric" | "text">("numeric");
   const [goalType, setGoalType] = useState<GoalType>("daily");
   const [goalTarget, setGoalTarget] = useState(0);
+  const [analyzerEnabled, setAnalyzerEnabled] = useState(false);
   const [linkedHabitIds, setLinkedHabitIds] = useState<string[]>([]);
   const [pickerOpen, setPickerOpen] = useState(false);
 
@@ -47,6 +49,7 @@ export function CreateTrackerPage({ onBack }: Props) {
       unit: unit.trim(),
       goalType,
       goalTarget: goalTarget > 0 ? goalTarget : null,
+      analyzerEnabled,
     });
     for (const habitId of linkedHabitIds) {
       linkHabitToValue(habitId, id);
@@ -165,6 +168,21 @@ export function CreateTrackerPage({ onBack }: Props) {
               className="w-20 bg-transparent text-right text-sm font-semibold focus:outline-none"
             />
           </div>
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <Sparkles className="size-4 text-primary" />
+            <div>
+              <h3 className="text-sm font-semibold">Turn on Analyzer</h3>
+              <p className="text-xs text-muted-foreground">
+                Analyze this tracker's values by field and entity.
+              </p>
+            </div>
+          </div>
+          <Switch checked={analyzerEnabled} onCheckedChange={setAnalyzerEnabled} />
         </div>
       </div>
 

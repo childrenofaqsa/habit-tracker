@@ -3,7 +3,7 @@ import { useAppStore } from "@/store/useAppStore";
 import { selectAppData } from "@/store/useAppStore";
 import { emptyAppData } from "@/lib/schema";
 import { todayKey } from "@/lib/date";
-import { buildHabit, buildTimeframe } from "@/test/factories";
+import { buildHabit, buildTimeframe, buildValue } from "@/test/factories";
 
 beforeEach(() => {
   useAppStore.setState({ ...emptyAppData(), hydrated: false });
@@ -106,6 +106,56 @@ describe("useAppStore", () => {
       const today = todayKey();
       expect(useAppStore.getState().history[today]?.habitStatus.h1).toBe("done");
     });
+
+    it("setValueEntryToday stores per-habit text entries separately", () => {
+      const data = emptyAppData();
+      data.habits.push(buildHabit({ id: "h1", title: "habit1" }));
+      data.habits.push(buildHabit({ id: "h2", title: "habit2" }));
+      data.values.push(buildValue({ id: "v1", type: "text" }));
+      useAppStore.getState().hydrate(data);
+      useAppStore.getState().setValueEntryToday("v1", "entry1", "h1");
+      useAppStore.getState().setValueEntryToday("v1", "entry2", "h2");
+      const entries = useAppStore.getState().history[todayKey()]?.valueEntries.v1;
+      expect(entries).toEqual({ h1: "entry1", h2: "entry2" });
+    });
+
+    it("appends a labeled line to the text override when a new habit logs", () => {
+      const data = emptyAppData();
+      data.habits.push(buildHabit({ id: "h1", title: "habit1" }));
+      data.habits.push(buildHabit({ id: "h2", title: "habit2" }));
+      data.values.push(buildValue({ id: "v1", type: "text" }));
+      useAppStore.getState().hydrate(data);
+      useAppStore.getState().setValueEntryToday("v1", "entry1", "h1");
+      useAppStore.getState().setValueEntryToday("v1", "edited text", "__direct__");
+      useAppStore.getState().setValueEntryToday("v1", "entry2", "h2");
+      const entries = useAppStore.getState().history[todayKey()]?.valueEntries.v1;
+      expect(entries?.__direct__).toBe("edited text\nhabit2 : entry2");
+      expect(entries?.h2).toBe("entry2");
+    });
+
+    it("does not append again when the same habit re-logs", () => {
+      const data = emptyAppData();
+      data.habits.push(buildHabit({ id: "h1", title: "habit1" }));
+      data.values.push(buildValue({ id: "v1", type: "text" }));
+      useAppStore.getState().hydrate(data);
+      useAppStore.getState().setValueEntryToday("v1", "edited text", "__direct__");
+      useAppStore.getState().setValueEntryToday("v1", "entry1", "h1");
+      useAppStore.getState().setValueEntryToday("v1", "entry1b", "h1");
+      const entries = useAppStore.getState().history[todayKey()]?.valueEntries.v1;
+      expect(entries?.__direct__).toBe("edited text\nhabit1 : entry1");
+      expect(entries?.h1).toBe("entry1b");
+    });
+
+    it("does not append for numeric trackers", () => {
+      const data = emptyAppData();
+      data.habits.push(buildHabit({ id: "h1", title: "habit1" }));
+      data.values.push(buildValue({ id: "v1", type: "numeric" }));
+      useAppStore.getState().hydrate(data);
+      useAppStore.getState().setValueEntryToday("v1", 5, "__direct__");
+      useAppStore.getState().setValueEntryToday("v1", 3, "h1");
+      const entries = useAppStore.getState().history[todayKey()]?.valueEntries.v1;
+      expect(entries).toEqual({ __direct__: 5, h1: 3 });
+    });
   });
 
   describe("systemSlice", () => {
@@ -115,6 +165,63 @@ describe("useAppStore", () => {
       newData.timeframes.push(buildTimeframe({ id: "replaced" }));
       useAppStore.getState().replaceAllData(newData);
       expect(useAppStore.getState().timeframes[0]!.id).toBe("replaced");
+    });
+  });
+
+  describe("fieldsSlice", () => {
+    it("addField adds a field and returns its id", () => {
+      useAppStore.getState().hydrate(emptyAppData());
+      const id = useAppStore.getState().addField("protein");
+      const fields = useAppStore.getState().fields;
+      expect(fields).toHaveLength(1);
+      expect(fields[0]!.id).toBe(id);
+      expect(fields[0]!.name).toBe("protein");
+    });
+
+    it("renameField updates the name", () => {
+      useAppStore.getState().hydrate(emptyAppData());
+      const id = useAppStore.getState().addField("protien");
+      useAppStore.getState().renameField(id, "protein");
+      expect(useAppStore.getState().fields[0]!.name).toBe("protein");
+    });
+
+    it("deleteField removes it and strips it from entities", () => {
+      useAppStore.getState().hydrate(emptyAppData());
+      const fieldId = useAppStore.getState().addField("protein");
+      const entityId = useAppStore.getState().addEntity("fish");
+      useAppStore.getState().toggleEntityField(entityId, fieldId);
+      expect(useAppStore.getState().entities[0]!.fieldIds).toContain(fieldId);
+      useAppStore.getState().deleteField(fieldId);
+      expect(useAppStore.getState().fields).toHaveLength(0);
+      expect(useAppStore.getState().entities[0]!.fieldIds).not.toContain(fieldId);
+    });
+  });
+
+  describe("entitiesSlice", () => {
+    it("addEntity adds an entity with no fields", () => {
+      useAppStore.getState().hydrate(emptyAppData());
+      const id = useAppStore.getState().addEntity("fish");
+      const entities = useAppStore.getState().entities;
+      expect(entities).toHaveLength(1);
+      expect(entities[0]!.id).toBe(id);
+      expect(entities[0]!.fieldIds).toEqual([]);
+    });
+
+    it("toggleEntityField adds then removes a field", () => {
+      useAppStore.getState().hydrate(emptyAppData());
+      const fieldId = useAppStore.getState().addField("protein");
+      const entityId = useAppStore.getState().addEntity("fish");
+      useAppStore.getState().toggleEntityField(entityId, fieldId);
+      expect(useAppStore.getState().entities[0]!.fieldIds).toEqual([fieldId]);
+      useAppStore.getState().toggleEntityField(entityId, fieldId);
+      expect(useAppStore.getState().entities[0]!.fieldIds).toEqual([]);
+    });
+
+    it("deleteEntity removes the entity", () => {
+      useAppStore.getState().hydrate(emptyAppData());
+      const id = useAppStore.getState().addEntity("fish");
+      useAppStore.getState().deleteEntity(id);
+      expect(useAppStore.getState().entities).toHaveLength(0);
     });
   });
 });

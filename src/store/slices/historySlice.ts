@@ -1,6 +1,7 @@
 import { todayKey } from "@/lib/date";
+import { DIRECT_KEY } from "@/lib/aggregate";
 import type { DayRecord } from "@/lib/schema";
-import type { AppSlice, HistoryActions } from "@/store/types";
+import type { AppSlice, HistoryActions, StoreState } from "@/store/types";
 
 function ensureToday(history: Record<string, DayRecord>): DayRecord {
   const key = todayKey();
@@ -15,6 +16,20 @@ function ensureToday(history: Record<string, DayRecord>): DayRecord {
 function nowClockTime(): string {
   const d = new Date();
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
+
+function appendToTextOverride(
+  draft: StoreState,
+  valueId: string,
+  habitId: string,
+  contribs: Record<string, number | string>,
+  value: string,
+): void {
+  const override = contribs[DIRECT_KEY];
+  if (typeof override !== "string" || override.trim().length === 0) return;
+  if (draft.values.find((v) => v.id === valueId)?.type !== "text") return;
+  const label = draft.habits.find((h) => h.id === habitId)?.title ?? habitId;
+  contribs[DIRECT_KEY] = `${override}\n${label} : ${value}`;
 }
 
 export const createHistorySlice: AppSlice<HistoryActions> = (set) => ({
@@ -69,7 +84,11 @@ export const createHistorySlice: AppSlice<HistoryActions> = (set) => ({
           day.valueEntries[valueId] = contribs;
         }
       } else {
+        const isNewContribution = habitId !== DIRECT_KEY && contribs[habitId] === undefined;
         contribs[habitId] = value;
+        if (isNewContribution && typeof value === "string") {
+          appendToTextOverride(draft, valueId, habitId, contribs, value);
+        }
         day.valueEntries[valueId] = contribs;
       }
     }),

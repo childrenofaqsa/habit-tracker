@@ -166,6 +166,7 @@ describe("selectValueEntryToday", () => {
       unit: "",
       goalType: "daily",
       goalTarget: null,
+      analyzerEnabled: false,
       order: 0,
       createdAt: 1,
       updatedAt: 1,
