@@ -1,14 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CalendarPlus, GripVertical, Calendar, Plus, EyeOff, Eye } from "lucide-react";
+import { CalendarPlus, Plus } from "lucide-react";
 import { format, parse } from "date-fns";
-import { verticalListSortingStrategy } from "@dnd-kit/sortable";import { toDateKey, parseDateKey } from "@/lib/date";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/common/components/ui/overlay/popover";
-import { Calendar as DatePicker } from "@/common/components/ui/form/calendar";import { useShallow } from "zustand/react/shallow";
-import { toast } from "sonner";
+import { useShallow } from "zustand/react/shallow";
 import { todayKey } from "@/lib/date";
 import { cn } from "@/lib/cn";
 import { useAppStore } from "@/store/useAppStore";
@@ -23,15 +16,15 @@ import { EmptyState } from "@/common/components/EmptyState";
 import { Reveal } from "@/common/components/motion/Reveal";
 import { SelectedDateProvider } from "@/common/hooks/useSelectedDate";
 import { useCelebration } from "@/common/hooks/useCelebration";
-import { AddInline } from "@/features/editmode/AddInline";
-import { DndList } from "@/features/editmode/DndList";
-import { Sortable } from "@/features/editmode/Sortable";
 import { TimeframeSection } from "@/features/habits/components/TimeframeSection";
 import { LinkedValueDialog } from "@/features/values/components/LinkedValueDialog";
 import { CategoryFilter } from "@/features/habits/components/CategoryFilter";
+import { HabitFilterBar } from "@/features/habits/components/HabitFilterBar";
 import { HabitTable } from "@/features/habits/components/HabitTable";
 import { EditHabitPage } from "@/features/habits/components/EditHabitPage";
 import { EditModeToggle } from "@/features/editmode/EditModeToggle";
+import { DateJumpButton } from "@/views/DailyView/DateJumpButton";
+import { EditModeView } from "@/views/DailyView/EditModeView";
 import type { Habit } from "@/lib/schema";
 
 type RoutineView = "myday" | "alltask";
@@ -70,6 +63,21 @@ export function DailyView() {
       );
     });
   }, [searchQuery, habits, categories]);
+
+  const dailyHideEmptyTimeframes = useUiStore((state) => state.dailyHideEmptyTimeframes);
+  const dayStatus = useAppStore((state) => state.history[selectedDate]?.habitStatus);
+
+  const visibleTimeframes = useMemo(() => {
+    if (!dailyHideEmptyTimeframes) return timeframes;
+    return timeframes.filter((tf) => {
+      const categoryIds = categories
+        .filter((c) => c.timeframeId === tf.id)
+        .map((c) => c.id);
+      const timeframeHabits = habits.filter((h) => categoryIds.includes(h.categoryId));
+      if (timeframeHabits.length === 0) return false;
+      return timeframeHabits.some((h) => dayStatus?.[h.id] !== "done");
+    });
+  }, [dailyHideEmptyTimeframes, timeframes, categories, habits, dayStatus]);
 
   useEffect(() => {
     if (
@@ -163,6 +171,8 @@ export function DailyView() {
               </div>
             </header>
 
+            {routineView === "myday" && !searchQuery.trim() && <HabitFilterBar />}
+
             {searchQuery.trim() ? (
               <HabitSearchResults
                 results={searchResults}
@@ -170,7 +180,7 @@ export function DailyView() {
                 onHabitAction={setEditingHabitId}
               />
             ) : routineView === "myday" ? (
-              <MyDayView timeframes={timeframes} />
+              <MyDayView timeframes={visibleTimeframes} />
             ) : (
               <AllTaskView
                 filterCategories={filterCategories}
@@ -304,188 +314,6 @@ function AllTaskView({
           <HabitTable habits={filteredHabits} onHabitAction={onHabitAction} />
         </Reveal>
       )}
-    </>
-  );
-}
-
-function DateJumpButton({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (d: string) => void;
-}) {
-  const [open, setOpen] = useState(false);
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          className="cursor-pointer rounded-xl border border-border bg-card p-2.5 shadow-sm transition-colors hover:bg-muted"
-          aria-label="Jump to date"
-        >
-          <Calendar className="size-5 text-foreground" />
-        </button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="end">
-        <DatePicker
-          mode="single"
-          selected={parseDateKey(value)}
-          onSelect={(date) => {
-            if (!date) return;
-            onChange(toDateKey(date));
-            setOpen(false);
-          }}
-        />
-      </PopoverContent>
-    </Popover>
-  );
-}
-
-function EditModeView({
-  selectedDate,
-  setSelectedDate,
-  timeframes,
-  reorderTimeframes,
-  addTimeframe,
-  addHabit,
-}: {
-  selectedDate: string;
-  setSelectedDate: (d: string) => void;
-  timeframes: { id: string; name: string; order: number }[];
-  reorderTimeframes: (ids: string[]) => void;
-  addTimeframe: (name: string) => string;
-  addHabit: (categoryId: string, title: string) => string;
-}) {
-  const hideCompleted = useUiStore((state) => state.editHideCompleted);
-  const setHideCompleted = useUiStore((state) => state.setEditHideCompleted);
-  const hideEmptyTimeframes = useUiStore((state) => state.editHideEmptyTimeframes);
-  const setHideEmptyTimeframes = useUiStore((state) => state.setEditHideEmptyTimeframes);
-  const allCategories = useAppStore((state) => state.categories);
-  const allHabits = useAppStore((state) => state.habits);
-  const dayStatus = useAppStore((state) => state.history[selectedDate]?.habitStatus);
-
-  const visibleTimeframes = useMemo(() => {
-    if (!hideEmptyTimeframes) return timeframes;
-    return timeframes.filter((tf) => {
-      const categoryIds = allCategories
-        .filter((c) => c.timeframeId === tf.id)
-        .map((c) => c.id);
-      const habits = allHabits.filter((h) => categoryIds.includes(h.categoryId));
-      if (habits.length === 0) return false;
-      return habits.some((h) => dayStatus?.[h.id] !== "done");
-    });
-  }, [hideEmptyTimeframes, timeframes, allCategories, allHabits, dayStatus]);
-
-  return (
-    <>
-      <header className="flex items-start justify-between">
-        <div>
-          <h2 className="text-3xl font-extrabold text-foreground">
-            {format(parse(selectedDate, "yyyy-MM-dd", new Date()), "EEEE, MMMM d")}
-          </h2>
-        </div>
-        <div className="flex items-center gap-3">
-          <DateJumpButton value={selectedDate} onChange={setSelectedDate} />
-          <EditModeToggle />
-          <button
-            type="button"
-            onClick={() => useAppStore.getState().setEditMode(false)}
-            className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground"
-          >
-            Done
-          </button>
-        </div>
-      </header>
-
-      <div className="flex flex-wrap items-center gap-2">
-        <button
-          type="button"
-          onClick={() => setHideCompleted(!hideCompleted)}
-          className={cn(
-            "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors",
-            hideCompleted
-              ? "border-primary/40 bg-primary/10 text-primary"
-              : "border-border bg-card text-muted-foreground hover:text-foreground",
-          )}
-          aria-pressed={hideCompleted}
-        >
-          {hideCompleted ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
-          {hideCompleted ? "Show completed" : "Hide completed"}
-        </button>
-        <button
-          type="button"
-          onClick={() => setHideEmptyTimeframes(!hideEmptyTimeframes)}
-          className={cn(
-            "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors",
-            hideEmptyTimeframes
-              ? "border-primary/40 bg-primary/10 text-primary"
-              : "border-border bg-card text-muted-foreground hover:text-foreground",
-          )}
-          aria-pressed={hideEmptyTimeframes}
-        >
-          {hideEmptyTimeframes ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
-          {hideEmptyTimeframes ? "Show empty timeframes" : "Hide empty timeframes"}
-        </button>
-      </div>
-
-      <DndList
-        ids={visibleTimeframes.map((tf) => tf.id)}
-        strategy={verticalListSortingStrategy}
-        onReorder={reorderTimeframes}
-      >
-        <div className="space-y-8">
-          {visibleTimeframes.map((timeframe) => (
-            <Sortable key={timeframe.id} id={timeframe.id}>
-              {({ attributes, listeners }) => (
-                <TimeframeSection
-                  timeframe={timeframe}
-                  handle={
-                    <button
-                      type="button"
-                      aria-label="Drag to reorder"
-                      className="grid size-6 cursor-grab touch-none place-items-center rounded-md text-muted-foreground active:cursor-grabbing"
-                      {...attributes}
-                      {...listeners}
-                    >
-                      <GripVertical className="size-4" />
-                    </button>
-                  }
-                />
-              )}
-            </Sortable>
-          ))}
-        </div>
-      </DndList>
-
-      <AddInline
-        label="Add Timeframe"
-        placeholder="Timeframe name"
-        onAdd={(name) => {
-          const trimmed = name.trim();
-          if (!trimmed) return;
-          const exists = timeframes.some(
-            (tf) => tf.name.trim().toLowerCase() === trimmed.toLowerCase(),
-          );
-          if (exists) {
-            toast.error("Timeframe already exists");
-            return;
-          }
-          addTimeframe(trimmed);
-        }}
-      />
-
-      <button
-        type="button"
-        onClick={() => {
-          const firstCategory = useAppStore.getState().categories[0];
-          if (firstCategory) addHabit(firstCategory.id, "New Habit");
-        }}
-        className="fixed bottom-20 right-6 z-40 flex size-16 items-center justify-center rounded-full bg-primary shadow-xl transition-transform hover:scale-110 active:scale-95"
-        aria-label="Add habit"
-      >
-        <Plus className="size-8 text-primary-foreground" />
-      </button>
     </>
   );
 }

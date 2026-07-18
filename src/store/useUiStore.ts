@@ -13,8 +13,8 @@ type UiState = {
   settingsOpen: boolean;
   trackerLogView: TrackerLogView;
   timeframeOpen: Record<string, boolean>;
-  editHideCompleted: boolean;
-  editHideEmptyTimeframes: boolean;
+  dailyHideCompleted: boolean;
+  dailyHideEmptyTimeframes: boolean;
   editingHabitId: string | null;
   editingTodoId: string | "new" | null;
   todoSort: TodoSortMode;
@@ -33,8 +33,8 @@ type UiState = {
   setSettingsOpen: (open: boolean) => void;
   setTrackerLogView: (view: TrackerLogView) => void;
   setTimeframeOpen: (id: string, open: boolean) => void;
-  setEditHideCompleted: (value: boolean) => void;
-  setEditHideEmptyTimeframes: (value: boolean) => void;
+  setDailyHideCompleted: (value: boolean) => void;
+  setDailyHideEmptyTimeframes: (value: boolean) => void;
   setEditingHabitId: (id: string | null) => void;
   setEditingTodoId: (id: string | "new" | null) => void;
   setTodoSort: (mode: TodoSortMode) => void;
@@ -56,8 +56,8 @@ export const useUiStore = create<UiState>((set) => ({
   settingsOpen: false,
   trackerLogView: "month",
   timeframeOpen: {},
-  editHideCompleted: false,
-  editHideEmptyTimeframes: false,
+  dailyHideCompleted: false,
+  dailyHideEmptyTimeframes: false,
   editingTodoId: null,
   editingHabitId: null,
   todoSort: "manual",
@@ -80,8 +80,8 @@ export const useUiStore = create<UiState>((set) => ({
     set((state) => ({ timeframeOpen: { ...state.timeframeOpen, [id]: open } })),
   setEditingTodoId: (id) => set({ editingTodoId: id }),
   setEditingHabitId: (id) => set({ editingHabitId: id }),
-  setEditHideCompleted: (value) => set({ editHideCompleted: value }),
-  setEditHideEmptyTimeframes: (value) => set({ editHideEmptyTimeframes: value }),
+  setDailyHideCompleted: (value) => set({ dailyHideCompleted: value }),
+  setDailyHideEmptyTimeframes: (value) => set({ dailyHideEmptyTimeframes: value }),
   setTodoSort: (mode) => set({ todoSort: mode }),
   setTodoHideCompleted: (value) => set({ todoHideCompleted: value }),
   setTodoTab: (tab) => set({ todoTab: tab }),

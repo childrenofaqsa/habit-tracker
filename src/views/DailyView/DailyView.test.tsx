@@ -2,8 +2,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { DailyView } from "@/views/DailyView/DailyView";
 import { useAppStore } from "@/store/useAppStore";
+import { useUiStore } from "@/store/useUiStore";
 import { emptyAppData } from "@/lib/schema";
-import { buildTimeframe, buildCategory, buildHabit } from "@/test/factories";
+import { todayKey } from "@/lib/date";
+import { buildTimeframe, buildCategory, buildHabit, buildDayRecord } from "@/test/factories";
 import type { StoreState } from "@/store/types";
 
 vi.mock("@/common/hooks/useCelebration", () => ({
@@ -47,11 +49,16 @@ vi.mock("@/features/editmode/DndList", () => ({
 }));
 
 vi.mock("@/features/editmode/Sortable", () => ({
-  Sortable: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  Sortable: ({
+    children,
+  }: {
+    children: (handle: { attributes: object; listeners: object; isDragging: boolean }) => React.ReactNode;
+  }) => <div>{children({ attributes: {}, listeners: {}, isDragging: false })}</div>,
 }));
 
 beforeEach(() => {
   useAppStore.setState({ ...emptyAppData(), hydrated: true } as Partial<StoreState>);
+  useUiStore.setState({ dailyHideCompleted: false, dailyHideEmptyTimeframes: false, searchQuery: "" });
 });
 
 describe("DailyView", () => {
@@ -94,5 +101,67 @@ describe("DailyView", () => {
     render(<DailyView />);
     const elapsed = performance.now() - start;
     expect(elapsed).toBeLessThan(1000);
+  });
+
+  it("shows the habit filter bar on My Day but not on All Habits", () => {
+    const data = emptyAppData();
+    data.timeframes.push(buildTimeframe({ id: "tf-1", name: "Morning", order: 0 }));
+    data.categories.push(buildCategory({ id: "c-1", timeframeId: "tf-1", order: 0 }));
+    data.habits.push(buildHabit({ id: "h-1", categoryId: "c-1", order: 0 }));
+    useAppStore.setState({ ...data, hydrated: true } as Partial<StoreState>);
+
+    render(<DailyView />);
+    expect(screen.getByText("Hide completed")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText("All Habits"));
+    expect(screen.queryByText("Hide completed")).not.toBeInTheDocument();
+  });
+
+  it("hides the habit filter bar in Edit Mode", () => {
+    const data = emptyAppData();
+    data.timeframes.push(buildTimeframe({ id: "tf-1", name: "Morning", order: 0 }));
+    data.settings.editMode = true;
+    useAppStore.setState({ ...data, hydrated: true } as Partial<StoreState>);
+
+    render(<DailyView />);
+    expect(screen.queryByText("Hide completed")).not.toBeInTheDocument();
+  });
+
+  it("hides a fully-completed timeframe on My Day when Hide empty timeframes is on", () => {
+    const data = emptyAppData();
+    data.timeframes.push(buildTimeframe({ id: "tf-1", name: "Morning", order: 0 }));
+    data.timeframes.push(buildTimeframe({ id: "tf-2", name: "Evening", order: 1 }));
+    data.categories.push(buildCategory({ id: "c-1", timeframeId: "tf-1", order: 0 }));
+    data.categories.push(buildCategory({ id: "c-2", timeframeId: "tf-2", order: 0 }));
+    data.habits.push(buildHabit({ id: "h-1", categoryId: "c-1", order: 0 }));
+    data.habits.push(buildHabit({ id: "h-2", categoryId: "c-2", order: 0 }));
+    data.history[todayKey()] = buildDayRecord({ habitStatus: { "h-1": "done" } });
+    useAppStore.setState({ ...data, hydrated: true } as Partial<StoreState>);
+
+    render(<DailyView />);
+    expect(screen.getByText("Morning")).toBeInTheDocument();
+    expect(screen.getByText("Evening")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText("Hide empty timeframes"));
+    expect(screen.queryByText("Morning")).not.toBeInTheDocument();
+    expect(screen.getByText("Evening")).toBeInTheDocument();
+  });
+
+  it("shows every timeframe in Edit Mode even when Hide empty timeframes is on", () => {
+    const data = emptyAppData();
+    data.timeframes.push(buildTimeframe({ id: "tf-1", name: "Morning", order: 0 }));
+    data.timeframes.push(buildTimeframe({ id: "tf-2", name: "Evening", order: 1 }));
+    data.categories.push(buildCategory({ id: "c-1", timeframeId: "tf-1", order: 0 }));
+    data.categories.push(buildCategory({ id: "c-2", timeframeId: "tf-2", order: 0 }));
+    data.habits.push(buildHabit({ id: "h-1", categoryId: "c-1", order: 0 }));
+    data.habits.push(buildHabit({ id: "h-2", categoryId: "c-2", order: 0 }));
+    data.history[todayKey()] = buildDayRecord({ habitStatus: { "h-1": "done" } });
+    data.settings.editMode = true;
+    useAppStore.setState({ ...data, hydrated: true } as Partial<StoreState>);
+    useUiStore.setState({ dailyHideEmptyTimeframes: true });
+
+    render(<DailyView />);
+    expect(screen.getByText("Morning")).toBeInTheDocument();
+    expect(screen.getByText("Evening")).toBeInTheDocument();
   });
 });
