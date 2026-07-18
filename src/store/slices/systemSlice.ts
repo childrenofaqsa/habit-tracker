@@ -8,7 +8,11 @@ function assignData(draft: AppData & { hydrated: boolean }, data: AppData): void
   draft.categories = data.categories;
   draft.habits = data.habits;
   draft.values = data.values;
+  draft.fields = data.fields;
+  draft.entities = data.entities;
   draft.todos = data.todos;
+  draft.projects = data.projects;
+  draft.todoLists = data.todoLists;
   draft.history = data.history;
   draft.settings = data.settings;
 }

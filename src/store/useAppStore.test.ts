@@ -3,7 +3,15 @@ import { useAppStore } from "@/store/useAppStore";
 import { selectAppData } from "@/store/useAppStore";
 import { emptyAppData } from "@/lib/schema";
 import { todayKey } from "@/lib/date";
-import { buildHabit, buildTimeframe, buildValue } from "@/test/factories";
+import {
+  buildHabit,
+  buildTimeframe,
+  buildValue,
+  buildField,
+  buildEntity,
+  buildProject,
+  buildTodoList,
+} from "@/test/factories";
 
 beforeEach(() => {
   useAppStore.setState({ ...emptyAppData(), hydrated: false });
@@ -22,6 +30,20 @@ describe("useAppStore", () => {
       expect(useAppStore.getState().hydrated).toBe(true);
       expect(useAppStore.getState().timeframes).toHaveLength(1);
     });
+
+    it("hydrates fields, entities, projects, and todoLists", () => {
+      const data = emptyAppData();
+      data.fields.push(buildField({ id: "field-1" }));
+      data.entities.push(buildEntity({ id: "entity-1" }));
+      data.projects.push(buildProject({ id: "project-1" }));
+      data.todoLists.push(buildTodoList({ id: "list-1" }));
+      useAppStore.getState().hydrate(data);
+      const state = useAppStore.getState();
+      expect(state.fields).toHaveLength(1);
+      expect(state.entities).toHaveLength(1);
+      expect(state.projects).toHaveLength(1);
+      expect(state.todoLists).toHaveLength(1);
+    });
   });
 
   describe("selectAppData", () => {
@@ -38,7 +60,11 @@ describe("useAppStore", () => {
       expect(appData).toHaveProperty("categories");
       expect(appData).toHaveProperty("habits");
       expect(appData).toHaveProperty("values");
+      expect(appData).toHaveProperty("fields");
+      expect(appData).toHaveProperty("entities");
       expect(appData).toHaveProperty("todos");
+      expect(appData).toHaveProperty("projects");
+      expect(appData).toHaveProperty("todoLists");
       expect(appData).toHaveProperty("history");
       expect(appData).toHaveProperty("settings");
     });
@@ -165,6 +191,45 @@ describe("useAppStore", () => {
       newData.timeframes.push(buildTimeframe({ id: "replaced" }));
       useAppStore.getState().replaceAllData(newData);
       expect(useAppStore.getState().timeframes[0]!.id).toBe("replaced");
+    });
+
+    it("replaceAllData preserves fields, entities, projects, and todoLists", () => {
+      useAppStore.getState().hydrate(emptyAppData());
+      const newData = emptyAppData();
+      newData.fields.push(buildField({ id: "field-1" }));
+      newData.entities.push(buildEntity({ id: "entity-1" }));
+      newData.projects.push(buildProject({ id: "project-1" }));
+      newData.todoLists.push(buildTodoList({ id: "list-1" }));
+      useAppStore.getState().replaceAllData(newData);
+      const state = useAppStore.getState();
+      expect(state.fields[0]!.id).toBe("field-1");
+      expect(state.entities[0]!.id).toBe("entity-1");
+      expect(state.projects[0]!.id).toBe("project-1");
+      expect(state.todoLists[0]!.id).toBe("list-1");
+    });
+
+    it("mergeData preserves both current and incoming fields, entities, projects, and todoLists", () => {
+      useAppStore.getState().hydrate(emptyAppData());
+      useAppStore.setState({
+        fields: [buildField({ id: "field-current" })],
+        entities: [buildEntity({ id: "entity-current" })],
+        projects: [buildProject({ id: "project-current" })],
+        todoLists: [buildTodoList({ id: "list-current" })],
+      });
+
+      const incoming = emptyAppData();
+      incoming.fields.push(buildField({ id: "field-incoming" }));
+      incoming.entities.push(buildEntity({ id: "entity-incoming" }));
+      incoming.projects.push(buildProject({ id: "project-incoming" }));
+      incoming.todoLists.push(buildTodoList({ id: "list-incoming" }));
+
+      useAppStore.getState().mergeData(incoming);
+
+      const state = useAppStore.getState();
+      expect(state.fields.map((f) => f.id)).toEqual(["field-current", "field-incoming"]);
+      expect(state.entities.map((e) => e.id)).toEqual(["entity-current", "entity-incoming"]);
+      expect(state.projects.map((p) => p.id)).toEqual(["project-current", "project-incoming"]);
+      expect(state.todoLists.map((l) => l.id)).toEqual(["list-current", "list-incoming"]);
     });
   });
 

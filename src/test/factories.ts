@@ -1,4 +1,16 @@
-import type { AppData, Habit, Todo, Timeframe, Category, ValueTracker, Project, DayRecord } from "@/lib/schema";
+import type {
+  AppData,
+  Habit,
+  Todo,
+  Timeframe,
+  Category,
+  ValueTracker,
+  Field,
+  Entity,
+  Project,
+  TodoList,
+  DayRecord,
+} from "@/lib/schema";
 import { emptyAppData } from "@/lib/schema";
 import { toDateKey } from "@/lib/date";
 
@@ -56,6 +68,31 @@ export function buildValue(overrides: Partial<ValueTracker> = {}): ValueTracker 
   };
 }
 
+export function buildField(overrides: Partial<Field> = {}): Field {
+  const n = seq();
+  return {
+    id: `field-${n}`,
+    name: `Field ${n}`,
+    order: n,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    ...overrides,
+  };
+}
+
+export function buildEntity(overrides: Partial<Entity> = {}): Entity {
+  const n = seq();
+  return {
+    id: `entity-${n}`,
+    name: `Entity ${n}`,
+    fieldIds: [],
+    order: n,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    ...overrides,
+  };
+}
+
 export function buildTodo(overrides: Partial<Todo> = {}): Todo {
   const n = seq();
   return {
@@ -92,6 +129,18 @@ export function buildProject(overrides: Partial<Project> = {}): Project {
     deadlineTime: null,
     priority: null,
     breadcrumb: [],
+    order: n,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    ...overrides,
+  };
+}
+
+export function buildTodoList(overrides: Partial<TodoList> = {}): TodoList {
+  const n = seq();
+  return {
+    id: `list-${n}`,
+    name: `List ${n}`,
     order: n,
     createdAt: Date.now(),
     updatedAt: Date.now(),
