@@ -4,41 +4,54 @@ import { HabitFilterBar } from "@/features/habits/components/HabitFilterBar";
 import { useUiStore } from "@/store/useUiStore";
 
 beforeEach(() => {
-  useUiStore.setState({ dailyHideCompleted: false, dailyHideEmptyTimeframes: false });
+  useUiStore.setState({
+    dailyShowCompleted: true,
+    dailyShowDiscarded: true,
+    dailyShowEmptyTimeframes: true,
+    dailyPriorityFilter: [],
+  });
 });
 
 describe("HabitFilterBar", () => {
-  it("toggles Hide completed and flips its label + aria-pressed", () => {
+  it("toggles Show completed", () => {
     render(<HabitFilterBar />);
 
-    const button = screen.getByText("Hide completed");
-    expect(button).toHaveAttribute("aria-pressed", "false");
+    const toggle = screen.getByLabelText("Show completed");
+    expect(toggle).toBeChecked();
 
-    fireEvent.click(button);
+    fireEvent.click(toggle);
 
-    expect(useUiStore.getState().dailyHideCompleted).toBe(true);
-    expect(screen.getByText("Show completed")).toHaveAttribute("aria-pressed", "true");
+    expect(useUiStore.getState().dailyShowCompleted).toBe(false);
   });
 
-  it("toggles Hide empty timeframes and flips its label + aria-pressed", () => {
+  it("toggles Show discarded", () => {
     render(<HabitFilterBar />);
 
-    const button = screen.getByText("Hide empty timeframes");
-    expect(button).toHaveAttribute("aria-pressed", "false");
+    fireEvent.click(screen.getByLabelText("Show discarded"));
 
-    fireEvent.click(button);
-
-    expect(useUiStore.getState().dailyHideEmptyTimeframes).toBe(true);
-    expect(screen.getByText("Show empty timeframes")).toHaveAttribute("aria-pressed", "true");
+    expect(useUiStore.getState().dailyShowDiscarded).toBe(false);
+    expect(useUiStore.getState().dailyShowCompleted).toBe(true);
   });
 
-  it("toggling one filter does not affect the other", () => {
+  it("toggles Show empty timeframes", () => {
     render(<HabitFilterBar />);
 
-    fireEvent.click(screen.getByText("Hide completed"));
+    fireEvent.click(screen.getByLabelText("Show empty timeframes"));
 
-    expect(useUiStore.getState().dailyHideCompleted).toBe(true);
-    expect(useUiStore.getState().dailyHideEmptyTimeframes).toBe(false);
-    expect(screen.getByText("Hide empty timeframes")).toBeInTheDocument();
+    expect(useUiStore.getState().dailyShowEmptyTimeframes).toBe(false);
+  });
+
+  it("selects multiple priorities and toggles them off independently", () => {
+    render(<HabitFilterBar />);
+
+    const high = screen.getByRole("checkbox", { name: "High priority" });
+    const low = screen.getByRole("checkbox", { name: "Low priority" });
+
+    fireEvent.click(high);
+    fireEvent.click(low);
+    expect(useUiStore.getState().dailyPriorityFilter).toEqual(["high", "low"]);
+
+    fireEvent.click(high);
+    expect(useUiStore.getState().dailyPriorityFilter).toEqual(["low"]);
   });
 });

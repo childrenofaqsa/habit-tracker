@@ -7,6 +7,7 @@ import { AddInline } from "@/features/editmode/AddInline";
 import { DndList } from "@/features/editmode/DndList";
 import { Sortable } from "@/features/editmode/Sortable";
 import { TimeframeSection } from "@/features/habits/components/TimeframeSection";
+import { HabitFilterBar } from "@/features/habits/components/HabitFilterBar";
 import { EditModeToggle } from "@/features/editmode/EditModeToggle";
 import { DateJumpButton } from "@/views/DailyView/DateJumpButton";
 
@@ -47,6 +48,8 @@ export function EditModeView({
           </button>
         </div>
       </header>
+
+      <HabitFilterBar />
 
       <DndList
         ids={timeframes.map((tf) => tf.id)}

@@ -11,20 +11,23 @@ import {
   selectTodaySummary,
   selectAllCategoryNames,
   selectHabitsByCategory,
+  selectPickedHabits,
+  isHabitVisibleOnMyDay,
 } from "@/store/selectors";
 import { EmptyState } from "@/common/components/EmptyState";
 import { Reveal } from "@/common/components/motion/Reveal";
 import { SelectedDateProvider } from "@/common/hooks/useSelectedDate";
 import { useCelebration } from "@/common/hooks/useCelebration";
 import { TimeframeSection } from "@/features/habits/components/TimeframeSection";
+import { PickedHabitsRow } from "@/features/habits/components/PickedHabitsRow";
 import { LinkedValueDialog } from "@/features/values/components/LinkedValueDialog";
 import { CategoryFilter } from "@/features/habits/components/CategoryFilter";
-import { HabitFilterBar } from "@/features/habits/components/HabitFilterBar";
 import { HabitTable } from "@/features/habits/components/HabitTable";
 import { EditHabitPage } from "@/features/habits/components/EditHabitPage";
 import { EditModeToggle } from "@/features/editmode/EditModeToggle";
 import { DateJumpButton } from "@/views/DailyView/DateJumpButton";
 import { EditModeView } from "@/views/DailyView/EditModeView";
+import { PickView } from "@/views/DailyView/PickView";
 import type { Habit } from "@/lib/schema";
 
 type RoutineView = "myday" | "alltask";
@@ -32,6 +35,7 @@ type RoutineView = "myday" | "alltask";
 export function DailyView() {
   const [selectedDate, setSelectedDate] = useState(todayKey);
   const [routineView, setRoutineView] = useState<RoutineView>("myday");
+  const [picking, setPicking] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All");
   const editingHabitId = useUiStore((state) => state.editingHabitId);
   const setEditingHabitId = useUiStore((state) => state.setEditingHabitId);
@@ -64,20 +68,38 @@ export function DailyView() {
     });
   }, [searchQuery, habits, categories]);
 
-  const dailyHideEmptyTimeframes = useUiStore((state) => state.dailyHideEmptyTimeframes);
+  const dailyShowCompleted = useUiStore((state) => state.dailyShowCompleted);
+  const dailyShowDiscarded = useUiStore((state) => state.dailyShowDiscarded);
+  const dailyShowEmptyTimeframes = useUiStore((state) => state.dailyShowEmptyTimeframes);
+  const dailyPriorityFilter = useUiStore(useShallow((state) => state.dailyPriorityFilter));
   const dayStatus = useAppStore((state) => state.history[selectedDate]?.habitStatus);
 
   const visibleTimeframes = useMemo(() => {
-    if (!dailyHideEmptyTimeframes) return timeframes;
+    if (dailyShowEmptyTimeframes) return timeframes;
+    const filters = {
+      showCompleted: dailyShowCompleted,
+      showDiscarded: dailyShowDiscarded,
+      priorities: dailyPriorityFilter,
+    };
     return timeframes.filter((tf) => {
       const categoryIds = categories
         .filter((c) => c.timeframeId === tf.id)
         .map((c) => c.id);
       const timeframeHabits = habits.filter((h) => categoryIds.includes(h.categoryId));
-      if (timeframeHabits.length === 0) return false;
-      return timeframeHabits.some((h) => dayStatus?.[h.id] !== "done");
+      return timeframeHabits.some((h) =>
+        isHabitVisibleOnMyDay(h, dayStatus?.[h.id], filters),
+      );
     });
-  }, [dailyHideEmptyTimeframes, timeframes, categories, habits, dayStatus]);
+  }, [
+    dailyShowEmptyTimeframes,
+    dailyShowCompleted,
+    dailyShowDiscarded,
+    dailyPriorityFilter,
+    timeframes,
+    categories,
+    habits,
+    dayStatus,
+  ]);
 
   useEffect(() => {
     if (
@@ -103,6 +125,10 @@ export function DailyView() {
         />
       </SelectedDateProvider>
     );
+  }
+
+  if (picking) {
+    return <PickView selectedDate={selectedDate} onDone={() => setPicking(false)} />;
   }
 
   if (timeframes.length === 0 && !editMode) {
@@ -140,6 +166,13 @@ export function DailyView() {
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPicking(true)}
+                  className="rounded-full border border-border bg-card px-5 py-1.5 text-sm font-semibold text-foreground shadow-sm transition-colors hover:bg-muted"
+                >
+                  Pick
+                </button>
                 <div className="rounded-full border border-border bg-muted p-1">
                   <button
                     type="button"
@@ -171,8 +204,6 @@ export function DailyView() {
               </div>
             </header>
 
-            {routineView === "myday" && !searchQuery.trim() && <HabitFilterBar />}
-
             {searchQuery.trim() ? (
               <HabitSearchResults
                 results={searchResults}
@@ -180,7 +211,7 @@ export function DailyView() {
                 onHabitAction={setEditingHabitId}
               />
             ) : routineView === "myday" ? (
-              <MyDayView timeframes={visibleTimeframes} />
+              <MyDayView timeframes={visibleTimeframes} selectedDate={selectedDate} />
             ) : (
               <AllTaskView
                 filterCategories={filterCategories}
@@ -226,9 +257,13 @@ function HabitSearchResults({
 
 function MyDayView({
   timeframes,
+  selectedDate,
 }: {
   timeframes: { id: string; name: string; order: number }[];
+  selectedDate: string;
 }) {
+  const pickedHabits = useAppStore(useShallow(selectPickedHabits(selectedDate)));
+
   if (timeframes.length === 0) {
     return (
       <EmptyState
@@ -240,6 +275,13 @@ function MyDayView({
   }
   return (
     <div className="space-y-4">
+      {pickedHabits.length > 0 && (
+        <Reveal>
+          <section className="rounded-3xl border border-primary/20 bg-primary/5 p-5">
+            <PickedHabitsRow habits={pickedHabits} />
+          </section>
+        </Reveal>
+      )}
       {timeframes.map((timeframe) => (
         <Reveal key={timeframe.id}>
           <TimeframeSection timeframe={timeframe} />

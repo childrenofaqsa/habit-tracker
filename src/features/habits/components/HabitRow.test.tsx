@@ -47,17 +47,22 @@ function renderHabitRow() {
 
 beforeEach(() => {
   useAppStore.setState({ ...emptyAppData(), hydrated: true } as Partial<StoreState>);
-  useUiStore.setState({ dailyHideCompleted: false });
+  useUiStore.setState({
+    dailyShowCompleted: true,
+    dailyShowDiscarded: true,
+    dailyShowEmptyTimeframes: true,
+    dailyPriorityFilter: [],
+  });
 });
 
 describe("HabitRow", () => {
-  it("hides completed habits on My Day when Hide completed is on", () => {
+  it("hides completed habits on My Day when Show completed is off", () => {
     const data = emptyAppData();
     data.habits.push(buildHabit({ id: "h-done", categoryId: CATEGORY_ID, title: "Done Habit", order: 0 }));
     data.habits.push(buildHabit({ id: "h-open", categoryId: CATEGORY_ID, title: "Open Habit", order: 1 }));
     data.history[todayKey()] = buildDayRecord({ habitStatus: { "h-done": "done" } });
     useAppStore.setState({ ...data, hydrated: true } as Partial<StoreState>);
-    useUiStore.setState({ dailyHideCompleted: true });
+    useUiStore.setState({ dailyShowCompleted: false });
 
     renderHabitRow();
 
@@ -65,14 +70,41 @@ describe("HabitRow", () => {
     expect(screen.getByText("Open Habit")).toBeInTheDocument();
   });
 
-  it("shows completed habits in Edit Mode even when Hide completed is on", () => {
+  it("hides discarded habits on My Day when Show discarded is off", () => {
+    const data = emptyAppData();
+    data.habits.push(buildHabit({ id: "h-missed", categoryId: CATEGORY_ID, title: "Missed Habit", order: 0 }));
+    data.habits.push(buildHabit({ id: "h-open", categoryId: CATEGORY_ID, title: "Open Habit", order: 1 }));
+    data.history[todayKey()] = buildDayRecord({ habitStatus: { "h-missed": "missed" } });
+    useAppStore.setState({ ...data, hydrated: true } as Partial<StoreState>);
+    useUiStore.setState({ dailyShowDiscarded: false });
+
+    renderHabitRow();
+
+    expect(screen.queryByText("Missed Habit")).not.toBeInTheDocument();
+    expect(screen.getByText("Open Habit")).toBeInTheDocument();
+  });
+
+  it("shows only selected priorities on My Day when a priority filter is active", () => {
+    const data = emptyAppData();
+    data.habits.push(buildHabit({ id: "h-high", categoryId: CATEGORY_ID, title: "High Habit", priority: "high", order: 0 }));
+    data.habits.push(buildHabit({ id: "h-low", categoryId: CATEGORY_ID, title: "Low Habit", priority: "low", order: 1 }));
+    useAppStore.setState({ ...data, hydrated: true } as Partial<StoreState>);
+    useUiStore.setState({ dailyPriorityFilter: ["high"] });
+
+    renderHabitRow();
+
+    expect(screen.getByText("High Habit")).toBeInTheDocument();
+    expect(screen.queryByText("Low Habit")).not.toBeInTheDocument();
+  });
+
+  it("shows completed habits in Edit Mode even when Show completed is off", () => {
     const data = emptyAppData();
     data.habits.push(buildHabit({ id: "h-done", categoryId: CATEGORY_ID, title: "Done Habit", order: 0 }));
     data.habits.push(buildHabit({ id: "h-open", categoryId: CATEGORY_ID, title: "Open Habit", order: 1 }));
     data.history[todayKey()] = buildDayRecord({ habitStatus: { "h-done": "done" } });
     data.settings.editMode = true;
     useAppStore.setState({ ...data, hydrated: true } as Partial<StoreState>);
-    useUiStore.setState({ dailyHideCompleted: true });
+    useUiStore.setState({ dailyShowCompleted: false });
 
     renderHabitRow();
 
@@ -85,11 +117,11 @@ describe("HabitRow", () => {
     data.habits.push(buildHabit({ id: "h-done", categoryId: CATEGORY_ID, title: "Done Habit", order: 0 }));
     data.history[todayKey()] = buildDayRecord({ habitStatus: { "h-done": "done" } });
     useAppStore.setState({ ...data, hydrated: true } as Partial<StoreState>);
-    useUiStore.setState({ dailyHideCompleted: true });
+    useUiStore.setState({ dailyShowCompleted: false });
 
     renderHabitRow();
 
-    expect(screen.getByText("All done for today.")).toBeInTheDocument();
+    expect(screen.getByText("Nothing matches your filters.")).toBeInTheDocument();
   });
 
   it("shows the default empty message when there are no habits at all", () => {

@@ -182,6 +182,16 @@ describe("useAppStore", () => {
       const entries = useAppStore.getState().history[todayKey()]?.valueEntries.v1;
       expect(entries).toEqual({ __direct__: 5, h1: 3 });
     });
+
+    it("setPickedHabits stores the picked order for the given day", () => {
+      const data = emptyAppData();
+      data.habits.push(buildHabit({ id: "h1" }));
+      data.habits.push(buildHabit({ id: "h2" }));
+      useAppStore.getState().hydrate(data);
+      const today = todayKey();
+      useAppStore.getState().setPickedHabits(today, ["h2", "h1"]);
+      expect(useAppStore.getState().history[today]?.pickedHabitIds).toEqual(["h2", "h1"]);
+    });
   });
 
   describe("systemSlice", () => {

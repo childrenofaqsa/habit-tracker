@@ -3,7 +3,7 @@ import { horizontalListSortingStrategy } from "@dnd-kit/sortable";
 import { useShallow } from "zustand/react/shallow";
 import { useAppStore } from "@/store/useAppStore";
 import { useUiStore } from "@/store/useUiStore";
-import { selectHabits } from "@/store/selectors";
+import { selectHabits, isHabitVisibleOnMyDay } from "@/store/selectors";
 import { useSelectedDate } from "@/common/hooks/useSelectedDate";
 import { HabitCard } from "@/features/habits/components/HabitCard/HabitCard";
 import { AddHabitCard } from "@/features/habits/components/AddHabitCard";
@@ -15,14 +15,21 @@ export function HabitRow({ categoryId }: { categoryId: string }) {
   const allHabits = useAppStore(useShallow(selectHabits(categoryId)));
   const addHabit = useAppStore((state) => state.addHabit);
   const reorderHabits = useAppStore((state) => state.reorderHabits);
-  const hideCompleted = useUiStore((state) => state.dailyHideCompleted);
+  const showCompleted = useUiStore((state) => state.dailyShowCompleted);
+  const showDiscarded = useUiStore((state) => state.dailyShowDiscarded);
+  const priorityFilter = useUiStore(useShallow((state) => state.dailyPriorityFilter));
   const selectedDate = useSelectedDate();
   const dayStatus = useAppStore((state) => state.history[selectedDate]?.habitStatus);
 
-  const habits =
-    !editMode && hideCompleted
-      ? allHabits.filter((h) => dayStatus?.[h.id] !== "done")
-      : allHabits;
+  const habits = editMode
+    ? allHabits
+    : allHabits.filter((h) =>
+        isHabitVisibleOnMyDay(h, dayStatus?.[h.id], {
+          showCompleted,
+          showDiscarded,
+          priorities: priorityFilter,
+        }),
+      );
 
   const isFilteredEmpty = habits.length === 0 && allHabits.length > 0;
 
@@ -34,7 +41,7 @@ export function HabitRow({ categoryId }: { categoryId: string }) {
         ))}
         {habits.length === 0 && (
           <p className="py-6 text-sm text-muted-foreground">
-            {isFilteredEmpty ? "All done for today." : "No habits yet."}
+            {isFilteredEmpty ? "Nothing matches your filters." : "No habits yet."}
           </p>
         )}
       </div>

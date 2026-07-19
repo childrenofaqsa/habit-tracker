@@ -1,5 +1,5 @@
 import { todayKey, reverseChronologicalKeys, parseDateKey } from "@/lib/date";
-import type { Habit, HabitStatus } from "@/lib/schema";
+import type { Habit, HabitStatus, Priority } from "@/lib/schema";
 import type { StoreState } from "@/store/types";
 import { calculateBestStreak } from "@/lib/streak";
 import { aggregateValueEntries, mergeTextEntries, type ValueEntries } from "@/lib/aggregate";
@@ -37,6 +37,30 @@ export function selectScheduledCompletion(state: StoreState, dateKey: string): n
 }
 
 const byOrder = <T extends { order: number }>(a: T, b: T) => a.order - b.order;
+
+export type MyDayHabitFilters = {
+  showCompleted: boolean;
+  showDiscarded: boolean;
+  priorities: Priority[];
+};
+
+/**
+ * Whether a habit passes the My Day filters, given its status on the selected
+ * day. "Completed" maps to `done` and "discarded" maps to `missed`. An empty
+ * `priorities` list means all priorities are shown.
+ */
+export function isHabitVisibleOnMyDay(
+  habit: Habit,
+  status: HabitStatus | undefined,
+  filters: MyDayHabitFilters,
+): boolean {
+  if (status === "done" && !filters.showCompleted) return false;
+  if (status === "missed" && !filters.showDiscarded) return false;
+  if (filters.priorities.length > 0 && !filters.priorities.includes(habit.priority)) {
+    return false;
+  }
+  return true;
+}
 
 export const selectTimeframes = (state: StoreState) =>
   [...state.timeframes].sort(byOrder);
@@ -194,3 +218,23 @@ export const selectTimeframeForCategory =
 export const selectAllCategoryNames = (state: StoreState) => [
   ...new Set(state.categories.map((c) => c.name)),
 ];
+
+/**
+ * The habits picked for the given day, resolved from the stored id order.
+ * Ids whose habit no longer exists are skipped so a deleted habit can't leave
+ * a dangling entry in the picked row.
+ */
+export const selectPickedHabits =
+  (dateKey: string) =>
+  (state: StoreState): Habit[] => {
+    const ids = state.history[dateKey]?.pickedHabitIds ?? [];
+    const byId = new Map(state.habits.map((h) => [h.id, h]));
+    return ids
+      .map((id) => byId.get(id))
+      .filter((h): h is Habit => h !== undefined);
+  };
+
+export const selectPickedHabitIds =
+  (dateKey: string) =>
+  (state: StoreState): string[] =>
+    state.history[dateKey]?.pickedHabitIds ?? [];

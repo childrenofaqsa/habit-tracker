@@ -6,7 +6,7 @@ import type { AppSlice, HistoryActions, StoreState } from "@/store/types";
 function ensureToday(history: Record<string, DayRecord>): DayRecord {
   const key = todayKey();
   if (!history[key]) {
-    history[key] = { habitStatus: {}, habitStatusTimes: {}, valueEntries: {} };
+    history[key] = { habitStatus: {}, habitStatusTimes: {}, valueEntries: {}, pickedHabitIds: [] };
   } else if (!history[key]!.habitStatusTimes) {
     history[key]!.habitStatusTimes = {};
   }
@@ -93,10 +93,23 @@ export const createHistorySlice: AppSlice<HistoryActions> = (set) => ({
       }
     }),
 
+  setPickedHabits: (dateKey, habitIds) =>
+    set((draft) => {
+      if (!draft.history[dateKey]) {
+        draft.history[dateKey] = {
+          habitStatus: {},
+          habitStatusTimes: {},
+          valueEntries: {},
+          pickedHabitIds: [],
+        };
+      }
+      draft.history[dateKey]!.pickedHabitIds = habitIds;
+    }),
+
   setValueEntry: (valueId, dateKey, value, habitId = "__direct__") =>
     set((draft) => {
       if (!draft.history[dateKey]) {
-        draft.history[dateKey] = { habitStatus: {}, habitStatusTimes: {}, valueEntries: {} };
+        draft.history[dateKey] = { habitStatus: {}, habitStatusTimes: {}, valueEntries: {}, pickedHabitIds: [] };
       }
       const day = draft.history[dateKey]!;
       const contribs = day.valueEntries[valueId] ?? {};

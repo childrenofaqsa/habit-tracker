@@ -46,6 +46,12 @@ function mergeHistory(
             ...(record.habitStatusTimes ?? {}),
           },
           valueEntries: mergeValueEntries(existing.valueEntries, record.valueEntries),
+          // Prefer the incoming pick order when the other device set one;
+          // otherwise keep what we have.
+          pickedHabitIds:
+            record.pickedHabitIds && record.pickedHabitIds.length > 0
+              ? record.pickedHabitIds
+              : (existing.pickedHabitIds ?? []),
         }
       : record;
   }

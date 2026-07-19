@@ -21,6 +21,7 @@ export type HistoryActions = {
   cycleHabitMissed: (habitId: string) => void;
   setValueEntryToday: (valueId: string, value: number | string | null, habitId?: string) => void;
   setValueEntry: (valueId: string, dateKey: string, value: number | string | null, habitId?: string) => void;
+  setPickedHabits: (dateKey: string, habitIds: string[]) => void;
 };
 
 export type HabitsActions = {

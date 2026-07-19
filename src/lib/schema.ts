@@ -126,6 +126,7 @@ export const dayRecordSchema = z.object({
   valueEntries: z
     .record(z.string(), z.record(z.string(), z.union([z.number(), z.string()])))
     .default({}),
+  pickedHabitIds: z.array(z.string()).optional(),
 });
 
 export const motionSettingsSchema = z.object({

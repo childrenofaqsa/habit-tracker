@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { ViewId } from "@/lib/constants";
+import type { Priority } from "@/lib/schema";
 
 type TrackerLogView = "month" | "week" | "list";
 export type TodoSortMode = "manual" | "time" | "priority" | "createdAt";
@@ -13,8 +14,10 @@ type UiState = {
   settingsOpen: boolean;
   trackerLogView: TrackerLogView;
   timeframeOpen: Record<string, boolean>;
-  dailyHideCompleted: boolean;
-  dailyHideEmptyTimeframes: boolean;
+  dailyShowCompleted: boolean;
+  dailyShowDiscarded: boolean;
+  dailyShowEmptyTimeframes: boolean;
+  dailyPriorityFilter: Priority[];
   editingHabitId: string | null;
   editingTodoId: string | "new" | null;
   todoSort: TodoSortMode;
@@ -33,8 +36,10 @@ type UiState = {
   setSettingsOpen: (open: boolean) => void;
   setTrackerLogView: (view: TrackerLogView) => void;
   setTimeframeOpen: (id: string, open: boolean) => void;
-  setDailyHideCompleted: (value: boolean) => void;
-  setDailyHideEmptyTimeframes: (value: boolean) => void;
+  setDailyShowCompleted: (value: boolean) => void;
+  setDailyShowDiscarded: (value: boolean) => void;
+  setDailyShowEmptyTimeframes: (value: boolean) => void;
+  toggleDailyPriorityFilter: (priority: Priority) => void;
   setEditingHabitId: (id: string | null) => void;
   setEditingTodoId: (id: string | "new" | null) => void;
   setTodoSort: (mode: TodoSortMode) => void;
@@ -56,8 +61,10 @@ export const useUiStore = create<UiState>((set) => ({
   settingsOpen: false,
   trackerLogView: "month",
   timeframeOpen: {},
-  dailyHideCompleted: false,
-  dailyHideEmptyTimeframes: false,
+  dailyShowCompleted: true,
+  dailyShowDiscarded: true,
+  dailyShowEmptyTimeframes: true,
+  dailyPriorityFilter: [],
   editingTodoId: null,
   editingHabitId: null,
   todoSort: "manual",
@@ -80,8 +87,15 @@ export const useUiStore = create<UiState>((set) => ({
     set((state) => ({ timeframeOpen: { ...state.timeframeOpen, [id]: open } })),
   setEditingTodoId: (id) => set({ editingTodoId: id }),
   setEditingHabitId: (id) => set({ editingHabitId: id }),
-  setDailyHideCompleted: (value) => set({ dailyHideCompleted: value }),
-  setDailyHideEmptyTimeframes: (value) => set({ dailyHideEmptyTimeframes: value }),
+  setDailyShowCompleted: (value) => set({ dailyShowCompleted: value }),
+  setDailyShowDiscarded: (value) => set({ dailyShowDiscarded: value }),
+  setDailyShowEmptyTimeframes: (value) => set({ dailyShowEmptyTimeframes: value }),
+  toggleDailyPriorityFilter: (priority) =>
+    set((state) => ({
+      dailyPriorityFilter: state.dailyPriorityFilter.includes(priority)
+        ? state.dailyPriorityFilter.filter((p) => p !== priority)
+        : [...state.dailyPriorityFilter, priority],
+    })),
   setTodoSort: (mode) => set({ todoSort: mode }),
   setTodoHideCompleted: (value) => set({ todoHideCompleted: value }),
   setTodoTab: (tab) => set({ todoTab: tab }),

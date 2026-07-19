@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { motion } from "motion/react";
-import { Check, X, Sparkles } from "lucide-react";
+import { Check, X, Sparkles, Plus } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { springs } from "@/lib/motionTokens";
 import type { Habit } from "@/lib/schema";
@@ -8,6 +8,7 @@ import { useAppStore } from "@/store/useAppStore";
 import { useUiStore } from "@/store/useUiStore";
 import { selectHabitStatus } from "@/store/selectors";
 import { useSelectedDate } from "@/common/hooks/useSelectedDate";
+import { usePickMode } from "@/features/habits/pickMode";
 import { useHabitImage } from "@/features/habits/hooks/useHabitImage";
 import { useCardGesture } from "@/features/habits/hooks/useCardGesture";
 import { useHabitActions } from "@/features/habits/hooks/useHabitActions";
@@ -22,17 +23,27 @@ export function HabitCard({ habit }: { habit: Habit }) {
   const openEdit = useUiStore((state) => state.setEditingHabitId);
   const imageUrl = useHabitImage(habit.imageId);
   const { toggleDone, forceDone, toggleMissed, uploadImage } = useHabitActions();
+  const pickMode = usePickMode();
   const [radialOpen, setRadialOpen] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  const picked = pickMode?.isPicked(habit.id) ?? false;
+
   const gesture = useCardGesture({
     enabled: true,
-    onTap: editMode
-      ? () => openEdit(habit.id)
-      : () => toggleDone(habit, cardRef.current),
-    onLongPress: editMode ? () => setRadialOpen(true) : () => toggleMissed(habit),
-    onDoubleTap: editMode ? undefined : () => forceDone(habit, cardRef.current),
+    onTap: pickMode
+      ? () => pickMode.togglePick(habit.id)
+      : editMode
+        ? () => openEdit(habit.id)
+        : () => toggleDone(habit, cardRef.current),
+    onLongPress: pickMode
+      ? () => {}
+      : editMode
+        ? () => setRadialOpen(true)
+        : () => toggleMissed(habit),
+    onDoubleTap:
+      pickMode || editMode ? undefined : () => forceDone(habit, cardRef.current),
   });
 
   const handleDelete = () => {
@@ -50,8 +61,28 @@ export function HabitCard({ habit }: { habit: Habit }) {
         whileTap={{ scale: 0.94 }}
         transition={springs.press}
         {...gesture}
-        className="snap-card relative flex w-16 shrink-0 select-none flex-col items-center rounded-2xl border border-gray-100 bg-white p-2.5 shadow-sm dark:border-border dark:bg-card"
+        className={cn(
+          "snap-card relative flex w-16 shrink-0 select-none flex-col items-center rounded-2xl border border-gray-100 bg-white p-2.5 shadow-sm dark:border-border dark:bg-card",
+          pickMode && "cursor-pointer",
+          picked && "border-primary ring-2 ring-primary",
+        )}
       >
+        {pickMode && (
+          <span
+            className={cn(
+              "absolute -right-1 -top-1 z-10 grid size-5 place-items-center rounded-full shadow-sm",
+              picked
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground",
+            )}
+          >
+            {picked ? (
+              <Check className="size-3.5" strokeWidth={3} />
+            ) : (
+              <Plus className="size-3.5" strokeWidth={3} />
+            )}
+          </span>
+        )}
         <div
           className={cn(
             "mb-2.5 flex h-[54px] w-12 items-center justify-center rounded-xl",

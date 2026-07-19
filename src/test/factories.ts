@@ -149,7 +149,7 @@ export function buildTodoList(overrides: Partial<TodoList> = {}): TodoList {
 }
 
 export function buildDayRecord(overrides: Partial<DayRecord> = {}): DayRecord {
-  return { habitStatus: {}, valueEntries: {}, ...overrides };
+  return { habitStatus: {}, valueEntries: {}, pickedHabitIds: [], ...overrides };
 }
 
 export function buildAppData(overrides: Partial<AppData> = {}): AppData {
