@@ -262,7 +262,18 @@ function MyDayView({
   timeframes: { id: string; name: string; order: number }[];
   selectedDate: string;
 }) {
-  const pickedHabits = useAppStore(useShallow(selectPickedHabits(selectedDate)));
+  const allPickedHabits = useAppStore(useShallow(selectPickedHabits(selectedDate)));
+  const showCompleted = useUiStore((state) => state.dailyShowCompleted);
+  const showDiscarded = useUiStore((state) => state.dailyShowDiscarded);
+  const priorityFilter = useUiStore(useShallow((state) => state.dailyPriorityFilter));
+  const dayStatus = useAppStore((state) => state.history[selectedDate]?.habitStatus);
+
+  const pickedHabits = useMemo(() => {
+    const filters = { showCompleted, showDiscarded, priorities: priorityFilter };
+    return allPickedHabits.filter((h) =>
+      isHabitVisibleOnMyDay(h, dayStatus?.[h.id], filters),
+    );
+  }, [allPickedHabits, showCompleted, showDiscarded, priorityFilter, dayStatus]);
 
   if (timeframes.length === 0) {
     return (
