@@ -3,7 +3,12 @@ import { CalendarPlus } from "lucide-react";
 import { format, parse } from "date-fns";
 import { useShallow } from "zustand/react/shallow";
 import { useAppStore } from "@/store/useAppStore";
-import { selectTimeframes, selectPickedHabitIds } from "@/store/selectors";
+import { useUiStore } from "@/store/useUiStore";
+import {
+  selectTimeframes,
+  selectPickedHabitIds,
+  isHabitVisibleOnMyDay,
+} from "@/store/selectors";
 import { EmptyState } from "@/common/components/EmptyState";
 import { Reveal } from "@/common/components/motion/Reveal";
 import { SelectedDateProvider } from "@/common/hooks/useSelectedDate";
@@ -28,6 +33,10 @@ export function PickView({
   const habits = useAppStore((state) => state.habits);
   const setPickedHabits = useAppStore((state) => state.setPickedHabits);
   const savedPickedIds = useAppStore(useShallow(selectPickedHabitIds(selectedDate)));
+  const showCompleted = useUiStore((state) => state.dailyShowCompleted);
+  const showDiscarded = useUiStore((state) => state.dailyShowDiscarded);
+  const priorityFilter = useUiStore(useShallow((state) => state.dailyPriorityFilter));
+  const dayStatus = useAppStore((state) => state.history[selectedDate]?.habitStatus);
 
   // Local draft — only committed to the store on "Done".
   const [draftIds, setDraftIds] = useState<string[]>(savedPickedIds);
@@ -50,12 +59,36 @@ export function PickView({
     [draftIds, togglePick, isPicked],
   );
 
+  // The full picked order, resolved to habits (skipping deleted ids).
   const pickedHabits = useMemo(() => {
     const byId = new Map(habits.map((h) => [h.id, h]));
     return draftIds
       .map((id) => byId.get(id))
       .filter((h): h is NonNullable<typeof h> => h !== undefined);
   }, [draftIds, habits]);
+
+  // Only the picked habits that pass the My Day filters are shown in the row.
+  const visiblePickedHabits = useMemo(() => {
+    const filters = { showCompleted, showDiscarded, priorities: priorityFilter };
+    return pickedHabits.filter((h) =>
+      isHabitVisibleOnMyDay(h, dayStatus?.[h.id], filters),
+    );
+  }, [pickedHabits, showCompleted, showDiscarded, priorityFilter, dayStatus]);
+
+  // Reordering only shuffles the visible cards. Hidden (filtered-out) picks keep
+  // their slots in the underlying draft so filtering can't silently drop them.
+  const handleReorderVisible = useCallback(
+    (visibleIds: string[]) => {
+      setDraftIds((prev) => {
+        const visibleSet = new Set(visibleIds);
+        let cursor = 0;
+        return prev.map((id) =>
+          visibleSet.has(id) ? visibleIds[cursor++]! : id,
+        );
+      });
+    },
+    [],
+  );
 
   const handleDone = () => {
     // Drop ids whose habit was deleted while picking.
@@ -90,7 +123,11 @@ export function PickView({
           </header>
 
           <section className="rounded-3xl border border-primary/20 bg-primary/5 p-5">
-            <PickedHabitsRow habits={pickedHabits} reorderable onReorder={setDraftIds} />
+            <PickedHabitsRow
+              habits={visiblePickedHabits}
+              reorderable
+              onReorder={handleReorderVisible}
+            />
           </section>
 
           {timeframes.length === 0 ? (
