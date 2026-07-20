@@ -16,6 +16,7 @@ type UiState = {
   timeframeOpen: Record<string, boolean>;
   dailyShowCompleted: boolean;
   dailyShowDiscarded: boolean;
+  dailyShowEmptyCategories: boolean;
   dailyShowEmptyTimeframes: boolean;
   dailyPriorityFilter: Priority[];
   editingHabitId: string | null;
@@ -38,6 +39,7 @@ type UiState = {
   setTimeframeOpen: (id: string, open: boolean) => void;
   setDailyShowCompleted: (value: boolean) => void;
   setDailyShowDiscarded: (value: boolean) => void;
+  setDailyShowEmptyCategories: (value: boolean) => void;
   setDailyShowEmptyTimeframes: (value: boolean) => void;
   toggleDailyPriorityFilter: (priority: Priority) => void;
   setEditingHabitId: (id: string | null) => void;
@@ -63,6 +65,7 @@ export const useUiStore = create<UiState>((set) => ({
   timeframeOpen: {},
   dailyShowCompleted: true,
   dailyShowDiscarded: true,
+  dailyShowEmptyCategories: true,
   dailyShowEmptyTimeframes: true,
   dailyPriorityFilter: [],
   editingTodoId: null,
@@ -89,6 +92,7 @@ export const useUiStore = create<UiState>((set) => ({
   setEditingHabitId: (id) => set({ editingHabitId: id }),
   setDailyShowCompleted: (value) => set({ dailyShowCompleted: value }),
   setDailyShowDiscarded: (value) => set({ dailyShowDiscarded: value }),
+  setDailyShowEmptyCategories: (value) => set({ dailyShowEmptyCategories: value }),
   setDailyShowEmptyTimeframes: (value) => set({ dailyShowEmptyTimeframes: value }),
   toggleDailyPriorityFilter: (priority) =>
     set((state) => ({

@@ -61,6 +61,7 @@ beforeEach(() => {
   useUiStore.setState({
     dailyShowCompleted: true,
     dailyShowDiscarded: true,
+    dailyShowEmptyCategories: true,
     dailyShowEmptyTimeframes: true,
     dailyPriorityFilter: [],
     searchQuery: "",

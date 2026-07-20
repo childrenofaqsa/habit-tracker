@@ -20,6 +20,8 @@ export function HabitFilterBar() {
   const setShowCompleted = useUiStore((state) => state.setDailyShowCompleted);
   const showDiscarded = useUiStore((state) => state.dailyShowDiscarded);
   const setShowDiscarded = useUiStore((state) => state.setDailyShowDiscarded);
+  const showEmptyCategories = useUiStore((state) => state.dailyShowEmptyCategories);
+  const setShowEmptyCategories = useUiStore((state) => state.setDailyShowEmptyCategories);
   const showEmptyTimeframes = useUiStore((state) => state.dailyShowEmptyTimeframes);
   const setShowEmptyTimeframes = useUiStore((state) => state.setDailyShowEmptyTimeframes);
   const priorityFilter = useUiStore((state) => state.dailyPriorityFilter);
@@ -37,6 +39,11 @@ export function HabitFilterBar() {
           label="Show discarded"
           checked={showDiscarded}
           onCheckedChange={setShowDiscarded}
+        />
+        <ToggleControl
+          label="Show empty category"
+          checked={showEmptyCategories}
+          onCheckedChange={setShowEmptyCategories}
         />
         <ToggleControl
           label="Show empty timeframes"

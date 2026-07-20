@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Trash2, GripVertical, ChevronDown, Sun, SunMedium, Sunset, Moon, Plus } from "lucide-react";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { verticalListSortingStrategy } from "@dnd-kit/sortable";
@@ -8,7 +8,8 @@ import type { Timeframe } from "@/lib/schema";
 import { useShallow } from "zustand/react/shallow";
 import { useAppStore } from "@/store/useAppStore";
 import { useUiStore } from "@/store/useUiStore";
-import { selectCategories } from "@/store/selectors";
+import { selectCategories, isHabitVisibleOnMyDay } from "@/store/selectors";
+import { useSelectedDate } from "@/common/hooks/useSelectedDate";
 import { Button } from "@/common/components/ui/data/button";
 import {
   Popover,
@@ -20,6 +21,7 @@ import { EditableTitle } from "@/features/editmode/EditableTitle";
 import { DndList } from "@/features/editmode/DndList";
 import { Sortable } from "@/features/editmode/Sortable";
 import { CategorySection } from "@/features/habits/components/CategorySection";
+import { usePickMode } from "@/features/habits/pickMode";
 
 function getTimeframeIcon(name: string) {
   const normalized = name.toLowerCase();
@@ -37,13 +39,47 @@ export function TimeframeSection({ timeframe, handle }: Props) {
   const setTimeframeOpen = useUiStore((state) => state.setTimeframeOpen);
   const open = storedOpen ?? true;
   const editMode = useAppStore((state) => state.settings.editMode);
-  const categories = useAppStore(useShallow(selectCategories(timeframe.id)));
+  const allStoredCategories = useAppStore(useShallow(selectCategories(timeframe.id)));
   const allCategories = useAppStore((state) => state.categories);
+  const habits = useAppStore((state) => state.habits);
   const renameTimeframe = useAppStore((state) => state.renameTimeframe);
   const deleteTimeframe = useAppStore((state) => state.deleteTimeframe);
   const addCategory = useAppStore((state) => state.addCategory);
   const reorderCategories = useAppStore((state) => state.reorderCategories);
   const Icon = getTimeframeIcon(timeframe.name);
+
+  // "Show empty category" only takes effect on the main My Day screen — Edit
+  // Mode and the Pick screen always show every category (same scope as the
+  // "show empty timeframes" filter).
+  const pickMode = usePickMode();
+  const selectedDate = useSelectedDate();
+  const showEmptyCategories = useUiStore((state) => state.dailyShowEmptyCategories);
+  const showCompleted = useUiStore((state) => state.dailyShowCompleted);
+  const showDiscarded = useUiStore((state) => state.dailyShowDiscarded);
+  const priorityFilter = useUiStore(useShallow((state) => state.dailyPriorityFilter));
+  const dayStatus = useAppStore((state) => state.history[selectedDate]?.habitStatus);
+
+  const categories = useMemo(() => {
+    if (editMode || pickMode || showEmptyCategories) return allStoredCategories;
+    const filters = { showCompleted, showDiscarded, priorities: priorityFilter };
+    return allStoredCategories.filter((category) =>
+      habits.some(
+        (h) =>
+          h.categoryId === category.id &&
+          isHabitVisibleOnMyDay(h, dayStatus?.[h.id], filters),
+      ),
+    );
+  }, [
+    editMode,
+    pickMode,
+    showEmptyCategories,
+    allStoredCategories,
+    habits,
+    showCompleted,
+    showDiscarded,
+    priorityFilter,
+    dayStatus,
+  ]);
 
   const localNames = new Set(
     categories.map((c) => c.name.trim().toLowerCase()),

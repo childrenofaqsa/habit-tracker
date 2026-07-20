@@ -7,6 +7,7 @@ beforeEach(() => {
   useUiStore.setState({
     dailyShowCompleted: true,
     dailyShowDiscarded: true,
+    dailyShowEmptyCategories: true,
     dailyShowEmptyTimeframes: true,
     dailyPriorityFilter: [],
   });
@@ -31,6 +32,15 @@ describe("HabitFilterBar", () => {
 
     expect(useUiStore.getState().dailyShowDiscarded).toBe(false);
     expect(useUiStore.getState().dailyShowCompleted).toBe(true);
+  });
+
+  it("toggles Show empty category", () => {
+    render(<HabitFilterBar />);
+
+    fireEvent.click(screen.getByLabelText("Show empty category"));
+
+    expect(useUiStore.getState().dailyShowEmptyCategories).toBe(false);
+    expect(useUiStore.getState().dailyShowEmptyTimeframes).toBe(true);
   });
 
   it("toggles Show empty timeframes", () => {
