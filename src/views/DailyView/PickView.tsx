@@ -31,12 +31,39 @@ export function PickView({
 }) {
   const timeframes = useAppStore(useShallow(selectTimeframes));
   const habits = useAppStore((state) => state.habits);
+  const categories = useAppStore((state) => state.categories);
   const setPickedHabits = useAppStore((state) => state.setPickedHabits);
   const savedPickedIds = useAppStore(useShallow(selectPickedHabitIds(selectedDate)));
   const showCompleted = useUiStore((state) => state.dailyShowCompleted);
   const showDiscarded = useUiStore((state) => state.dailyShowDiscarded);
+  const showEmptyTimeframes = useUiStore((state) => state.dailyShowEmptyTimeframes);
   const priorityFilter = useUiStore(useShallow((state) => state.dailyPriorityFilter));
   const dayStatus = useAppStore((state) => state.history[selectedDate]?.habitStatus);
+
+  // Mirror My Day's "show empty timeframes" filter: hide a timeframe when none
+  // of its habits pass the active filters.
+  const visibleTimeframes = useMemo(() => {
+    if (showEmptyTimeframes) return timeframes;
+    const filters = { showCompleted, showDiscarded, priorities: priorityFilter };
+    return timeframes.filter((tf) => {
+      const categoryIds = categories
+        .filter((c) => c.timeframeId === tf.id)
+        .map((c) => c.id);
+      const timeframeHabits = habits.filter((h) => categoryIds.includes(h.categoryId));
+      return timeframeHabits.some((h) =>
+        isHabitVisibleOnMyDay(h, dayStatus?.[h.id], filters),
+      );
+    });
+  }, [
+    showEmptyTimeframes,
+    showCompleted,
+    showDiscarded,
+    priorityFilter,
+    timeframes,
+    categories,
+    habits,
+    dayStatus,
+  ]);
 
   // Local draft — only committed to the store on "Done".
   const [draftIds, setDraftIds] = useState<string[]>(savedPickedIds);
@@ -138,7 +165,7 @@ export function PickView({
             />
           ) : (
             <div className="space-y-4">
-              {timeframes.map((timeframe) => (
+              {visibleTimeframes.map((timeframe) => (
                 <Reveal key={timeframe.id}>
                   <TimeframeSection timeframe={timeframe} />
                 </Reveal>

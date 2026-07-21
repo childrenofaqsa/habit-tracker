@@ -21,7 +21,6 @@ import { EditableTitle } from "@/features/editmode/EditableTitle";
 import { DndList } from "@/features/editmode/DndList";
 import { Sortable } from "@/features/editmode/Sortable";
 import { CategorySection } from "@/features/habits/components/CategorySection";
-import { usePickMode } from "@/features/habits/pickMode";
 
 function getTimeframeIcon(name: string) {
   const normalized = name.toLowerCase();
@@ -48,10 +47,8 @@ export function TimeframeSection({ timeframe, handle }: Props) {
   const reorderCategories = useAppStore((state) => state.reorderCategories);
   const Icon = getTimeframeIcon(timeframe.name);
 
-  // "Show empty category" only takes effect on the main My Day screen — Edit
-  // Mode and the Pick screen always show every category (same scope as the
-  // "show empty timeframes" filter).
-  const pickMode = usePickMode();
+  // "Show empty category" takes effect on both the My Day and Pick screens —
+  // only Edit Mode always shows every category (so you can add/reorder habits).
   const selectedDate = useSelectedDate();
   const showEmptyCategories = useUiStore((state) => state.dailyShowEmptyCategories);
   const showCompleted = useUiStore((state) => state.dailyShowCompleted);
@@ -60,7 +57,7 @@ export function TimeframeSection({ timeframe, handle }: Props) {
   const dayStatus = useAppStore((state) => state.history[selectedDate]?.habitStatus);
 
   const categories = useMemo(() => {
-    if (editMode || pickMode || showEmptyCategories) return allStoredCategories;
+    if (editMode || showEmptyCategories) return allStoredCategories;
     const filters = { showCompleted, showDiscarded, priorities: priorityFilter };
     return allStoredCategories.filter((category) =>
       habits.some(
@@ -71,7 +68,6 @@ export function TimeframeSection({ timeframe, handle }: Props) {
     );
   }, [
     editMode,
-    pickMode,
     showEmptyCategories,
     allStoredCategories,
     habits,
