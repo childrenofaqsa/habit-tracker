@@ -1,4 +1,11 @@
-import type { Category, Habit, Timeframe, ValueTracker, ValueType } from "@/lib/schema";
+import type {
+  Category,
+  DayRecord,
+  Habit,
+  Timeframe,
+  ValueTracker,
+  ValueType,
+} from "@/lib/schema";
 
 export type MatrixRow = {
   id: string;
@@ -6,6 +13,17 @@ export type MatrixRow = {
   kind: "habit" | "value";
   category?: string;
   valueType?: ValueType;
+};
+
+/**
+ * A collapsible section in the history matrix. Habits are grouped by category
+ * name (merged across timeframes); values live in their own trailing group.
+ */
+export type MatrixGroup = {
+  id: string;
+  name: string;
+  kind: "category" | "values";
+  rows: MatrixRow[];
 };
 
 export type MatrixFilter = "all" | "habits" | "values";
@@ -77,5 +95,82 @@ export function buildMatrixRows(
             valueType: value.type,
           }));
   return [...habitRows, ...valueRows];
+}
+
+/**
+ * Group the history rows into collapsible sections. Habits are grouped by
+ * category *name* (categories that share a name across timeframes are merged),
+ * with the rows inside each group kept in My Day routine order. Values are
+ * collected into a single trailing group. Group order follows first appearance
+ * in routine order (then values last).
+ */
+export function buildMatrixGroups(
+  habits: Habit[],
+  values: ValueTracker[],
+  filter: MatrixFilter = "all",
+  categories: Category[] = [],
+  timeframes: Timeframe[] = [],
+): MatrixGroup[] {
+  const categoryMap = new Map(categories.map((c) => [c.id, c]));
+  const groups: MatrixGroup[] = [];
+
+  if (filter !== "values") {
+    const byName = new Map<string, MatrixGroup>();
+    for (const habit of sortHabitsByRoutine(habits, categories, timeframes)) {
+      const name = categoryMap.get(habit.categoryId)?.name ?? "Uncategorized";
+      let group = byName.get(name);
+      if (!group) {
+        group = { id: `category:${name}`, name, kind: "category", rows: [] };
+        byName.set(name, group);
+        groups.push(group);
+      }
+      group.rows.push({
+        id: habit.id,
+        name: habit.title,
+        kind: "habit",
+        category: name,
+      });
+    }
+  }
+
+  if (filter !== "habits") {
+    const valueRows: MatrixRow[] = [...values].sort(byOrder).map((value) => ({
+      id: value.id,
+      name: value.name,
+      kind: "value",
+      valueType: value.type,
+    }));
+    if (valueRows.length > 0) {
+      groups.push({ id: "values", name: "Values", kind: "values", rows: valueRows });
+    }
+  }
+
+  return groups;
+}
+
+/**
+ * Done-percentage for a category group on a given day: habits done divided by
+ * habits tracked (done or missed) that day. Returns null when no habit in the
+ * group was tracked, so the cell can render empty. Value groups have no
+ * completion figure and always return null.
+ */
+export function computeGroupCompletion(
+  group: MatrixGroup,
+  record: DayRecord | undefined,
+): number | null {
+  if (group.kind !== "category" || !record) return null;
+  let done = 0;
+  let tracked = 0;
+  for (const row of group.rows) {
+    const status = record.habitStatus[row.id];
+    if (status === "done") {
+      done += 1;
+      tracked += 1;
+    } else if (status === "missed") {
+      tracked += 1;
+    }
+  }
+  if (tracked === 0) return null;
+  return Math.round((done / tracked) * 100);
 }
 

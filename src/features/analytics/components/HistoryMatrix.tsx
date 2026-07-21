@@ -1,11 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ChevronRight } from "lucide-react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { usePinch } from "@use-gesture/react";
 import { cn } from "@/lib/cn";
 import { reverseChronologicalKeys, formatMatrixDate } from "@/lib/date";
 import { useAppStore } from "@/store/useAppStore";
-import { buildMatrixRows } from "@/features/analytics/matrixData";
-import type { MatrixFilter } from "@/features/analytics/matrixData";
+import {
+  buildMatrixGroups,
+  computeGroupCompletion,
+} from "@/features/analytics/matrixData";
+import type { MatrixFilter, MatrixGroup, MatrixRow } from "@/features/analytics/matrixData";
 import { MatrixCell } from "@/features/analytics/components/MatrixCell";
 import {
   Dialog,
@@ -13,6 +17,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/common/components/ui/overlay/dialog";
+
+type DisplayRow =
+  | { kind: "group"; group: MatrixGroup }
+  | { kind: "row"; row: MatrixRow };
 
 const BASE_COL = 56;
 const BASE_ROW = 42;
@@ -34,8 +42,28 @@ export function HistoryMatrix({ days }: { days: number }) {
   const timeframes = useAppStore((state) => state.timeframes);
   const [filter, setFilter] = useState<MatrixFilter>("all");
   const [visibleDays, setVisibleDays] = useState(Math.min(days, COLUMN_CHUNK));
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 
-  const rows = buildMatrixRows(habits, values, filter, categories, timeframes);
+  const groups = useMemo(
+    () => buildMatrixGroups(habits, values, filter, categories, timeframes),
+    [habits, values, filter, categories, timeframes],
+  );
+
+  const displayRows = useMemo<DisplayRow[]>(() => {
+    const out: DisplayRow[] = [];
+    for (const group of groups) {
+      out.push({ kind: "group", group });
+      if (!collapsed[group.id]) {
+        for (const row of group.rows) out.push({ kind: "row", row });
+      }
+    }
+    return out;
+  }, [groups, collapsed]);
+
+  const toggleGroup = useCallback((id: string) => {
+    setCollapsed((prev) => ({ ...prev, [id]: !prev[id] }));
+  }, []);
+
   const columns = reverseChronologicalKeys(visibleDays);
 
   const [scale, setScale] = useState(1);
@@ -89,7 +117,7 @@ export function HistoryMatrix({ days }: { days: number }) {
     { target: pinchRef },
   );
 
-  if (rows.length === 0) {
+  if (displayRows.length === 0) {
     return (
       <p className="rounded-xl border border-border p-6 text-center text-sm text-muted-foreground">
         Add habits or values to see your history.
@@ -126,27 +154,42 @@ export function HistoryMatrix({ days }: { days: number }) {
             >
               {filter === "habits" ? "Habit" : filter === "values" ? "Value" : "Habit / Value"}
             </div>
-            {rows.map((row) => (
-              <div
-                key={row.id}
-                style={{ height: rowHeight }}
-                className="flex flex-col justify-center truncate border-b border-border px-2"
-              >
-                <span className="truncate text-xs">{row.name}</span>
-                {row.category && (
-                  <span className="truncate text-[9px] uppercase text-muted-foreground">
-                    {row.category}
+            {displayRows.map((item) =>
+              item.kind === "group" ? (
+                <button
+                  key={item.group.id}
+                  type="button"
+                  onClick={() => toggleGroup(item.group.id)}
+                  style={{ height: rowHeight }}
+                  className="flex w-full items-center gap-1 border-b border-border bg-muted/60 px-2 text-left hover:bg-muted"
+                >
+                  <ChevronRight
+                    className={cn(
+                      "size-3.5 shrink-0 text-muted-foreground transition-transform",
+                      !collapsed[item.group.id] && "rotate-90",
+                    )}
+                  />
+                  <span className="truncate text-xs font-semibold uppercase tracking-wide">
+                    {item.group.name}
                   </span>
-                )}
-              </div>
-            ))}
+                </button>
+              ) : (
+                <div
+                  key={item.row.id}
+                  style={{ height: rowHeight }}
+                  className="flex flex-col justify-center truncate border-b border-border px-2 pl-5"
+                >
+                  <span className="truncate text-xs">{item.row.name}</span>
+                </div>
+              ),
+            )}
           </div>
 
           <div ref={scrollRef} className="no-scrollbar flex-1 overflow-x-auto will-change-transform">
             <div
               style={{
                 width: virtualizer.getTotalSize(),
-                height: headerHeight + rows.length * rowHeight,
+                height: headerHeight + displayRows.length * rowHeight,
                 position: "relative",
               }}
             >
@@ -174,15 +217,23 @@ export function HistoryMatrix({ days }: { days: number }) {
                     >
                       {formatMatrixDate(dayKey)}
                     </div>
-                    {rows.map((row) => (
-                      <MatrixCell
-                        key={row.id}
-                        row={row}
-                        record={record}
-                        height={rowHeight}
-                        onOpenText={(name, text) => setNote({ name, text })}
-                      />
-                    ))}
+                    {displayRows.map((item) =>
+                      item.kind === "group" ? (
+                        <GroupCell
+                          key={item.group.id}
+                          completion={computeGroupCompletion(item.group, record)}
+                          height={rowHeight}
+                        />
+                      ) : (
+                        <MatrixCell
+                          key={item.row.id}
+                          row={item.row}
+                          record={record}
+                          height={rowHeight}
+                          onOpenText={(name, text) => setNote({ name, text })}
+                        />
+                      ),
+                    )}
                   </div>
                 );
               })}
@@ -199,6 +250,27 @@ export function HistoryMatrix({ days }: { days: number }) {
           </DialogContent>
         </Dialog>
       </div>
+    </div>
+  );
+}
+
+function GroupCell({
+  completion,
+  height,
+}: {
+  completion: number | null;
+  height: number;
+}) {
+  return (
+    <div
+      className="flex items-center justify-center border-b border-l border-border bg-muted/60"
+      style={{ height }}
+    >
+      {completion !== null && (
+        <span className="text-[10px] font-semibold tabular-nums text-muted-foreground">
+          {completion}%
+        </span>
+      )}
     </div>
   );
 }
