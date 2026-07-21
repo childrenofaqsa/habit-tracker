@@ -13,6 +13,7 @@ import { useHabitImage } from "@/features/habits/hooks/useHabitImage";
 import { useCardGesture } from "@/features/habits/hooks/useCardGesture";
 import { useHabitActions } from "@/features/habits/hooks/useHabitActions";
 import { RadialMenu } from "@/features/habits/components/HabitCard/RadialMenu";
+import { HabitInfoPopup } from "@/features/habits/components/HabitCard/HabitInfoPopup";
 import { deleteImage, revokeImageUrl } from "@/storage/imageStore";
 
 export function HabitCard({ habit }: { habit: Habit }) {
@@ -25,6 +26,7 @@ export function HabitCard({ habit }: { habit: Habit }) {
   const { toggleDone, forceDone, toggleMissed, uploadImage } = useHabitActions();
   const pickMode = usePickMode();
   const [radialOpen, setRadialOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -58,9 +60,6 @@ export function HabitCard({ habit }: { habit: Habit }) {
     <>
       <motion.div
         ref={cardRef}
-        whileTap={{ scale: 0.94 }}
-        transition={springs.press}
-        {...gesture}
         className={cn(
           "snap-card relative flex w-16 shrink-0 select-none flex-col items-center rounded-2xl border border-gray-100 bg-white p-2.5 shadow-sm dark:border-border dark:bg-card",
           pickMode && "cursor-pointer",
@@ -83,9 +82,13 @@ export function HabitCard({ habit }: { habit: Habit }) {
             )}
           </span>
         )}
-        <div
+        <motion.div
+          whileTap={{ scale: 0.94 }}
+          transition={springs.press}
+          {...gesture}
           className={cn(
             "mb-2.5 flex h-[54px] w-12 items-center justify-center rounded-xl",
+            !pickMode && !editMode && "cursor-pointer",
             status === "done" && "bg-[#19a337]",
             status === "missed" && "bg-[#d92525]",
             !status && "bg-[#f8f9ff] dark:bg-muted",
@@ -107,10 +110,14 @@ export function HabitCard({ habit }: { habit: Habit }) {
             ) : (
               <Sparkles className="size-6 text-black/60 dark:text-muted-foreground" />
             ))}
-        </div>
-        <span className="line-clamp-2 max-h-7 text-center text-[11px] font-bold leading-tight text-black dark:text-foreground">
+        </motion.div>
+        <button
+          type="button"
+          onClick={() => setInfoOpen(true)}
+          className="line-clamp-2 max-h-7 cursor-pointer text-center text-[11px] font-bold leading-tight text-black dark:text-foreground"
+        >
           {habit.title}
-        </span>
+        </button>
 
         <RadialMenu
           open={radialOpen}
@@ -120,6 +127,13 @@ export function HabitCard({ habit }: { habit: Habit }) {
           onDelete={handleDelete}
         />
       </motion.div>
+
+      <HabitInfoPopup
+        open={infoOpen}
+        title={habit.title}
+        details={habit.details}
+        onClose={() => setInfoOpen(false)}
+      />
 
       <input
         ref={fileRef}
