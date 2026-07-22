@@ -1,0 +1,57 @@
+
+> habit-tracker-todo@1.0.0 lint C:\Users\u1133421\bou\habit-tracker-todo
+> eslint .
+
+
+C:\Users\u1133421\bou\habit-tracker-todo\e2e\app-boot.spec.ts
+  21:11  error  'hasContent' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\u1133421\bou\habit-tracker-todo\src\common\components\ui\data\badge.tsx
+  27:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\u1133421\bou\habit-tracker-todo\src\common\components\ui\data\button.tsx
+  41:18  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\u1133421\bou\habit-tracker-todo\src\features\analytics\components\CompletionChart.tsx
+  34:6  warning  React Hook useMemo has unnecessary dependencies: 'habits' and 'history'. Either exclude them or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\u1133421\bou\habit-tracker-todo\src\features\analytics\components\HistoryMatrix.tsx
+  50:23  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+C:\Users\u1133421\bou\habit-tracker-todo\src\features\analytics\components\HistoryMatrix.tsx:50:23
+  48 |   const headerHeight = Math.round(BASE_HEADER * scale);
+  49 |
+> 50 |   const virtualizer = useVirtualizer({
+     |                       ^^^^^^^^^^^^^^ TanStack Virtual's `useVirtualizer()` API returns functions that cannot be memoized safely
+  51 |     count: columns.length,
+  52 |     getScrollElement: () => scrollRef.current,
+  53 |     estimateSize: () => colWidth,  react-hooks/incompatible-library
+
+C:\Users\u1133421\bou\habit-tracker-todo\src\features\habits\components\TimeframeSection.tsx
+  54:16  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+C:\Users\u1133421\bou\habit-tracker-todo\src\features\habits\components\TimeframeSection.tsx:54:16
+  52 |             <div className="flex items-center gap-3">
+  53 |               {handle}
+> 54 |               <Icon className="size-5 text-black dark:text-foreground" />
+     |                ^^^^ This component is created during render
+  55 |               <EditableTitle
+  56 |                 value={timeframe.name}
+  57 |                 editMode={editMode}
+
+C:\Users\u1133421\bou\habit-tracker-todo\src\features\habits\components\TimeframeSection.tsx:38:16
+  36 |   const addCategory = useAppStore((state) => state.addCategory);
+  37 |   const reorderCategories = useAppStore((state) => state.reorderCategories);
+> 38 |   const Icon = getTimeframeIcon(timeframe.name);
+     |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The component is created during render here
+  39 |
+  40 |   return (
+  41 |     <Collapsible.Root  react-hooks/static-components
+
+Γ£û 6 problems (2 errors, 4 warnings)
+
+ΓÇëELIFECYCLEΓÇë Command failed with exit code 1.

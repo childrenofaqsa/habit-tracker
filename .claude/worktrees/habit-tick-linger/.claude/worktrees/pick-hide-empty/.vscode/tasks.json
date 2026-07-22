@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Test: typecheck + unit tests",
+			"type": "shell",
+			"command": "$env:CI='true'; pnpm typecheck; pnpm test",
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "test"
+		}
+	]
+}

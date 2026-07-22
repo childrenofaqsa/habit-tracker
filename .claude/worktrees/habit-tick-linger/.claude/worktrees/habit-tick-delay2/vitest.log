@@ -1,0 +1,28 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.7 [39m[90mC:/Users/u1133421/bou/habit-tracker-todo[39m
+
+ [32mΓ£ô[39m src/lib/checksum.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 121[2mms[22m[39m
+ [32mΓ£ô[39m src/common/hooks/useMotionSettings.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 69[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/id.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 32[2mms[22m[39m
+stderr | src/app/Navigation.test.tsx > Navigation > renders all nav items
+React does not recognize the `layoutId` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `layoutid` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+
+ [32mΓ£ô[39m src/lib/schema.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 68[2mms[22m[39m
+ [32mΓ£ô[39m src/app/Navigation.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 1148[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m supports side orientation [33m 657[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/date.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 66[2mms[22m[39m
+ [32mΓ£ô[39m src/lib/merge.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 47[2mms[22m[39m
+ [32mΓ£ô[39m src/storage/retention.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 38[2mms[22m[39m
+ [32mΓ£ô[39m src/store/selectors.test.ts [2m([22m[2m24 tests[22m[2m)[22m[32m 74[2mms[22m[39m
+ [32mΓ£ô[39m src/store/todoSelectors.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 118[2mms[22m[39m
+ [32mΓ£ô[39m src/store/useAppStore.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 77[2mms[22m[39m
+ [32mΓ£ô[39m src/store/selectorStability.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 169[2mms[22m[39m
+ [32mΓ£ô[39m src/views/ValuesView/ValuesView.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 304[2mms[22m[39m
+ [32mΓ£ô[39m src/views/DailyView/DailyView.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 293[2mms[22m[39m
+ [32mΓ£ô[39m src/views/TodoView/TodoView.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 235[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m15 passed[39m[22m[90m (15)[39m
+[2m      Tests [22m [1m[32m118 passed[39m[22m[90m (118)[39m
+[2m   Start at [22m 19:07:12
+[2m   Duration [22m 100.62s[2m (transform 14.58s, setup 99.89s, import 222.46s, tests 2.86s, environment 234.23s)[22m
+

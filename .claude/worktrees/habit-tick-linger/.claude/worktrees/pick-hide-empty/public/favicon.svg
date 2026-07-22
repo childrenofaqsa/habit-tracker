@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#4f46e5"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.15"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="108%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#312e81" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="512" height="512" rx="108" fill="url(#bg)"/>
+  <!-- Shine overlay -->
+  <rect width="512" height="512" rx="108" fill="url(#shine)"/>
+  <!-- Circle track -->
+  <circle cx="256" cy="256" r="140" fill="none" stroke="#ffffff" stroke-opacity="0.2" stroke-width="28"/>
+  <!-- Progress arc (about 75%) -->
+  <path d="M256 116 A140 140 0 1 1 157 358" fill="none" stroke="#ffffff" stroke-width="28" stroke-linecap="round"/>
+  <!-- Checkmark -->
+  <path d="M200 262 l40 40 l80 -80" fill="none" stroke="#ffffff" stroke-width="36" stroke-linecap="round" stroke-linejoin="round" filter="url(#shadow)"/>
+</svg>
