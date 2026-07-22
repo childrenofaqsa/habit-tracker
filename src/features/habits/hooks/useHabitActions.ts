@@ -9,6 +9,11 @@ import { useUiStore } from "@/store/useUiStore";
 import { useCelebration } from "@/common/hooks/useCelebration";
 import { deleteImage, putImage, revokeImageUrl } from "@/storage/imageStore";
 
+// Pending linger timers, keyed by habit id, kept outside React state so
+// re-renders don't lose them and re-toggling a habit refreshes its window
+// instead of stacking timers.
+const lingerTimers = new Map<string, ReturnType<typeof setTimeout>>();
+
 export function useHabitActions() {
   const cycleDone = useAppStore((state) => state.cycleHabitDone);
   const cycleMissed = useAppStore((state) => state.cycleHabitMissed);
@@ -19,6 +24,27 @@ export function useHabitActions() {
 
   const statusOf = (habitId: string) =>
     useAppStore.getState().history[todayKey()]?.habitStatus[habitId];
+
+  // Keep a just-toggled habit visible in its performed state for the
+  // configured linger window before the completed/discarded filters hide it.
+  const startLinger = useCallback((habitId: string) => {
+    const seconds = useAppStore.getState().settings.myDayLingerSeconds;
+    const ui = useUiStore.getState();
+    const existing = lingerTimers.get(habitId);
+    if (existing) clearTimeout(existing);
+    if (seconds <= 0) {
+      // No linger — filter out immediately (original behavior).
+      lingerTimers.delete(habitId);
+      ui.clearMyDayRecentlyToggled(habitId);
+      return;
+    }
+    ui.markMyDayRecentlyToggled(habitId);
+    const timer = setTimeout(() => {
+      lingerTimers.delete(habitId);
+      useUiStore.getState().clearMyDayRecentlyToggled(habitId);
+    }, seconds * 1000);
+    lingerTimers.set(habitId, timer);
+  }, []);
 
   const promptLinkedValue = useCallback(
     (habit: Habit) => {
@@ -31,30 +57,33 @@ export function useHabitActions() {
     (habit: Habit, element: HTMLElement | null) => {
       const becomingDone = statusOf(habit.id) !== "done";
       cycleDone(habit.id);
+      startLinger(habit.id);
       if (becomingDone) {
         celebrate.habitDone(element);
         promptLinkedValue(habit);
       }
     },
-    [cycleDone, celebrate, promptLinkedValue],
+    [cycleDone, celebrate, promptLinkedValue, startLinger],
   );
 
   const forceDone = useCallback(
     (habit: Habit, element: HTMLElement | null) => {
       setStatus(habit.id, "done");
+      startLinger(habit.id);
       celebrate.habitDone(element);
       promptLinkedValue(habit);
     },
-    [setStatus, celebrate, promptLinkedValue],
+    [setStatus, celebrate, promptLinkedValue, startLinger],
   );
 
   const toggleMissed = useCallback(
     (habit: Habit) => {
       const becomingMissed = statusOf(habit.id) !== "missed";
       cycleMissed(habit.id);
+      startLinger(habit.id);
       if (becomingMissed) celebrate.habitMissed();
     },
-    [cycleMissed, celebrate],
+    [cycleMissed, celebrate, startLinger],
   );
 
   const uploadImage = useCallback(

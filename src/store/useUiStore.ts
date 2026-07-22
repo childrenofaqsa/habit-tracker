@@ -19,6 +19,7 @@ type UiState = {
   dailyShowEmptyCategories: boolean;
   dailyShowEmptyTimeframes: boolean;
   dailyPriorityFilter: Priority[];
+  myDayRecentlyToggled: string[];
   editingHabitId: string | null;
   editingTodoId: string | "new" | null;
   todoSort: TodoSortMode;
@@ -42,6 +43,8 @@ type UiState = {
   setDailyShowEmptyCategories: (value: boolean) => void;
   setDailyShowEmptyTimeframes: (value: boolean) => void;
   toggleDailyPriorityFilter: (priority: Priority) => void;
+  markMyDayRecentlyToggled: (habitId: string) => void;
+  clearMyDayRecentlyToggled: (habitId: string) => void;
   setEditingHabitId: (id: string | null) => void;
   setEditingTodoId: (id: string | "new" | null) => void;
   setTodoSort: (mode: TodoSortMode) => void;
@@ -68,6 +71,7 @@ export const useUiStore = create<UiState>((set) => ({
   dailyShowEmptyCategories: true,
   dailyShowEmptyTimeframes: true,
   dailyPriorityFilter: [],
+  myDayRecentlyToggled: [],
   editingTodoId: null,
   editingHabitId: null,
   todoSort: "manual",
@@ -100,6 +104,22 @@ export const useUiStore = create<UiState>((set) => ({
         ? state.dailyPriorityFilter.filter((p) => p !== priority)
         : [...state.dailyPriorityFilter, priority],
     })),
+  markMyDayRecentlyToggled: (habitId) =>
+    set((state) =>
+      state.myDayRecentlyToggled.includes(habitId)
+        ? state
+        : { myDayRecentlyToggled: [...state.myDayRecentlyToggled, habitId] },
+    ),
+  clearMyDayRecentlyToggled: (habitId) =>
+    set((state) =>
+      state.myDayRecentlyToggled.includes(habitId)
+        ? {
+            myDayRecentlyToggled: state.myDayRecentlyToggled.filter(
+              (id) => id !== habitId,
+            ),
+          }
+        : state,
+    ),
   setTodoSort: (mode) => set({ todoSort: mode }),
   setTodoHideCompleted: (value) => set({ todoHideCompleted: value }),
   setTodoTab: (tab) => set({ todoTab: tab }),

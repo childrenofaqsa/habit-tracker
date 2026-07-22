@@ -2,7 +2,9 @@ import { Check } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { Priority } from "@/lib/schema";
 import { Switch } from "@/common/components/ui/form/switch";
+import { Input } from "@/common/components/ui/form/input";
 import { useUiStore } from "@/store/useUiStore";
+import { useAppStore } from "@/store/useAppStore";
 
 const PRIORITIES: { value: Priority; label: string }[] = [
   { value: "high", label: "High priority" },
@@ -26,6 +28,8 @@ export function HabitFilterBar() {
   const setShowEmptyTimeframes = useUiStore((state) => state.setDailyShowEmptyTimeframes);
   const priorityFilter = useUiStore((state) => state.dailyPriorityFilter);
   const togglePriority = useUiStore((state) => state.toggleDailyPriorityFilter);
+  const lingerSeconds = useAppStore((state) => state.settings.myDayLingerSeconds);
+  const setLingerSeconds = useAppStore((state) => state.setMyDayLingerSeconds);
 
   return (
     <div className="space-y-3 rounded-2xl border border-border bg-card p-4">
@@ -61,6 +65,46 @@ export function HabitFilterBar() {
           />
         ))}
       </div>
+      <LingerControl seconds={lingerSeconds} onChange={setLingerSeconds} />
+    </div>
+  );
+}
+
+/**
+ * How long a just-ticked/crossed habit lingers (in its performed state) on My
+ * Day before the "Show completed"/"Show discarded" filters hide it. Only has a
+ * visible effect while those filters are off. 0 = filter out immediately.
+ */
+function LingerControl({
+  seconds,
+  onChange,
+}: {
+  seconds: number;
+  onChange: (seconds: number) => void;
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-2 border-t border-border pt-3">
+      <label
+        htmlFor="myd_linger"
+        className="text-sm font-medium text-foreground"
+      >
+        Keep ticked/crossed habits visible for
+      </label>
+      <Input
+        id="myd_linger"
+        type="number"
+        min={0}
+        inputMode="numeric"
+        value={String(seconds)}
+        onChange={(event) => {
+          const next = Number.parseInt(event.target.value, 10);
+          onChange(Number.isFinite(next) ? Math.max(0, next) : 0);
+        }}
+        className="h-8 w-20 text-sm"
+      />
+      <span className="text-sm text-muted-foreground">
+        seconds before filtering out
+      </span>
     </div>
   );
 }

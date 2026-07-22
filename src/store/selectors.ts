@@ -42,20 +42,30 @@ export type MyDayHabitFilters = {
   showCompleted: boolean;
   showDiscarded: boolean;
   priorities: Priority[];
+  /**
+   * When true, the habit was just ticked/crossed and is within its linger
+   * window, so the completed/discarded filters are skipped to keep it briefly
+   * visible in its performed state before it filters out.
+   */
+  recentlyToggled?: boolean;
 };
 
 /**
  * Whether a habit passes the My Day filters, given its status on the selected
  * day. "Completed" maps to `done` and "discarded" maps to `missed`. An empty
- * `priorities` list means all priorities are shown.
+ * `priorities` list means all priorities are shown. A `recentlyToggled` habit
+ * bypasses the completed/discarded filters so the user can see what they just
+ * ticked or crossed before it filters out.
  */
 export function isHabitVisibleOnMyDay(
   habit: Habit,
   status: HabitStatus | undefined,
   filters: MyDayHabitFilters,
 ): boolean {
-  if (status === "done" && !filters.showCompleted) return false;
-  if (status === "missed" && !filters.showDiscarded) return false;
+  if (!filters.recentlyToggled) {
+    if (status === "done" && !filters.showCompleted) return false;
+    if (status === "missed" && !filters.showDiscarded) return false;
+  }
   if (filters.priorities.length > 0 && !filters.priorities.includes(habit.priority)) {
     return false;
   }

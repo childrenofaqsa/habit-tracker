@@ -30,4 +30,9 @@ export const createSettingsSlice: AppSlice<SettingsActions> = (set) => ({
     set((draft) => {
       draft.settings.deviceLabel = label;
     }),
+
+  setMyDayLingerSeconds: (seconds) =>
+    set((draft) => {
+      draft.settings.myDayLingerSeconds = Math.max(0, seconds);
+    }),
 });

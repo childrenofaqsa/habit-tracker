@@ -72,22 +72,23 @@ export function DailyView() {
   const dailyShowDiscarded = useUiStore((state) => state.dailyShowDiscarded);
   const dailyShowEmptyTimeframes = useUiStore((state) => state.dailyShowEmptyTimeframes);
   const dailyPriorityFilter = useUiStore(useShallow((state) => state.dailyPriorityFilter));
+  const recentlyToggled = useUiStore(useShallow((state) => state.myDayRecentlyToggled));
   const dayStatus = useAppStore((state) => state.history[selectedDate]?.habitStatus);
 
   const visibleTimeframes = useMemo(() => {
     if (dailyShowEmptyTimeframes) return timeframes;
-    const filters = {
-      showCompleted: dailyShowCompleted,
-      showDiscarded: dailyShowDiscarded,
-      priorities: dailyPriorityFilter,
-    };
     return timeframes.filter((tf) => {
       const categoryIds = categories
         .filter((c) => c.timeframeId === tf.id)
         .map((c) => c.id);
       const timeframeHabits = habits.filter((h) => categoryIds.includes(h.categoryId));
       return timeframeHabits.some((h) =>
-        isHabitVisibleOnMyDay(h, dayStatus?.[h.id], filters),
+        isHabitVisibleOnMyDay(h, dayStatus?.[h.id], {
+          showCompleted: dailyShowCompleted,
+          showDiscarded: dailyShowDiscarded,
+          priorities: dailyPriorityFilter,
+          recentlyToggled: recentlyToggled.includes(h.id),
+        }),
       );
     });
   }, [
@@ -95,6 +96,7 @@ export function DailyView() {
     dailyShowCompleted,
     dailyShowDiscarded,
     dailyPriorityFilter,
+    recentlyToggled,
     timeframes,
     categories,
     habits,
@@ -266,14 +268,19 @@ function MyDayView({
   const showCompleted = useUiStore((state) => state.dailyShowCompleted);
   const showDiscarded = useUiStore((state) => state.dailyShowDiscarded);
   const priorityFilter = useUiStore(useShallow((state) => state.dailyPriorityFilter));
+  const recentlyToggled = useUiStore(useShallow((state) => state.myDayRecentlyToggled));
   const dayStatus = useAppStore((state) => state.history[selectedDate]?.habitStatus);
 
   const pickedHabits = useMemo(() => {
-    const filters = { showCompleted, showDiscarded, priorities: priorityFilter };
     return allPickedHabits.filter((h) =>
-      isHabitVisibleOnMyDay(h, dayStatus?.[h.id], filters),
+      isHabitVisibleOnMyDay(h, dayStatus?.[h.id], {
+        showCompleted,
+        showDiscarded,
+        priorities: priorityFilter,
+        recentlyToggled: recentlyToggled.includes(h.id),
+      }),
     );
-  }, [allPickedHabits, showCompleted, showDiscarded, priorityFilter, dayStatus]);
+  }, [allPickedHabits, showCompleted, showDiscarded, priorityFilter, recentlyToggled, dayStatus]);
 
   if (timeframes.length === 0) {
     return (

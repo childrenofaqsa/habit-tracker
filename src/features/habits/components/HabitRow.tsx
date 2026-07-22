@@ -18,6 +18,7 @@ export function HabitRow({ categoryId }: { categoryId: string }) {
   const showCompleted = useUiStore((state) => state.dailyShowCompleted);
   const showDiscarded = useUiStore((state) => state.dailyShowDiscarded);
   const priorityFilter = useUiStore(useShallow((state) => state.dailyPriorityFilter));
+  const recentlyToggled = useUiStore(useShallow((state) => state.myDayRecentlyToggled));
   const selectedDate = useSelectedDate();
   const dayStatus = useAppStore((state) => state.history[selectedDate]?.habitStatus);
 
@@ -28,6 +29,7 @@ export function HabitRow({ categoryId }: { categoryId: string }) {
           showCompleted,
           showDiscarded,
           priorities: priorityFilter,
+          recentlyToggled: recentlyToggled.includes(h.id),
         }),
       );
 

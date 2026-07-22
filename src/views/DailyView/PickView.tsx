@@ -38,20 +38,25 @@ export function PickView({
   const showDiscarded = useUiStore((state) => state.dailyShowDiscarded);
   const showEmptyTimeframes = useUiStore((state) => state.dailyShowEmptyTimeframes);
   const priorityFilter = useUiStore(useShallow((state) => state.dailyPriorityFilter));
+  const recentlyToggled = useUiStore(useShallow((state) => state.myDayRecentlyToggled));
   const dayStatus = useAppStore((state) => state.history[selectedDate]?.habitStatus);
 
   // Mirror My Day's "show empty timeframes" filter: hide a timeframe when none
   // of its habits pass the active filters.
   const visibleTimeframes = useMemo(() => {
     if (showEmptyTimeframes) return timeframes;
-    const filters = { showCompleted, showDiscarded, priorities: priorityFilter };
     return timeframes.filter((tf) => {
       const categoryIds = categories
         .filter((c) => c.timeframeId === tf.id)
         .map((c) => c.id);
       const timeframeHabits = habits.filter((h) => categoryIds.includes(h.categoryId));
       return timeframeHabits.some((h) =>
-        isHabitVisibleOnMyDay(h, dayStatus?.[h.id], filters),
+        isHabitVisibleOnMyDay(h, dayStatus?.[h.id], {
+          showCompleted,
+          showDiscarded,
+          priorities: priorityFilter,
+          recentlyToggled: recentlyToggled.includes(h.id),
+        }),
       );
     });
   }, [
@@ -59,6 +64,7 @@ export function PickView({
     showCompleted,
     showDiscarded,
     priorityFilter,
+    recentlyToggled,
     timeframes,
     categories,
     habits,
@@ -96,11 +102,15 @@ export function PickView({
 
   // Only the picked habits that pass the My Day filters are shown in the row.
   const visiblePickedHabits = useMemo(() => {
-    const filters = { showCompleted, showDiscarded, priorities: priorityFilter };
     return pickedHabits.filter((h) =>
-      isHabitVisibleOnMyDay(h, dayStatus?.[h.id], filters),
+      isHabitVisibleOnMyDay(h, dayStatus?.[h.id], {
+        showCompleted,
+        showDiscarded,
+        priorities: priorityFilter,
+        recentlyToggled: recentlyToggled.includes(h.id),
+      }),
     );
-  }, [pickedHabits, showCompleted, showDiscarded, priorityFilter, dayStatus]);
+  }, [pickedHabits, showCompleted, showDiscarded, priorityFilter, recentlyToggled, dayStatus]);
 
   // Reordering only shuffles the visible cards. Hidden (filtered-out) picks keep
   // their slots in the underlying draft so filtering can't silently drop them.

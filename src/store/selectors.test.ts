@@ -9,6 +9,7 @@ import {
   selectTodaySummary,
   selectStreak,
   selectDayCompletion,
+  isHabitVisibleOnMyDay,
 } from "@/store/selectors";
 import type { StoreState } from "@/store/types";
 import { emptyAppData } from "@/lib/schema";
@@ -307,5 +308,62 @@ describe("selectDayCompletion", () => {
     const state = stateWith();
     state.history["2024-01-01"] = { habitStatus: {}, valueEntries: {} };
     expect(selectDayCompletion(state, "2024-01-01")).toBe(0);
+  });
+});
+
+describe("isHabitVisibleOnMyDay", () => {
+  const habit = buildHabit({ priority: "medium" });
+
+  it("hides a done habit when completed is hidden", () => {
+    expect(
+      isHabitVisibleOnMyDay(habit, "done", {
+        showCompleted: false,
+        showDiscarded: true,
+        priorities: [],
+      }),
+    ).toBe(false);
+  });
+
+  it("hides a missed habit when discarded is hidden", () => {
+    expect(
+      isHabitVisibleOnMyDay(habit, "missed", {
+        showCompleted: true,
+        showDiscarded: false,
+        priorities: [],
+      }),
+    ).toBe(false);
+  });
+
+  it("keeps a just-toggled done habit visible despite the completed filter", () => {
+    expect(
+      isHabitVisibleOnMyDay(habit, "done", {
+        showCompleted: false,
+        showDiscarded: true,
+        priorities: [],
+        recentlyToggled: true,
+      }),
+    ).toBe(true);
+  });
+
+  it("keeps a just-toggled missed habit visible despite the discarded filter", () => {
+    expect(
+      isHabitVisibleOnMyDay(habit, "missed", {
+        showCompleted: true,
+        showDiscarded: false,
+        priorities: [],
+        recentlyToggled: true,
+      }),
+    ).toBe(true);
+  });
+
+  it("still applies the priority filter to a just-toggled habit", () => {
+    expect(
+      isHabitVisibleOnMyDay(habit, "done", {
+        showCompleted: false,
+        showDiscarded: false,
+        priorities: ["high"],
+        recentlyToggled: true,
+      }),
+    ).toBe(false);
   });
 });

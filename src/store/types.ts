@@ -129,6 +129,7 @@ export type SettingsActions = {
   updateMotion: (patch: Partial<MotionSettings>) => void;
   setInstalledAt: (timestamp: number) => void;
   setDeviceLabel: (label: string) => void;
+  setMyDayLingerSeconds: (seconds: number) => void;
 };
 
 export type SystemActions = {

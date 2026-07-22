@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { HabitFilterBar } from "@/features/habits/components/HabitFilterBar";
 import { useUiStore } from "@/store/useUiStore";
+import { useAppStore } from "@/store/useAppStore";
 
 beforeEach(() => {
   useUiStore.setState({
@@ -11,6 +12,7 @@ beforeEach(() => {
     dailyShowEmptyTimeframes: true,
     dailyPriorityFilter: [],
   });
+  useAppStore.getState().setMyDayLingerSeconds(30);
 });
 
 describe("HabitFilterBar", () => {
@@ -63,5 +65,25 @@ describe("HabitFilterBar", () => {
 
     fireEvent.click(high);
     expect(useUiStore.getState().dailyPriorityFilter).toEqual(["low"]);
+  });
+
+  it("edits the linger duration", () => {
+    render(<HabitFilterBar />);
+
+    const input = screen.getByLabelText(
+      "Keep ticked/crossed habits visible for",
+    ) as HTMLInputElement;
+    expect(input.value).toBe("30");
+
+    fireEvent.change(input, { target: { value: "5" } });
+    expect(useAppStore.getState().settings.myDayLingerSeconds).toBe(5);
+  });
+
+  it("clamps a negative linger duration to zero", () => {
+    render(<HabitFilterBar />);
+
+    const input = screen.getByLabelText("Keep ticked/crossed habits visible for");
+    fireEvent.change(input, { target: { value: "-3" } });
+    expect(useAppStore.getState().settings.myDayLingerSeconds).toBe(0);
   });
 });

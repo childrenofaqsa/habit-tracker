@@ -146,6 +146,12 @@ export const settingsSchema = z.object({
   installedAt: z.number().nullable().default(null),
   deviceLabel: z.string().default("My Device"),
   motion: motionSettingsSchema.default(motionSettingsSchema.parse({})),
+  /**
+   * How long (in seconds) a just-ticked/crossed habit lingers on My Day —
+   * shown in its performed (done/missed) state — before the completed/discarded
+   * filters are allowed to hide it. 0 filters immediately (old behavior).
+   */
+  myDayLingerSeconds: z.number().min(0).default(30),
 });
 
 export const appDataSchema = z.object({

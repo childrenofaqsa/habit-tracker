@@ -54,16 +54,21 @@ export function TimeframeSection({ timeframe, handle }: Props) {
   const showCompleted = useUiStore((state) => state.dailyShowCompleted);
   const showDiscarded = useUiStore((state) => state.dailyShowDiscarded);
   const priorityFilter = useUiStore(useShallow((state) => state.dailyPriorityFilter));
+  const recentlyToggled = useUiStore(useShallow((state) => state.myDayRecentlyToggled));
   const dayStatus = useAppStore((state) => state.history[selectedDate]?.habitStatus);
 
   const categories = useMemo(() => {
     if (editMode || showEmptyCategories) return allStoredCategories;
-    const filters = { showCompleted, showDiscarded, priorities: priorityFilter };
     return allStoredCategories.filter((category) =>
       habits.some(
         (h) =>
           h.categoryId === category.id &&
-          isHabitVisibleOnMyDay(h, dayStatus?.[h.id], filters),
+          isHabitVisibleOnMyDay(h, dayStatus?.[h.id], {
+            showCompleted,
+            showDiscarded,
+            priorities: priorityFilter,
+            recentlyToggled: recentlyToggled.includes(h.id),
+          }),
       ),
     );
   }, [
@@ -74,6 +79,7 @@ export function TimeframeSection({ timeframe, handle }: Props) {
     showCompleted,
     showDiscarded,
     priorityFilter,
+    recentlyToggled,
     dayStatus,
   ]);
 
