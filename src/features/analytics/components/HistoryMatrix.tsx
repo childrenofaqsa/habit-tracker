@@ -42,7 +42,9 @@ export function HistoryMatrix({ days }: { days: number }) {
   const timeframes = useAppStore((state) => state.timeframes);
   const [filter, setFilter] = useState<MatrixFilter>("all");
   const [visibleDays, setVisibleDays] = useState(Math.min(days, COLUMN_CHUNK));
-  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  // Categories start collapsed by default; a group is only shown expanded once
+  // the user explicitly opens it (expanded[group.id] === true).
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   const groups = useMemo(
     () => buildMatrixGroups(habits, values, filter, categories, timeframes),
@@ -53,15 +55,15 @@ export function HistoryMatrix({ days }: { days: number }) {
     const out: DisplayRow[] = [];
     for (const group of groups) {
       out.push({ kind: "group", group });
-      if (!collapsed[group.id]) {
+      if (expanded[group.id]) {
         for (const row of group.rows) out.push({ kind: "row", row });
       }
     }
     return out;
-  }, [groups, collapsed]);
+  }, [groups, expanded]);
 
   const toggleGroup = useCallback((id: string) => {
-    setCollapsed((prev) => ({ ...prev, [id]: !prev[id] }));
+    setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
   }, []);
 
   const columns = reverseChronologicalKeys(visibleDays);
@@ -166,7 +168,7 @@ export function HistoryMatrix({ days }: { days: number }) {
                   <ChevronRight
                     className={cn(
                       "size-3.5 shrink-0 text-muted-foreground transition-transform",
-                      !collapsed[item.group.id] && "rotate-90",
+                      expanded[item.group.id] && "rotate-90",
                     )}
                   />
                   <span className="truncate text-xs font-semibold uppercase tracking-wide">

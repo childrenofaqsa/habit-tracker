@@ -149,9 +149,10 @@ export function buildMatrixGroups(
 }
 
 /**
- * Done-percentage for a category group on a given day: habits done divided by
- * habits tracked (done or missed) that day. Returns null when no habit in the
- * group was tracked, so the cell can render empty. Value groups have no
+ * Done-percentage for a category group on a given day: habits done (green tick)
+ * divided by every habit in the category that day — done (green), missed (red)
+ * and untracked (unknown) alike. Returns null only when the group has no habits
+ * or the day has no record, so the cell can render empty. Value groups have no
  * completion figure and always return null.
  */
 export function computeGroupCompletion(
@@ -159,18 +160,12 @@ export function computeGroupCompletion(
   record: DayRecord | undefined,
 ): number | null {
   if (group.kind !== "category" || !record) return null;
+  const total = group.rows.length;
+  if (total === 0) return null;
   let done = 0;
-  let tracked = 0;
   for (const row of group.rows) {
-    const status = record.habitStatus[row.id];
-    if (status === "done") {
-      done += 1;
-      tracked += 1;
-    } else if (status === "missed") {
-      tracked += 1;
-    }
+    if (record.habitStatus[row.id] === "done") done += 1;
   }
-  if (tracked === 0) return null;
-  return Math.round((done / tracked) * 100);
+  return Math.round((done / total) * 100);
 }
 
